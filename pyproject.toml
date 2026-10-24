@@ -1,0 +1,31 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra -m 'not live'"
+markers = [
+    "live: hits real external services (Bright Data, Mapbox). Run by hand: pytest -m live. Never in CI.",
+]
+
+[tool.coverage.run]
+source = ["server"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+# Gate for the whole backend. Pure scoring modules (scoring, continuity, selector)
+# must reach 100% when they exist: see docs/specs/AGILE_PLAN.md section 3.
+fail_under = 80
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"]
+# Long lines are allowed (formatting is not a merge gate).
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+# Amey's files: found when CI was added. Not edited by Bhavpreet (owner rule). Remove these
+# two lines once he fixes them (ruff check . --fix handles the import order).
+"tests/test_places.py" = ["I001"]
+"scripts/brightdata_smoke.py" = ["B904"]

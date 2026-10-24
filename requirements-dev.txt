@@ -1,0 +1,7 @@
+-r server/requirements.txt
+pytest==8.3.4
+pytest-cov==6.0.0
+ruff==0.8.4
+# Time zone database. Needed on Windows and slim containers for zoneinfo("America/Los_Angeles").
+# Amey: consider moving this into server/requirements.txt (the app needs it at runtime too).
+tzdata==2025.2
