@@ -15,11 +15,11 @@ Last full review by a human: (date/time)
 
 ## Person B: Amey (backend / data)
 - Owns (do not edit without asking): `server/`, `scoring/`
-- Status:
-- Doing now:
-- Files in progress:
-- Next:
-- Blocked on:
+- Status: scaffold done and re-verified 12:54 on branch amey/backend-scaffold (health route, scoring_v1.json, provider interface + empty Bright Data stub)
+- Doing now: nothing
+- Files in progress: none
+- Next: implement Bright Data provider once a key exists; answer CONTRACTS questions (see latest log, "Needs from teammate")
+- Blocked on: Bright Data API key; CONTRACTS.md items in the log
 
 ## Guide (third person, advice and submission content, little code)
 - Owns: Devpost text, demo script, community quotes, track questions (`docs/agent-context/OPEN_QUESTIONS.md`)
