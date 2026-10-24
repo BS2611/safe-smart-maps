@@ -1,0 +1,19 @@
+---
+description: Shared team rules for all AI agents (same as AGENTS.md)
+alwaysApply: true
+---
+
+Read and follow `AGENTS.md` in the repo root before doing anything. It is the
+single source of truth for all agents (Cursor, Claude Code, Codex).
+
+Short version:
+1. Start: run `bash scripts/context-brief.sh` (STATE, CONTRACTS, open questions,
+   decisions, 10 newest logs). Reply to your human with a 5-line summary first.
+2. While working: write chat decisions into DECISIONS.md / OPEN_QUESTIONS.md at
+   once; checkpoint a log entry at least every 30-45 minutes.
+3. Finish or hand off: run scripts/new-log.sh "title" (or new-log.ps1), fill every
+   field with an exact "Next step", update CONTRACTS.md / DECISIONS.md if needed,
+   update only your own section of STATE.md, commit code and context together.
+4. Never touch files the other person owns or has in progress without asking.
+5. No secrets in git. No mocked data in the Bright Data path. Never say a
+   route is "safe".

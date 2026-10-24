@@ -1,0 +1,11 @@
+# DECISIONS - append one line per decision. Do not rewrite old ones.
+
+Format: `YYYY-MM-DD HH:MM | who | decision | reason`
+
+2026-10-24 | team | Bright Data is the core live feed; Apify only for supporting data | Bright Data prize needs it essential
+2026-10-24 | team | Mapbox for map and routing; we generate candidates and re-rank ourselves | Directions API takes no custom segment costs
+2026-10-24 | team | Never label a route "safe" | We describe conditions, we cannot guarantee safety
+2026-10-24 10:56 | bhavpreet | Next.js frontend, Python backend (Django or FastAPI, FastAPI proposed), 3-layer architecture (presentation / service / data-access) | Swappable data sources; pending Amey's confirmation of framework
+2026-10-24 11:05 | bhavpreet | Repo root = CalHack_13; layout web/ server/ scoring/ docs/specs/ docs/agent-context/; CONTRACTS.md overrides the tech spec; API is /v1/routes | One layout for kit and specs; Bhavpreet gave full authority to reconcile; Amey to confirm contract
+2026-10-24 11:05 | bhavpreet | Agents must checkpoint logs every 30-45 min, record chat decisions in files immediately, and follow the handoff protocol (AGENTS.md sec 4) | Prevent context loss between agents/people
+2026-10-24 10:56 | bhavpreet | Target community = students leaving a campus late | Fits Anthropic/People-First tracks; campus still to be named
