@@ -16,3 +16,6 @@
 | 12 | Who builds the Wear OS app (Kotlin)? | Stretch; Bhavpreet unless Amey is faster | both |
 | 13 | How does the contact get the alert (SMS provider, cost, consent flow)? | Opt-in SMS or show prompt flow only | Amey |
 | 14 | Is a watch relay through our backend acceptable for the health-data rule? | In-memory, short TTL, deleted at trip end | both |
+| 15 | Product name contains "Safe"; keep it? | Rule bans calling a route safe, not the name; team confirms | both |
+| 16 | Figma bottom nav (Conditions / Explore / Layers), "Lock corridor", companionship-routing claim, red asterisk button, preset chips | Cut what has no screen or spec; label emergency button "Call 911" | Bhavpreet |
+| 17 | GitHub repo for CI and branch protection | Create repo, push, enable required checks | Bhavpreet |

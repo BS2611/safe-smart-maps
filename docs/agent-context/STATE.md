@@ -7,11 +7,11 @@ Last full review by a human: (date/time)
 
 ## Person A: Bhavpreet (frontend / map)
 - Owns (do not edit without asking): `web/`, `docs/agent-context/` entries by A
-- Status: specs + Stitch brief v0.2 done (Android, iOS, Samsung Wear OS); no code yet
-- Doing now: waiting on Stitch designs; platform decisions need Amey review
+- Status: specs, Stitch brief, Figma review (docs/design/FIGMA_REVIEW.md) and agile plan (docs/specs/AGILE_PLAN.md) done; no code yet
+- Doing now: Sprint 0: fix Figma must-fix list, create GitHub repo + CI
 - Files in progress: none
-- Next: answer OPEN_QUESTIONS 10-14 (watch model, test phones); hand brief to Stitch; push repo
-- Blocked on: Amey's answers (framework, layout, contract shape)
+- Next: tick the must-fix list in docs/design/FIGMA_REVIEW.md; answer OPEN_QUESTIONS 10, 11, 15-17; create GitHub repo; start S0 in TASKS.md
+- Blocked on: Amey confirming CONTRACTS v1 (see his latest log)
 
 ## Person B: Amey (backend / data)
 - Owns (do not edit without asking): `server/`, `scoring/`

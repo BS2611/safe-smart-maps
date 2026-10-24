@@ -23,7 +23,9 @@ Deadline: Sunday 9:00 AM PT (Devpost submission).
 | History of every change, newest last | docs/agent-context/log/ |
 | What the product does | docs/specs/FUNCTIONAL_SPEC.md |
 | How it is built, algorithms | docs/specs/TECHNICAL_SPEC.md |
-| Task list and milestones | docs/specs/TASKS.md |
+| Task list by sprint | docs/specs/TASKS.md |
+| Agile method, Definition of Done, test strategy | docs/specs/AGILE_PLAN.md |
+| Design review and Figma fix list | docs/design/FIGMA_REVIEW.md, FIGMA_FIXES_BRIEF.md |
 Precedence when files disagree: CONTRACTS.md > DECISIONS.md > specs > chat.
 
 ## 1. Before you change anything (every session, no exceptions)
@@ -65,6 +67,7 @@ Precedence when files disagree: CONTRACTS.md > DECISIONS.md > specs > chat.
    progress, next, blocked on). Never edit the other person's section.
 5. If a spec is now wrong, fix the spec or note the mismatch in the log.
 6. Commit the code and the context files together (when git exists).
+7. A story is only done when it meets the Definition of Done in docs/specs/AGILE_PLAN.md: unit tests written with the code, full regression suite green, contract/wording checks passed, reviewed PR. Never say "done" or merge with failing or skipped tests.
 
 ## 4. Handoff protocol (switching agent, tool, person, or ending a session)
 Do this whenever you stop, hit a limit, switch tools, or the human says

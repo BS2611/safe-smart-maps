@@ -1,97 +1,81 @@
-# Safe Smart Maps – Task Breakdown
+# Safe Smart Maps - Backlog by sprint
 
-Team: **Dev A** (frontend/presentation), **Dev B** (backend/service + data), **Guide** (third person: advice, story, submission content; not heavy build work). Swap owners based on strengths.
-Deadline: Sunday 9:00 AM PT. Plan in blocks; "Est." in hours.
+Method, Definition of Done and test strategy: docs/specs/AGILE_PLAN.md. Every story below includes its unit tests and a full regression run; "Done" means the DoD is met.
+Owners: **A** = Bhavpreet (web/, design), **B** = Amey (server/, scoring/), **G** = guide. Est. in hours. Swap owners by strength.
+Deadline: Sunday 9:00 AM PT.
 
-## M0 – Kickoff together (Now – ~1h)
-| # | Task | Owner | Est. | Done when |
+## S0 - Foundations (Sat now to ~5 PM)
+| # | Story | Owner | Est. | Tests / done when |
 |---|---|---|---|---|
-| 0.1 | Create GitHub repo, add docs, branch rules (main + feature branches) | Dev A | 0.25 | Both can push |
-| 0.2 | Answer docs/agent-context/OPEN_QUESTIONS.md items: corridor, campus, backend framework, Apify split | All | 0.5 | Decisions filled in |
-| 0.3 | Freeze API contract + sample JSON (TECHNICAL_SPEC §4) | A + B | 0.5 | `sample_routes.json` agreed |
-| 0.4 | Get Mapbox and Bright Data keys working locally (not committed) | B (A for Mapbox browser token) | 0.5 | Test call succeeds |
+| 0.1 | Apply docs/design/FIGMA_FIXES_BRIEF.md in Figma (must-fix copy, missing screens) | A | 2 | Review checklist in FIGMA_REVIEW.md all ticked |
+| 0.2 | Export tokens (colors, type, spacing) with Figma get_design_context into `web/` theme | A | 1 | Token file unit-tested for contrast pairs |
+| 0.3 | Create GitHub repo, push, branch protection (green CI + 1 review) | A | 0.5 | PR from branch merges only when checks pass |
+| 0.4 | CI skeleton (lint, type-check, pytest, Vitest, Playwright) with one trivial passing test per tool | A + B | 1.5 | CI green on a test PR |
+| 0.5 | Review and merge Amey's scaffold (`amey/backend-scaffold`) | A | 0.5 | pytest for `/v1/health` and weights-sum check |
+| 0.6 | Confirm CONTRACTS v1 and FastAPI; answer OPEN_QUESTIONS 5, 6, 13, 14 | B | 0.5 | CONTRACTS status set to CONFIRMED |
+| 0.7 | Decide scope items D1-D6 from FIGMA_REVIEW.md | A + B | 0.3 | DECISIONS lines added |
+| 0.8 | Find an Android phone and an iPhone for testing | G | 0.3 | Devices named in STATE |
 
-## M1 – Scaffolds (until ~10 AM)
-| # | Task | Owner | Est. |
-|---|---|---|---|
-| 1.1 | Next.js app, Mapbox map loads, geocoding search for start/destination | A | 2 |
-| 1.2 | Settings layout (extra minutes, alone/with someone, priorities, time picker) | A | 1 |
-| 1.3 | FastAPI scaffold, `/v1/health`, config loader + weight validation | B | 1 |
-| 1.4 | Provider interfaces + cache skeleton (3-layer folders) | B | 1 |
+## S1 - Data truth (to ~7 PM)
+| # | Story | Owner | Est. | Tests |
+|---|---|---|---|---|
+| 1.1 | `scoring_v1.json` loader and validation | B | 0.5 | Weights sum, bounds, bad file rejected |
+| 1.2 | Segmenter (50 m, arrival time per segment) | B | 1.5 | Lengths, time stepping, short routes |
+| 1.3 | Segment scoring from config | B | 1.5 | Each factor, missing factor gives "unknown" |
+| 1.4 | Continuity (coverage, longest gap, worst 200 m, penalty) and route score | B | 1.5 | Golden-file tests, empty-stretch cases, 100% coverage |
+| 1.5 | Bright Data provider: listings and hours, open/closed at arrival | B | 3 | Fixture parsing; blocked/slow/empty; past midnight, 24 h; `@live` smoke |
+| 1.6 | web: Welcome + Location Denied components | A | 1.5 | Vitest per state; Playwright at 390 and 360 |
+| 1.7 | web: Plan trip screen (search, time chip, 8 PM/1 AM chips) | A | 2 | Form states, keyboard, time logic tests |
+| 1.8 | web: Settings (extra minutes, alone/with someone, priorities max 2) | A | 1.5 | Limits, reset, weights adjust within bounds |
 
-## M2 – Live data and map rendering (10 AM – 1 PM)
-| # | Task | Owner | Est. |
-|---|---|---|---|
-| 2.1 | Render colored segments + route line from the sample JSON | A | 2 |
-| 2.2 | Bright Data pull: listings + hours for the corridor | B | 2.5 |
-| 2.3 | Opening-hours → open/closed at arrival time | B | 1 |
-| 2.4 | OSM road/lit tags; help points | B | 1.5 |
+## S2 - Routes end to end (to ~10 PM)
+| # | Story | Owner | Est. | Tests |
+|---|---|---|---|---|
+| 2.1 | Candidate routes (Mapbox alternatives plus detours via waypoints) | B | 2.5 | Provider interface with fixtures; 5-8 candidates |
+| 2.2 | Selector (Fastest, Safest within cap, Balanced; merged labels) | B | 1 | Edge cases, ties, cap too small |
+| 2.3 | `POST /v1/routes` per CONTRACTS | B | 2 | TestClient, errors, `warnings`, contract test |
+| 2.4 | OSM road/lit tags; 311 outages; help points | B | 2 | Provider fixtures; stale/missing data |
+| 2.5 | web: Map with colored segments + legend (icons, not color alone) | A | 2.5 | Component tests; WebKit screenshot |
+| 2.6 | web: Three route cards + merged card + fetched-at badge | A | 2 | All variants, "not sure" case |
+| 2.7 | web: Fetching checklist wired to real stages | A | 1.5 | Normal, slow, unavailable states |
 
-## M3 – Scoring and cards (1 – 4 PM)
-| # | Task | Owner | Est. |
-|---|---|---|---|
-| 3.1 | Three-route comparison cards, label merge display | A | 2 |
-| 3.2 | Time picker wired to request; data-fetched-at badge | A | 1 |
-| 3.3 | Segmenter + segment scoring from `scoring_v1.json` | B | 2 |
-| 3.4 | Continuity rule (coverage, longest gap, worst window, penalty) | B | 1.5 |
-| 3.5 | Candidate generation (Mapbox alternatives + waypoint detours) and selector | B | 1.5 |
+## S3 - Explain and time (to ~1 AM)
+| # | Story | Owner | Est. | Tests |
+|---|---|---|---|---|
+| 3.1 | Claude explanations with template fallback | B | 1.5 | Fallback on failure; no "safe" in output (test) |
+| 3.2 | Cache scored data by area+hour | B | 1.5 | Hit/miss/TTL tests |
+| 3.3 | Transit (511/GTFS) and incidents (low weight) providers | B | 2 | Fixtures; weights respected |
+| 3.4 | web: Route detail (continuity, strip, factors, explanation) | A | 3 | Component and e2e tests |
+| 3.5 | web: Time comparison 8 PM vs 1 AM | A | 2.5 | Same trip, route changes, e2e |
+| 3.6 | web: About / How scores work | A | 1 | Copy test: weights match scoring_v1 |
 
-## M4 – Integration (4 – 7 PM)
-| # | Task | Owner | Est. |
-|---|---|---|---|
-| 4.1 | Connect UI to live `/v1/routes`; loading/empty/error states | A | 2.5 |
-| 4.2 | Claude explanations with template fallback | B | 1.5 |
-| 4.3 | Settings change weights; 311, 511 and incidents (low weight) providers | B | 1.5 |
+## S4 - Harden (to ~4 AM; freeze at start)
+| # | Story | Owner | Est. | Tests |
+|---|---|---|---|---|
+| 4.1 | Blocked page, timeout, retry/backoff everywhere | B | 2 | Simulated failures through the API |
+| 4.2 | Feature detection and fallbacks; install tip; safe areas; keyboard | A | 2 | Playwright WebKit + Chromium, 390 and 360 |
+| 4.3 | Accessibility pass (contrast, 48 px targets, labels) | A | 1 | Automated a11y checks in Playwright |
+| 4.4 | Full regression, `@live` run, rehearse 8 PM vs 1 AM | A + B + G | 1.5 | All green, live check noted in log |
+| 4.5 | Pre-warm cache for the demo corridor | B | 0.5 | Cache hit test |
 
-## M5 – Hardening (7 – 10 PM)
-| # | Task | Owner | Est. |
-|---|---|---|---|
-| 5.1 | End-to-end tests; empty and slow data handling in UI | A | 2 |
-| 5.2 | Caching, retries/backoff, blocked-page handling | B | 2 |
-| 5.3 | "Not sure" labels and wording audit (no "safe") | A + Guide | 0.5 |
-
-## M6 – Polish and demo (10 PM – 1 AM)
-| # | Task | Owner | Est. |
-|---|---|---|---|
-| 6.1 | 8 PM vs 1 AM demo flow polished | A | 2 |
-| 6.2 | Bug fixes; verify data-fetched-at everywhere | B | 2 |
-| 6.3 | Demo script (2-minute story, real results) | Guide | 1 |
-
-## M7 – Submission (1 – 9 AM, sleep in shifts)
-| # | Task | Owner |
+## S5 - Ship (to ~8 AM, submit before 9:00 AM)
+| # | Story | Owner |
 |---|---|---|
-| 7.1 | README (setup, sponsor tools and where used, known limits); secrets scan | B |
-| 7.2 | Record demo video; set table number; project image | A |
-| 7.3 | Devpost text, tracks selected, GitHub link; **submit before 9:00 AM** | B + Guide |
+| 5.1 | README (setup, sponsor tools and where used, known limits); secrets scan | B |
+| 5.2 | Demo video, table number, project image | A |
+| 5.3 | Devpost text, tracks, GitHub link, community quotes, customer story | G + B |
+| 5.4 | Final live rehearsal; submit | all |
 
-## Platform tasks (core: both phones)
-| # | Task | Owner | Est. |
+## Stretch (only if S3 finishes early)
+| # | Story | Owner | Est. |
 |---|---|---|---|
-| P.1 | PWA setup (manifest, icons, service worker), safe-area insets, keyboard-aware inputs | A | 1.5 |
-| P.2 | Test every must-have screen on a real Android phone (Chrome) and a real iPhone (Safari, installed to home screen); fix layout and map issues | A | 2 |
-| P.3 | Feature detection + fallback messages (Bluetooth, vibration, wake lock, push) | A | 1 |
-| P.4 | Find an iPhone for testing (borrow from the guide or a friend) | Guide | 0.2 |
-
-## Stretch (only if core is done)
-Heartbeat alert, Cartesia voice, Convex saved trips.
-| # | Task | Owner | Est. |
-|---|---|---|---|
-| W.1 | Confirm the Samsung watch model and Wear OS version; enable developer mode and ADB over Wi-Fi | A | 0.5 |
-| W.2 | Watch app skeleton (Kotlin, Compose for Wear OS), read heart rate with Health Services on the real watch | A (or Guide pairs) | 3 |
-| W.3 | Relay endpoints in CONTRACTS (pair, heartbeat, stream, alerts) in memory only | B | 2 |
-| W.4 | Pairing screen in web app + live bpm display, Simulated badge | A | 1.5 |
-| W.5 | Watch prompt: baseline, trigger, 30 s countdown, haptics, alert call | A | 2 |
-| W.6 | Contact message provider (SMS) with opt-in check; or show prompt flow only and say so | B | 1.5 |
-| W.7 | Fallback: simulated source, Bluetooth band on Android Chrome | A | 1 |
+| X.1 | Walk mode (wake lock, next-stretch hint) | A | 2.5 |
+| X.2 | Heartbeat flow with simulated source, labeled | A | 3 |
+| W.1-W.7 | Wear OS companion (pair, heartbeat, prompt, alert); needs watch model (OPEN_QUESTIONS 10) | A / B | 12+ |
+| X.3 | Cartesia voice readout | A | 2 |
 
 ## Guide responsibilities
-Quotes from 2–3 real students (Anthropic track), customer story and measurable results (Microsoft track), confirm with organizers (#0-ask-directors) that one project can enter several tracks, review demo for the "never say safe" rule.
+Quotes from 2-3 real students (Anthropic track), customer story and results (Microsoft track), confirm multi-track entry with organizers (#0-ask-directors), test on real Android and iPhone, review demo for the "never say safe" rule.
 
 ## Risks
-| Risk | Mitigation |
-|---|---|
-| Bright Data pages blocked or slow | Cache + "not sure" fallback; test early (2.2) |
-| Scope creep | Core = M0–M5; stretch only after |
-| Sleep/time | Shifts in M7; one person always on bug fixes |
-| Keys committed | `.gitignore`, `.env.example`, final scan (7.1) |
-
+See docs/specs/AGILE_PLAN.md section 7.
