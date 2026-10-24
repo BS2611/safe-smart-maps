@@ -7,7 +7,7 @@ person can pick up cold.
 
 ## Set up (once)
 1. Put this folder at the repo root (keep the dot folders `.cursor/`, `.claude/`).
-2. `git init` (if needed), `git config user.name "<your name>"` (the log script uses it), then
+2. `git init` (if needed), `git config user.name "<your name>"` (the log script uses it), then  
    `git add -A && git commit -m "Add agent kit and specs" && git push`.
 3. The other person: `git pull`, set `git config user.name`.
 4. Each person fills their section of `docs/agent-context/STATE.md` and sets "Last full review".
