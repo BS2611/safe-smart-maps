@@ -3,7 +3,7 @@
 SOURCE OF TRUTH. `docs/specs/TECHNICAL_SPEC.md` must match this file; if they
 disagree, this file wins and the spec gets fixed. If you change anything here,
 update this file in the same commit and log it (field "Contracts affected").
-Status: DRAFT v1 - Amey (backend) must confirm before server/ code is written.
+Status: DRAFT v1 + additive changes below (marked "added 24 Oct"). Amey must confirm. The code in server/ implements this file; tests/fixtures/routes_response*.json are generated from it (python -m tests.make_fixture).
 
 ## Folder layout (repo root = this folder)
 - `web/`      Next.js responsive PWA for Android + iOS browsers (Bhavpreet)
@@ -24,9 +24,9 @@ Add fields freely; never remove or rename a field within a version.
   "end": [lng, lat],
   "length_m": 50,
   "arrival_time": "2026-10-24T23:10:00-07:00",
-  "score": 0,
+  "score": 0,                                   (null when confidence is "unknown")
   "band": "green | yellow | red | unknown",
-  "factors": { "open_places": 0, "lighting": 0, "main_road": 0,
+  "factors": { "open_places": 0,   (each factor is a number 0-100 or null = not sure) "lighting": 0, "main_road": 0,
                "help_points": 0, "transit": 0, "activity_estimate": 0,
                "incidents": 0, "turns": 0 },
   "reasons": ["2 open places within 50 m", "lit main road"],
@@ -40,6 +40,8 @@ Add fields freely; never remove or rename a field within a version.
 ```json
 {
   "label": "safest | balanced | fastest",
+  "route_id": "r1a2b3c4d5e",                   (added 24 Oct: stable id from the geometry)
+  "via": ["Polk St", "Market St"],             (added 24 Oct: longest named streets, route order)
   "also_labels": [],
   "duration_min": 0,
   "extra_min": 0,
@@ -47,7 +49,7 @@ Add fields freely; never remove or rename a field within a version.
   "route_score": 0,
   "continuity": { "coverage_pct": 0, "longest_gap_m": 0,
                   "longest_gap_note": "near the park", "worst_window_score": 0 },
-  "open_places_count": 0,
+  "open_places_count": 0,                      (null when live listings were unavailable)
   "nearest_help_point": { "name": "string", "distance_m": 0 },
   "geometry": "GeoJSON LineString",
   "segments": ["Segment score"],
@@ -62,8 +64,10 @@ Add fields freely; never remove or rename a field within a version.
 - `POST /v1/routes`
   body: `{ "from": {lat,lng}, "to": {lat,lng}, "depart_time": "ISO", "settings": { "max_extra_minutes": 10, "with_companion": false, "priorities": ["lighting"] } }`
   -> `{ "api_version", "scoring_version", "data_fetched_at", "routes": [Route result], "warnings": ["string"] }`
-- Errors: `{ "error": { "code": "NO_ROUTE | UPSTREAM_TIMEOUT | BAD_REQUEST", "message": "string" } }`
+- Errors: `{ "error": { "code": "NO_ROUTE | UPSTREAM_TIMEOUT | BAD_REQUEST | UPSTREAM_ERROR | NOT_CONFIGURED", "message": "string" } }`
+  HTTP: BAD_REQUEST 400, NO_ROUTE 404, UPSTREAM_ERROR 502, NOT_CONFIGURED 503, UPSTREAM_TIMEOUT 504 (UPSTREAM_ERROR, NOT_CONFIGURED added 24 Oct). Messages never echo the request or any key.
   Partial upstream failure returns 200 with `warnings`.
+- Trips longer than about 5 km return BAD_REQUEST (demo-area limit). `depart_time` must include a time zone.
 - (add more here)
 
 ## Watch relay endpoints (stretch; all in-memory, no accounts)

@@ -1,0 +1,1405 @@
+{
+  "api_version": "1",
+  "scoring_version": "scoring_v1",
+  "data_fetched_at": "2026-10-24T22:31:00Z",
+  "routes": [
+    {
+      "label": "safest",
+      "also_labels": [
+        "balanced"
+      ],
+      "route_id": "r9f46573474",
+      "via": [
+        "Lombard St",
+        "Fillmore St"
+      ],
+      "duration_min": 13.0,
+      "extra_min": 4.0,
+      "distance_m": 1050.0,
+      "route_score": 42.4,
+      "continuity": {
+        "coverage_pct": 50.0,
+        "longest_gap_m": 305.0,
+        "longest_gap_note": "on Lombard St",
+        "worst_window_score": 50.0
+      },
+      "open_places_count": 7,
+      "nearest_help_point": {
+        "name": "All Night Pharmacy",
+        "distance_m": 19.0
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -122.4484,
+            37.8029
+          ],
+          [
+            -122.447,
+            37.806
+          ],
+          [
+            -122.4415,
+            37.806
+          ],
+          [
+            -122.44,
+            37.8029
+          ]
+        ]
+      },
+      "segments": [
+        {
+          "segment_id": "s0",
+          "start": [
+            -122.4484,
+            37.8029
+          ],
+          "end": [
+            -122.44820583376627,
+            37.80332993951755
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-25T03:00:16.250000Z",
+          "score": 50.0,
+          "band": "yellow",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 0.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "no open places nearby",
+            "lit street",
+            "main road",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "high"
+        },
+        {
+          "segment_id": "s1",
+          "start": [
+            -122.44820583376627,
+            37.80332993951755
+          ],
+          "end": [
+            -122.44801166753254,
+            37.803759879035105
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-25T03:00:48.750000Z",
+          "score": 50.0,
+          "band": "yellow",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 0.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "no open places nearby",
+            "lit street",
+            "main road",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "high"
+        },
+        {
+          "segment_id": "s2",
+          "start": [
+            -122.44801166753254,
+            37.803759879035105
+          ],
+          "end": [
+            -122.4478175012988,
+            37.80418981855266
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-25T03:01:21.250000Z",
+          "score": 50.0,
+          "band": "yellow",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 0.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "no open places nearby",
+            "lit street",
+            "main road",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "high"
+        },
+        {
+          "segment_id": "s3",
+          "start": [
+            -122.4478175012988,
+            37.80418981855266
+          ],
+          "end": [
+            -122.44762333506507,
+            37.80461975807021
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-25T03:01:53.750000Z",
+          "score": 50.0,
+          "band": "yellow",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 0.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "no open places nearby",
+            "lit street",
+            "main road",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "high"
+        },
+        {
+          "segment_id": "s4",
+          "start": [
+            -122.44762333506507,
+            37.80461975807021
+          ],
+          "end": [
+            -122.44742916883133,
+            37.80504969758776
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-25T03:02:26.250000Z",
+          "score": 50.0,
+          "band": "yellow",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 0.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "no open places nearby",
+            "lit street",
+            "main road",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "high"
+        },
+        {
+          "segment_id": "s5",
+          "start": [
+            -122.44742916883133,
+            37.80504969758776
+          ],
+          "end": [
+            -122.44723500259761,
+            37.805479637105314
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-25T03:02:58.750000Z",
+          "score": 57.4,
+          "band": "yellow",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 42.0,
+            "transit": null,
+            "activity": 25.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "no open places nearby",
+            "lit street",
+            "main road",
+            "help point 108 m away",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "high"
+        },
+        {
+          "segment_id": "s6",
+          "start": [
+            -122.44723500259761,
+            37.805479637105314
+          ],
+          "end": [
+            -122.44704083636387,
+            37.80590957662287
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-25T03:03:31.250000Z",
+          "score": 79.7,
+          "band": "green",
+          "factors": {
+            "open_places": 60.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 92.5,
+            "transit": null,
+            "activity": 25.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "2 open places within 50 m",
+            "lit street",
+            "main road",
+            "help point 57 m away",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "high"
+        },
+        {
+          "segment_id": "s7",
+          "start": [
+            -122.44704083636387,
+            37.80590957662287
+          ],
+          "end": [
+            -122.44654374516179,
+            37.806
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-25T03:04:03.750000Z",
+          "score": 81.7,
+          "band": "green",
+          "factors": {
+            "open_places": 60.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 100.0,
+            "transit": null,
+            "activity": 50.0,
+            "incidents": 100.0,
+            "turns": 70.0
+          },
+          "reasons": [
+            "2 open places within 50 m",
+            "lit street",
+            "main road",
+            "help point 27 m away",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "high"
+        },
+        {
+          "segment_id": "s8",
+          "start": [
+            -122.44654374516179,
+            37.806
+          ],
+          "end": [
+            -122.44596597591413,
+            37.806
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-25T03:04:36.250000Z",
+          "score": 81.2,
+          "band": "green",
+          "factors": {
+            "open_places": 60.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 80.9,
+            "transit": null,
+            "activity": 50.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "2 open places within 50 m",
+            "lit street",
+            "main road",
+            "help point 69 m away",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "high"
+        },
+        {
+          "segment_id": "s9",
+          "start": [
+            -122.44596597591413,
+            37.806
+          ],
+          "end": [
+            -122.44538820666646,
+            37.806
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-25T03:05:08.750000Z",
+          "score": 75.7,
+          "band": "green",
+          "factors": {
+            "open_places": 60.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 31.7,
+            "transit": null,
+            "activity": 50.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "2 open places within 50 m",
+            "lit street",
+            "main road",
+            "help point 118 m away",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "high"
+        },
+        {
+          "segment_id": "s10",
+          "start": [
+            -122.44538820666646,
+            37.806
+          ],
+          "end": [
+            -122.4448104374188,
+            37.806
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-25T03:05:41.250000Z",
+          "score": 72.2,
+          "band": "green",
+          "factors": {
+            "open_places": 60.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 50.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "2 open places within 50 m",
+            "lit street",
+            "main road",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "high"
+        },
+        {
+          "segment_id": "s11",
+          "start": [
+            -122.4448104374188,
+            37.806
+          ],
+          "end": [
+            -122.44423266817114,
+            37.806
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-25T03:06:13.750000Z",
+          "score": 74.0,
+          "band": "green",
+          "factors": {
+            "open_places": 60.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 16.2,
+            "transit": null,
+            "activity": 50.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "2 open places within 50 m",
+            "lit street",
+            "main road",
+            "help point 134 m away",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "high"
+        },
+        {
+          "segment_id": "s12",
+          "start": [
+            -122.44423266817114,
+            37.806
+          ],
+          "end": [
+            -122.44365489892347,
+            37.806
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-25T03:06:46.250000Z",
+          "score": 82.4,
+          "band": "green",
+          "factors": {
+            "open_places": 60.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 66.9,
+            "transit": null,
+            "activity": 75.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "2 open places within 50 m",
+            "lit street",
+            "main road",
+            "help point 83 m away",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "high"
+        },
+        {
+          "segment_id": "s13",
+          "start": [
+            -122.44365489892347,
+            37.806
+          ],
+          "end": [
+            -122.44307712967581,
+            37.806
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-25T03:07:18.750000Z",
+          "score": 97.2,
+          "band": "green",
+          "factors": {
+            "open_places": 100.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 100.0,
+            "transit": null,
+            "activity": 75.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "3 open places within 50 m",
+            "lit street",
+            "main road",
+            "help point 33 m away",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "high"
+        },
+        {
+          "segment_id": "s14",
+          "start": [
+            -122.44307712967581,
+            37.806
+          ],
+          "end": [
+            -122.44249936042814,
+            37.806
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-25T03:07:51.250000Z",
+          "score": 97.2,
+          "band": "green",
+          "factors": {
+            "open_places": 100.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 100.0,
+            "transit": null,
+            "activity": 75.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "3 open places within 50 m",
+            "lit street",
+            "main road",
+            "help point 19 m away",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "high"
+        },
+        {
+          "segment_id": "s15",
+          "start": [
+            -122.44249936042814,
+            37.806
+          ],
+          "end": [
+            -122.44192159118049,
+            37.806
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-25T03:08:23.750000Z",
+          "score": 83.9,
+          "band": "green",
+          "factors": {
+            "open_places": 60.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 80.4,
+            "transit": null,
+            "activity": 75.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "2 open places within 50 m",
+            "lit street",
+            "main road",
+            "help point 70 m away",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "high"
+        },
+        {
+          "segment_id": "s16",
+          "start": [
+            -122.44192159118049,
+            37.806
+          ],
+          "end": [
+            -122.44144422959211,
+            37.80588474115702
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-25T03:08:56.250000Z",
+          "score": 75.5,
+          "band": "green",
+          "factors": {
+            "open_places": 60.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 29.7,
+            "transit": null,
+            "activity": 50.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "2 open places within 50 m",
+            "lit street",
+            "main road",
+            "help point 120 m away",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "high"
+        },
+        {
+          "segment_id": "s17",
+          "start": [
+            -122.44144422959211,
+            37.80588474115702
+          ],
+          "end": [
+            -122.44123791107896,
+            37.80545834956316
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-25T03:09:28.750000Z",
+          "score": 67.8,
+          "band": "yellow",
+          "factors": {
+            "open_places": 60.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 25.0,
+            "incidents": 100.0,
+            "turns": 70.0
+          },
+          "reasons": [
+            "2 open places within 50 m",
+            "lit street",
+            "main road",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "high"
+        },
+        {
+          "segment_id": "s18",
+          "start": [
+            -122.44123791107896,
+            37.80545834956316
+          ],
+          "end": [
+            -122.44103159256579,
+            37.805031957969305
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-25T03:10:01.250000Z",
+          "score": 52.8,
+          "band": "yellow",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 25.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "no open places nearby",
+            "lit street",
+            "main road",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "high"
+        },
+        {
+          "segment_id": "s19",
+          "start": [
+            -122.44103159256579,
+            37.805031957969305
+          ],
+          "end": [
+            -122.44082527405264,
+            37.80460556637544
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-25T03:10:33.750000Z",
+          "score": 50.0,
+          "band": "yellow",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 0.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "no open places nearby",
+            "lit street",
+            "main road",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "high"
+        },
+        {
+          "segment_id": "s20",
+          "start": [
+            -122.44082527405264,
+            37.80460556637544
+          ],
+          "end": [
+            -122.44061895553948,
+            37.80417917478158
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-25T03:11:06.250000Z",
+          "score": 50.0,
+          "band": "yellow",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 0.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "no open places nearby",
+            "lit street",
+            "main road",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "high"
+        },
+        {
+          "segment_id": "s21",
+          "start": [
+            -122.44061895553948,
+            37.80417917478158
+          ],
+          "end": [
+            -122.44041263702631,
+            37.80375278318772
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-25T03:11:38.750000Z",
+          "score": 50.0,
+          "band": "yellow",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 0.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "no open places nearby",
+            "lit street",
+            "main road",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "high"
+        },
+        {
+          "segment_id": "s22",
+          "start": [
+            -122.44041263702631,
+            37.80375278318772
+          ],
+          "end": [
+            -122.44020631851316,
+            37.80332639159386
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-25T03:12:11.250000Z",
+          "score": 50.0,
+          "band": "yellow",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 0.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "no open places nearby",
+            "lit street",
+            "main road",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "high"
+        },
+        {
+          "segment_id": "s23",
+          "start": [
+            -122.44020631851316,
+            37.80332639159386
+          ],
+          "end": [
+            -122.44,
+            37.8029
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-25T03:12:43.750000Z",
+          "score": 50.0,
+          "band": "yellow",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 0.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "no open places nearby",
+            "lit street",
+            "main road",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "high"
+        }
+      ],
+      "explanation": "Fixture explanation.",
+      "explanation_source": "template"
+    },
+    {
+      "label": "fastest",
+      "also_labels": [],
+      "route_id": "rda1477805c",
+      "via": [
+        "Lyon St",
+        "Marina Blvd"
+      ],
+      "duration_min": 9.0,
+      "extra_min": 0.0,
+      "distance_m": 740.0,
+      "route_score": 13.6,
+      "continuity": {
+        "coverage_pct": 20.0,
+        "longest_gap_m": 295.0,
+        "longest_gap_note": "on Marina Blvd",
+        "worst_window_score": 26.1
+      },
+      "open_places_count": 1,
+      "nearest_help_point": {
+        "name": "All Night Pharmacy",
+        "distance_m": 350.0
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -122.4484,
+            37.8029
+          ],
+          [
+            -122.4442,
+            37.8029
+          ],
+          [
+            -122.44,
+            37.8029
+          ]
+        ]
+      },
+      "segments": [
+        {
+          "segment_id": "s0",
+          "start": [
+            -122.4484,
+            37.8029
+          ],
+          "end": [
+            -122.44784,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-25T03:00:18Z",
+          "score": 26.1,
+          "band": "red",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": null,
+            "main_road": 55.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 0.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "no open places nearby",
+            "not sure: lighting data missing",
+            "side street",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "s1",
+          "start": [
+            -122.44784,
+            37.8029
+          ],
+          "end": [
+            -122.44728,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-25T03:00:54Z",
+          "score": 26.1,
+          "band": "red",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": null,
+            "main_road": 55.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 0.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "no open places nearby",
+            "not sure: lighting data missing",
+            "side street",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "s2",
+          "start": [
+            -122.44728,
+            37.8029
+          ],
+          "end": [
+            -122.44672,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-25T03:01:30Z",
+          "score": 26.1,
+          "band": "red",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": null,
+            "main_road": 55.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 0.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "no open places nearby",
+            "not sure: lighting data missing",
+            "side street",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "s3",
+          "start": [
+            -122.44672,
+            37.8029
+          ],
+          "end": [
+            -122.44616,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-25T03:02:06Z",
+          "score": 26.1,
+          "band": "red",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": null,
+            "main_road": 55.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 0.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "no open places nearby",
+            "not sure: lighting data missing",
+            "side street",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "s4",
+          "start": [
+            -122.44616,
+            37.8029
+          ],
+          "end": [
+            -122.4456,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-25T03:02:42Z",
+          "score": 26.1,
+          "band": "red",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": null,
+            "main_road": 55.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 0.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "no open places nearby",
+            "not sure: lighting data missing",
+            "side street",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "s5",
+          "start": [
+            -122.4456,
+            37.8029
+          ],
+          "end": [
+            -122.44504,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-25T03:03:18Z",
+          "score": 29.6,
+          "band": "red",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": null,
+            "main_road": 55.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 25.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "no open places nearby",
+            "not sure: lighting data missing",
+            "side street",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "s6",
+          "start": [
+            -122.44504,
+            37.8029
+          ],
+          "end": [
+            -122.44448,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-25T03:03:54Z",
+          "score": 43.9,
+          "band": "red",
+          "factors": {
+            "open_places": 40.0,
+            "lighting": null,
+            "main_road": 55.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 25.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "1 open place within 50 m",
+            "not sure: lighting data missing",
+            "side street",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "s7",
+          "start": [
+            -122.44448,
+            37.8029
+          ],
+          "end": [
+            -122.44392,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-25T03:04:30Z",
+          "score": 43.9,
+          "band": "red",
+          "factors": {
+            "open_places": 40.0,
+            "lighting": null,
+            "main_road": 55.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 25.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "1 open place within 50 m",
+            "not sure: lighting data missing",
+            "side street",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "s8",
+          "start": [
+            -122.44392,
+            37.8029
+          ],
+          "end": [
+            -122.44336,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-25T03:05:06Z",
+          "score": 43.9,
+          "band": "red",
+          "factors": {
+            "open_places": 40.0,
+            "lighting": null,
+            "main_road": 55.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 25.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "1 open place within 50 m",
+            "not sure: lighting data missing",
+            "side street",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "s9",
+          "start": [
+            -122.44336,
+            37.8029
+          ],
+          "end": [
+            -122.4428,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-25T03:05:42Z",
+          "score": 29.6,
+          "band": "red",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": null,
+            "main_road": 55.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 25.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "no open places nearby",
+            "not sure: lighting data missing",
+            "side street",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "s10",
+          "start": [
+            -122.4428,
+            37.8029
+          ],
+          "end": [
+            -122.44224,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-25T03:06:18Z",
+          "score": 26.1,
+          "band": "red",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": null,
+            "main_road": 55.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 0.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "no open places nearby",
+            "not sure: lighting data missing",
+            "side street",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "s11",
+          "start": [
+            -122.44224,
+            37.8029
+          ],
+          "end": [
+            -122.44168,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-25T03:06:54Z",
+          "score": 26.1,
+          "band": "red",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": null,
+            "main_road": 55.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 0.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "no open places nearby",
+            "not sure: lighting data missing",
+            "side street",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "s12",
+          "start": [
+            -122.44168,
+            37.8029
+          ],
+          "end": [
+            -122.44112,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-25T03:07:30Z",
+          "score": 26.1,
+          "band": "red",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": null,
+            "main_road": 55.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 0.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "no open places nearby",
+            "not sure: lighting data missing",
+            "side street",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "s13",
+          "start": [
+            -122.44112,
+            37.8029
+          ],
+          "end": [
+            -122.44056,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-25T03:08:06Z",
+          "score": 26.1,
+          "band": "red",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": null,
+            "main_road": 55.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 0.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "no open places nearby",
+            "not sure: lighting data missing",
+            "side street",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "s14",
+          "start": [
+            -122.44056,
+            37.8029
+          ],
+          "end": [
+            -122.44,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-25T03:08:42Z",
+          "score": 26.1,
+          "band": "red",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": null,
+            "main_road": 55.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": 0.0,
+            "incidents": 100.0,
+            "turns": 100.0
+          },
+          "reasons": [
+            "no open places nearby",
+            "not sure: lighting data missing",
+            "side street",
+            "not sure: transit schedule not connected"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        }
+      ],
+      "explanation": "Fixture explanation.",
+      "explanation_source": "template"
+    }
+  ],
+  "warnings": [
+    "Transit schedules are not connected, so transit shows as not sure.",
+    "1 place had opening hours we could not read; it was not counted as open."
+  ]
+}

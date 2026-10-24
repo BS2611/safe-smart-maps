@@ -33,7 +33,8 @@ def test_real_config_matches_the_spec_weights():
 def test_real_config_thresholds_match_the_spec():
     config = load_scoring_config()
     assert config["segment_length_m"] == 50
-    assert config["radii_m"] == {"open_place": 50, "help_point": 150, "coverage": 75}
+    radii = config["radii_m"]
+    assert (radii["open_place"], radii["help_point"], radii["coverage"]) == (50, 150, 75)
     cont = config["continuity"]
     assert cont["coverage_target"] == 0.80
     assert cont["gap_limit_m"] == 150

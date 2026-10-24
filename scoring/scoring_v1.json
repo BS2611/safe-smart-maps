@@ -11,7 +11,7 @@
     "turns": 0.05
   },
   "segment_length_m": 50,
-  "radii_m": {"open_place": 50, "help_point": 150, "coverage": 75},
+  "radii_m": {"open_place": 50, "help_point": 150, "coverage": 75, "activity": 100, "incident": 100, "outage": 50},
   "continuity": {
     "coverage_target": 0.80,
     "gap_limit_m": 150,
@@ -19,5 +19,14 @@
     "avg_weight": 0.5,
     "worst_window_weight": 0.5,
     "gap_penalty_per_m": 0.1
-  }
+  },
+  "bands": {"green_min": 70, "yellow_min": 45},
+  "confidence": {"high_min_known_weight": 0.8, "low_min_known_weight": 0.5},
+  "selection": {"balanced_points_per_extra_min": 1.5, "min_candidates": 3},
+  "open_place_weights": {"default": 1.0, "boosted": 1.5, "boosted_categories": ["pharmacy", "gas_station", "restaurant", "convenience_store"], "points_per_weight": 40},
+  "activity": {"points_per_open_place": 25, "time_of_day": {"0": 0.35, "5": 0.45, "7": 0.8, "11": 1.0, "17": 1.0, "22": 0.8, "23": 0.6}},
+  "roads": {"main": ["trunk", "primary", "secondary", "tertiary"], "minor": ["residential", "unclassified", "living_street"], "poor": ["service", "alley", "footway", "path", "steps", "track", "pedestrian"], "main_score": 100, "minor_score": 55, "poor_score": 20},
+  "lighting": {"lit_score": 100, "unlit_score": 10, "outage_penalty": 30},
+  "incidents": {"points_per_incident": 10},
+  "turns": {"gentle_deg": 30, "moderate_deg": 75, "gentle_score": 100, "moderate_score": 70, "sharp_score": 40, "tunnel_penalty": 40}
 }
