@@ -1,4 +1,4 @@
-﻿# Safe Smart Maps – Task Breakdown
+# Safe Smart Maps – Task Breakdown
 
 Team: **Dev A** (frontend/presentation), **Dev B** (backend/service + data), **Guide** (third person: advice, story, submission content; not heavy build work). Swap owners based on strengths.
 Deadline: Sunday 9:00 AM PT. Plan in blocks; "Est." in hours.
@@ -64,8 +64,25 @@ Deadline: Sunday 9:00 AM PT. Plan in blocks; "Est." in hours.
 | 7.2 | Record demo video; set table number; project image | A |
 | 7.3 | Devpost text, tracks selected, GitHub link; **submit before 9:00 AM** | B + Guide |
 
+## Platform tasks (core: both phones)
+| # | Task | Owner | Est. |
+|---|---|---|---|
+| P.1 | PWA setup (manifest, icons, service worker), safe-area insets, keyboard-aware inputs | A | 1.5 |
+| P.2 | Test every must-have screen on a real Android phone (Chrome) and a real iPhone (Safari, installed to home screen); fix layout and map issues | A | 2 |
+| P.3 | Feature detection + fallback messages (Bluetooth, vibration, wake lock, push) | A | 1 |
+| P.4 | Find an iPhone for testing (borrow from the guide or a friend) | Guide | 0.2 |
+
 ## Stretch (only if core is done)
-Heartbeat alert (simulated, labeled), Cartesia voice, Convex saved trips.
+Heartbeat alert, Cartesia voice, Convex saved trips.
+| # | Task | Owner | Est. |
+|---|---|---|---|
+| W.1 | Confirm the Samsung watch model and Wear OS version; enable developer mode and ADB over Wi-Fi | A | 0.5 |
+| W.2 | Watch app skeleton (Kotlin, Compose for Wear OS), read heart rate with Health Services on the real watch | A (or Guide pairs) | 3 |
+| W.3 | Relay endpoints in CONTRACTS (pair, heartbeat, stream, alerts) in memory only | B | 2 |
+| W.4 | Pairing screen in web app + live bpm display, Simulated badge | A | 1.5 |
+| W.5 | Watch prompt: baseline, trigger, 30 s countdown, haptics, alert call | A | 2 |
+| W.6 | Contact message provider (SMS) with opt-in check; or show prompt flow only and say so | B | 1.5 |
+| W.7 | Fallback: simulated source, Bluetooth band on Android Chrome | A | 1 |
 
 ## Guide responsibilities
 Quotes from 2–3 real students (Anthropic track), customer story and measurable results (Microsoft track), confirm with organizers (#0-ask-directors) that one project can enter several tracks, review demo for the "never say safe" rule.

@@ -6,7 +6,8 @@ update this file in the same commit and log it (field "Contracts affected").
 Status: DRAFT v1 - Amey (backend) must confirm before server/ code is written.
 
 ## Folder layout (repo root = this folder)
-- `web/`      Next.js frontend (Bhavpreet)
+- `web/`      Next.js responsive PWA for Android + iOS browsers (Bhavpreet)
+- `watch/`    Wear OS (Samsung) companion app, Kotlin, stretch (owner TBD)
 - `server/`   Python backend, 3 layers (Amey): `api/` (HTTP) -> `services/` (scoring, routes, explain) -> `data/` (providers, cache)
 - `scoring/`  `scoring_v1.json` weights and thresholds
 - `tests/fixtures/` labeled test fixtures only (never in the live demo path)
@@ -64,6 +65,18 @@ Add fields freely; never remove or rename a field within a version.
 - Errors: `{ "error": { "code": "NO_ROUTE | UPSTREAM_TIMEOUT | BAD_REQUEST", "message": "string" } }`
   Partial upstream failure returns 200 with `warnings`.
 - (add more here)
+
+## Watch relay endpoints (stretch; all in-memory, no accounts)
+- `POST /v1/trips/pair` -> `{ "trip_id", "pair_code": "6 digits", "expires_in_s": 600 }` (called by the phone web app)
+- `POST /v1/watch/pair` body `{ "pair_code", "device": "wearos" }` -> `{ "watch_token", "trip_id" }`
+- `POST /v1/watch/heartbeat` (Bearer watch_token) body `{ "bpm": 0, "ts": "ISO", "source": "wearos | band | simulated" }` -> 204
+- `GET /v1/trips/{trip_id}/stream` -> Server-Sent Events: `{ "type": "bpm | prompt | alert_sent | ack", ... }`
+- `POST /v1/alerts` (Bearer watch_token or trip token) body `{ "trip_id", "location": {lat,lng}, "route_id" }` -> `{ "status": "sent | contact_not_opted_in | failed" }`
+- `POST /v1/alerts/ack` body `{ "trip_id", "ok": true }`
+- Rules: `source: "simulated"` must be shown as Simulated in every UI. Tokens expire at trip end. No bpm or coordinates stored or logged.
+
+## Platform support matrix (what the web app must handle)
+Android Chrome and iOS Safari 16.4+ (installed to home screen) are both required for the core demo. Web Bluetooth, vibration, and background tracking are NOT available on iOS; features must detect support and show a fallback message.
 
 ## Data source interface (server/data/)
 - `get_places(area, time)` -> list of places with opening hours, `is_24h`, `category`, `source`, `fetched_at`.

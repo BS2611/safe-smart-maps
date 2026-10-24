@@ -11,3 +11,8 @@
 | 7 | Heartbeat alert in demo? | Stretch; simulated and labeled if shown | both |
 | 8 | Microsoft "customer" | Only name a real one | guide |
 | 9 | Repo hosting | Create GitHub repo, push this folder as root | Bhavpreet |
+| 10 | Which Samsung watch model and Wear OS version does Bhavpreet have (tested = works with what)? | Galaxy Watch 4 or newer runs Wear OS; older Tizen watches cannot run our app | Bhavpreet |
+| 11 | Test devices: which Android phone and which iPhone for testing? | Need one of each to prove platform independence | both / guide |
+| 12 | Who builds the Wear OS app (Kotlin)? | Stretch; Bhavpreet unless Amey is faster | both |
+| 13 | How does the contact get the alert (SMS provider, cost, consent flow)? | Opt-in SMS or show prompt flow only | Amey |
+| 14 | Is a watch relay through our backend acceptable for the health-data rule? | In-memory, short TTL, deleted at trip end | both |

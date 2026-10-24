@@ -1,4 +1,4 @@
-﻿# Safe Smart Maps – Functional Specification
+# Safe Smart Maps – Functional Specification
 
 Version 0.1 · Cal Hacks 13.0 · Deadline: Sunday 9:00 AM PT
 
@@ -29,7 +29,9 @@ Normal maps show the fastest walking route. Safe Smart Maps shows three walking 
 | F7 | student | to set max extra minutes, alone/with someone, factor priorities | the result fits me | Should |
 | F8 | student | to see "data fetched at" time and "not sure" labels | I know how fresh the info is | Must |
 | F9 | student | to compare the same trip at 8 PM vs 1 AM | I see how closing times change the result | Must (demo) |
-| F10 | student | an opt-in heartbeat check with a trusted contact | someone is alerted if I may need help | Stretch |
+| F10 | student | an opt-in heartbeat check with a trusted contact, using my watch | someone is alerted if I may need help | Stretch |
+| F11 | student | the same app on my Android or iPhone | I can use whatever phone I have | Must |
+| F12 | student | a watch prompt I can answer without taking out my phone | I can confirm I am OK quickly | Stretch |
 
 ## 5. Features
 
@@ -72,10 +74,24 @@ Same trip run at 8 PM and 1 AM: shops close, coverage drops, and the Safest rout
 ### 5.7 Heartbeat alert (stretch, opt-in)
 - Consent screen; user picks contact and threshold; contact must agree to receive alerts.
 - Trigger: heart rate rises abnormally vs the user's own walking baseline **plus** another sign (sudden stop, large route deviation, very fast pace).
-- Flow: "Are you OK?" prompt → no answer in ~30 s → message to contact with live location and route.
-- Wording: "unusual heart rate detected" (no medical claim). Does not replace 911.
-- Demo input: Bluetooth heart-rate band or a **clearly labeled simulated** reading. Data stays on the phone and is deleted after the trip.
+- Flow: "Are you OK?" prompt (on the wrist when a watch is paired, otherwise on the phone) -> no answer in ~30 s -> message to contact with live location and route.
+- Wording: "unusual heart rate detected" (no medical claim). Does not replace calling 911.
+- Inputs, best to worst: (1) **Samsung Galaxy Watch (Wear OS) companion app** reading the watch heart-rate sensor; (2) Bluetooth heart-rate band (Android Chrome only); (3) a **clearly labeled simulated** reading. Never present simulated data as real.
+- Heart rate is health data: opt-in, minimal, kept in memory only, deleted when the trip ends, the user chooses the contact and threshold.
 
+### 5.8 Platforms
+Platform independent: one responsive web app (installable to the home screen) that works on **Android** (Chrome) and **iOS** (Safari), plus an optional **Wear OS watch companion** (tested watch: Samsung, model to be confirmed). Phone browsers cannot read a watch directly, so the watch app sends data through our backend (see TECHNICAL_SPEC section 8).
+| Capability | Android Chrome | iOS Safari (installed to home screen) | Wear OS watch app |
+|---|---|---|---|
+| Plan trip, map, routes, details, time comparison | Yes | Yes | No (glance only) |
+| Walk mode with screen on (wake lock) | Yes | Yes (iOS 16.4+) | Glance of next stretch |
+| Tracking with screen locked | Limited | No | Yes, runs on the wrist |
+| Vibration on prompts | Yes | No | Yes (haptics) |
+| Bluetooth heart-rate band from the web | Yes | **No** | n/a |
+| Watch heart rate | Via watch app | Via watch app | Native sensor |
+| Push notifications | Yes | Only when installed to home screen (iOS 16.4+) | Yes |
+Rules: every feature must degrade gracefully with a clear message, e.g. "Heart-rate input is not supported on this browser. Use a paired watch or the simulated reading." Core demo (routes and time comparison) must work on both Android and iOS.
+Watch (stretch) screens: pairing code entry, "Walking" status with next-stretch hint, "Are you OK?" prompt with 30 s countdown and big "I'm OK" button, "Alert sent" with cancel. Small round screen, glanceable, one action per screen.
 ## 6. States and error handling (user-visible)
 | Situation | Behavior |
 |---|---|
@@ -94,7 +110,7 @@ Same trip run at 8 PM and 1 AM: shops close, coverage drops, and the Safest rout
 6. No API keys in the repo.
 
 ## 8. Out of scope (for the hackathon)
-Multiple cities, accounts/login, guaranteed-safety claims, real foot-traffic counts, native apps, reading Apple Watch data from the web.
+Multiple cities, accounts/login, guaranteed-safety claims, real foot-traffic counts, native phone apps (we ship one web app for Android and iOS), Apple Watch app, reading any watch directly from a phone browser.
 
 ## 9. Future improvements (one demo slide)
 More cities; wearable and phone-sensor input; trusted-contact live sharing; feedback on how a route felt; voice guidance (Cartesia); community-reported lighting problems; verification against real street-lighting data.

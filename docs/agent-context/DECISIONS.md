@@ -10,3 +10,5 @@ Format: `YYYY-MM-DD HH:MM | who | decision | reason`
 2026-10-24 11:05 | bhavpreet | Agents must checkpoint logs every 30-45 min, record chat decisions in files immediately, and follow the handoff protocol (AGENTS.md sec 4) | Prevent context loss between agents/people
 2026-10-24 10:56 | bhavpreet | Target community = students leaving a campus late | Fits Anthropic/People-First tracks; campus still to be named
 2026-10-24 11:40 | bhavpreet | UI shows route labels "Most lit & active", "Balanced", "Fastest" (API value stays safest); dark theme default; mobile first | "Safest" reads as a promise
+2026-10-24 12:05 | bhavpreet | Platform independent: one responsive PWA (Android Chrome + iOS Safari) plus optional Samsung Wear OS companion app; Apple Watch and native phone apps out of scope | Watch cannot be read from a phone browser; PWA keeps Next.js and one codebase
+2026-10-24 12:05 | bhavpreet | Watch computes heart-rate trigger locally and reports via backend relay (memory only, deleted at trip end); fallbacks: BLE band (Android Chrome), labeled simulated | Locked phone suspends web pages; pending Amey review of relay endpoints

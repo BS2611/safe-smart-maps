@@ -7,10 +7,10 @@ Last full review by a human: (date/time)
 
 ## Person A: Bhavpreet (frontend / map)
 - Owns (do not edit without asking): `web/`, `docs/agent-context/` entries by A
-- Status: specs drafted (functional, technical, tasks); no code yet
-- Doing now: aligning specs with the agent kit
+- Status: specs + Stitch brief v0.2 done (Android, iOS, Samsung Wear OS); no code yet
+- Doing now: waiting on Stitch designs; platform decisions need Amey review
 - Files in progress: none
-- Next: agree folder layout + contract with Amey; git init and commit
+- Next: answer OPEN_QUESTIONS 10-14 (watch model, test phones); hand brief to Stitch; push repo
 - Blocked on: Amey's answers (framework, layout, contract shape)
 
 ## Person B: Amey (backend / data)

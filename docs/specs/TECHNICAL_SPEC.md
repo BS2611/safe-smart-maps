@@ -1,11 +1,12 @@
-﻿# Safe Smart Maps – Technical Specification
+# Safe Smart Maps – Technical Specification
 
 Version 0.1 · Companion to FUNCTIONAL_SPEC.md
 
 ## 1. Stack
 | Concern | Choice |
 |---|---|
-| Frontend | Next.js (TypeScript), Mapbox GL JS |
+| Frontend | Next.js (TypeScript) responsive PWA for Android and iOS, Mapbox GL JS |
+| Watch (stretch) | Kotlin Wear OS companion app (Samsung Galaxy Watch), Health Services heart rate |
 | Backend | Python, FastAPI (Django is the alternative; decide at kickoff), pydantic models |
 | Live data | Bright Data (core feed: business listings, opening hours) |
 | Supporting data | OpenStreetMap (road/lit tags), SF 311 (streetlight outages), 511/GTFS (transit), SF open data (incidents). Apify for supporting sources/scheduled runs (see docs/agent-context/OPEN_QUESTIONS.md) |
@@ -97,19 +98,36 @@ select: fastest = min duration
 ## 7. Security and privacy
 - Secrets only in environment variables; `.env` git-ignored; `.env.example` committed with empty values. Repo scanned for keys before submission.
 - Mapbox server token stays in backend; the browser token is URL-restricted.
-- Location and heart-rate data processed in memory/on-device, not persisted after the trip; logs must not contain coordinates tied to a user.
+- Location and heart-rate data processed in memory (watch, phone page, short-lived relay), not persisted after the trip; logs must not contain coordinates tied to a user.
 - CORS restricted to the frontend origin.
 
-## 8. Heartbeat alert (stretch)
-Client-side only: Web Bluetooth (Chrome/Android) or labeled simulator → baseline over first minutes → trigger on spike + secondary sign → 30 s confirm → call `POST /v1/alerts` (sends contact message with live location). Contact opt-in required. Alert delivery provider TBD; if not built, the demo shows the prompt flow only and says so.
+## 8. Platforms, watch and heartbeat alert (stretch)
+### 8.1 Platform strategy (decision: one responsive web app + optional Wear OS companion)
+- `web/` is a Next.js **PWA** (manifest, service worker, installable). Runs in Android Chrome and iOS Safari; no separate native phone apps.
+- Browser limits we design around: no Web Bluetooth on iOS; no background geolocation or timers when the page is hidden or the phone is locked (use the Screen Wake Lock API while walking, iOS 16.4+); no vibration on iOS; web push on iOS only after "Add to Home Screen" (16.4+). Every feature checks support and shows a plain fallback message.
+- Layout: mobile first (375 x 812 and 360 x 640), safe-area insets (`env(safe-area-inset-*)`), bottom sheets, 48 px targets, keyboard-aware inputs, desktop as a wider two-pane layout.
+- Mapbox GL JS runs on both; cap map pixel ratio and segment count on low-end phones.
 
+### 8.2 Samsung / Wear OS companion (`watch/`, stretch)
+- Native Kotlin Wear OS app (Galaxy Watch 4 or newer runs Wear OS; confirm the owned model, see OPEN_QUESTIONS). Heart rate via Health Services (`androidx.health:health-services-client`, permission BODY_SENSORS). Verify exact API on the real watch early.
+- Why a watch app instead of the phone browser: a web page cannot read a watch, and a locked phone suspends the page. The watch runs on its own and can call HTTPS over Wi-Fi/LTE or via the paired phone's connection.
+- Pairing: phone web app calls `POST /v1/trips/pair` and shows a 6-digit code (valid 10 min); the watch app enters it and calls `POST /v1/watch/pair` to get a short-lived token tied to that trip only. No accounts.
+- Data flow: watch -> `POST /v1/watch/heartbeat` (bpm, timestamp, source) -> backend relay (memory only) -> phone page via `GET /v1/trips/{id}/stream` (Server-Sent Events) for display.
+- The **watch computes the baseline and trigger locally** (heart-rate spike plus a second sign such as sudden stop or very fast pace from watch motion sensors) so it works with the phone locked. On trigger it shows "Are you OK?" with haptics; no answer in ~30 s -> `POST /v1/alerts`.
+- Backend sends the contact message (provider TBD, e.g. SMS service) with live location and route; contact must have opted in. Not built => demo shows the prompt flow and says so.
+- Privacy: relay holds readings in memory with a short TTL, deletes everything at trip end, logs no bpm or coordinates tied to a person, token expires with the trip.
+- Fallbacks in order: Wear OS app -> Bluetooth band (Android Chrome only) -> labeled simulated reading (`source: "simulated"`, shown in the UI as Simulated). Apple Watch is out of scope.
+
+### 8.3 Watch UI constraints
+Round ~1.2 in screen, glanceable: pairing code entry, walking status, prompt with big "I'm OK", alert-sent with cancel. One action per screen, high contrast, haptic pattern for the prompt. See `docs/design/STITCH_UI_BRIEF.pdf`.
 ## 9. Repository layout
 ```nCalHack_13/   (repo root)
   AGENTS.md CLAUDE.md README_FIRST.md .cursor/ .claude/ scripts/
   docs/agent-context/  STATE, CONTRACTS, DECISIONS, OPEN_QUESTIONS, log/
   docs/specs/          FUNCTIONAL_SPEC, TECHNICAL_SPEC, TASKS
   scoring/scoring_v1.json
-  web/      Next.js app (presentation)
+  web/      Next.js PWA (presentation)
+  watch/    Wear OS companion app (stretch)
   server/   api/ -> services/ -> data/ (providers, cache)
   tests/fixtures/  labeled fixtures only
   .env.example
