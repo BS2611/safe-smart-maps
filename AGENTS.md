@@ -114,3 +114,9 @@ disagree, trust the code, then write a log entry saying what was wrong.
 - Never claim something works unless you ran it. Say what you ran and what
   you saw. If you could not test, say so in the log entry.
 - Write plainly; no jargon the other person would have to look up.
+
+## Git attribution
+- Never add AI agents as commit authors or co-authors.
+- Do not add `Co-Authored-By` lines for Claude, Codex, Cursor, Anthropic, OpenAI, or any other AI tool.
+- Do not add AI-generated attribution, signatures, or promotional links to commit messages or pull requests.
+- Git commits must use the human developer's configured `git user.name` and `git user.email`.
