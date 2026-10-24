@@ -15,11 +15,11 @@ Last full review by a human: (date/time)
 
 ## Person B: Amey (backend / data)
 - Owns (do not edit without asking): `server/`, `scoring/`
-- Status: scaffold done and re-verified 12:54 on branch amey/backend-scaffold (health route, scoring_v1.json, provider interface + empty Bright Data stub)
+- Status: M2.2/M2.3 code done on amey/brightdata-places (Place model, Bright Data provider, open/closed/unknown evaluator, 16 unit tests passing). Live Bright Data call NOT run: no key.
 - Doing now: nothing
 - Files in progress: none
-- Next: implement Bright Data provider once a key exists; answer CONTRACTS questions (see latest log, "Needs from teammate")
-- Blocked on: Bright Data API key; CONTRACTS.md items in the log
+- Next: put BRIGHTDATA_API_KEY in .env, run `.venv/bin/python -m scripts.brightdata_smoke`, check real open_hours shape; then Mapbox/OSM
+- Blocked on: Bright Data API key; CONTRACTS.md items in the log (incl. approving Place model)
 
 ## Guide (third person, advice and submission content, little code)
 - Owns: Devpost text, demo script, community quotes, track questions (`docs/agent-context/OPEN_QUESTIONS.md`)
