@@ -9,3 +9,4 @@ Format: `YYYY-MM-DD HH:MM | who | decision | reason`
 2026-10-24 11:05 | bhavpreet | Repo root = CalHack_13; layout web/ server/ scoring/ docs/specs/ docs/agent-context/; CONTRACTS.md overrides the tech spec; API is /v1/routes | One layout for kit and specs; Bhavpreet gave full authority to reconcile; Amey to confirm contract
 2026-10-24 11:05 | bhavpreet | Agents must checkpoint logs every 30-45 min, record chat decisions in files immediately, and follow the handoff protocol (AGENTS.md sec 4) | Prevent context loss between agents/people
 2026-10-24 10:56 | bhavpreet | Target community = students leaving a campus late | Fits Anthropic/People-First tracks; campus still to be named
+2026-10-24 11:40 | bhavpreet | UI shows route labels "Most lit & active", "Balanced", "Fastest" (API value stays safest); dark theme default; mobile first | "Safest" reads as a promise
