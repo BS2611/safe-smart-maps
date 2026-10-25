@@ -15,11 +15,11 @@ Last full review by a human: (date/time)
 
 ## Person B: Amey (backend / data)
 - Owns (do not edit without asking): `server/`, `scoring/`
-- Status: Bright Data places live + cached; OSM context provider built (live Overpass check still not done); M3.3 segment scoring and M3.4 continuity/route-level score done and tested (272 tests pass), committed locally on amey/backend, not pushed.
+- Status: Bright Data places live + cached; OSM context provider built (live Overpass check still not done); M3.3 segment scoring and M3.4 continuity/route-level score done and tested (272 tests before Bhavpreet's PR #4; 439 pass now), committed locally on amey/backend, not pushed. Reviewed PR #4 (Mapbox provider): fixed test_wiring .env isolation, added lat/lng guard to segment_route.
 - Doing now: nothing
 - Files in progress: none
-- Next: retry live Overpass check; then candidate selector and /v1/routes when Mapbox provider lands
-- Blocked on: Mapbox candidate-route provider (other developer) for /v1/routes; approval to add Place model to CONTRACTS.md
+- Next: decide push of amey/backend; retry live Overpass check; re-point web/ at the new /v1/routes response
+- Blocked on: approval to add Place model to CONTRACTS.md
 
 ## Guide (third person, advice and submission content, little code)
 - Owns: Devpost text, demo script, community quotes, track questions (`docs/agent-context/OPEN_QUESTIONS.md`)

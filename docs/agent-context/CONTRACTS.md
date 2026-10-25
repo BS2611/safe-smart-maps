@@ -40,7 +40,7 @@ Factor names are exactly the keys of `scoring_v1.json` `weights` (`activity`, NO
 
 ### Segment scoring (server/services/segmenter.py, segment_scoring.py) - hackathon-v1 heuristics
 Not measurements of safety; tunable constants all live in `scoring/scoring_v1.json`.
-- Segmenter input: ordered `(lat, lng)` route points (flat list; `join_legs` flattens legs). Repeats dropped; < 2 distinct points -> no segments. Length by haversine; `n = max(1, round(L / segment_length_m))` equal pieces. `Segment`: `index, segment_id, start, end, midpoint (halfway along path), length_m, coordinates, offset_m`.
+- Segmenter input: ordered `(lat, lng)` route points; any point outside lat -90..90 / lng -180..180 raises `ValueError` (order is never guessed or swapped) (flat list; `join_legs` flattens legs). Repeats dropped; < 2 distinct points -> no segments. Length by haversine; `n = max(1, round(L / segment_length_m))` equal pieces. `Segment`: `index, segment_id, start, end, midpoint (halfway along path), length_m, coordinates, offset_m`.
 - Arrival at a segment = `depart_at + offset_m / walking_speed_mps` (1.4 m/s) until the routing provider supplies timing.
 - `score = sum(w_i * f_i over known) / sum(w_i over known)`; weights can be overridden per user and are renormalized.
 - `open_places`: places OPEN at arrival within `radii_m.open_place` of the segment path -> `open_places_by_count[min(n, 3)]` = 0/50/75/100. Place data unavailable (`None`) -> unknown; available with zero open -> 0; unknown-hours places never count as open or closed, kept as evidence.
