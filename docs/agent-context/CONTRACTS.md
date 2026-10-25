@@ -8,6 +8,7 @@ Status: DRAFT v1 - Amey (backend) must confirm before server/ code is written.
 ## Folder layout (repo root = this folder)
 - `web/`      Next.js frontend (Bhavpreet)
 - `server/`   Python backend, 3 layers (Amey): `api/` (HTTP) -> `services/` (scoring, routes, explain) -> `data/` (providers, cache)
+- `watch/`   Wear OS (Samsung Galaxy Watch) companion app, Kotlin (Bhavpreet); see watch/README.md
 - `scoring/`  `scoring_v1.json` weights and thresholds
 - `tests/fixtures/` labeled test fixtures only (never in the live demo path)
 
