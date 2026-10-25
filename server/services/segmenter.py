@@ -29,6 +29,16 @@ def join_legs(legs: list[list[Point]]) -> list[Point]:
     return [p for leg in legs for p in leg]
 
 
+def _check_lat_lng(coords: list[Point]) -> None:
+    for i, p in enumerate(coords):
+        lat, lng = p
+        # `not (a <= x <= b)` also rejects NaN
+        if not (-90 <= lat <= 90 and -180 <= lng <= 180):
+            raise ValueError(
+                f"route point {i} is not a valid (lat, lng): latitude must be -90..90 and "
+                f"longitude -180..180 (got lat={lat}, lng={lng}); (lng, lat) order is a likely cause")
+
+
 def _dedupe(coords: list[Point]) -> list[Point]:
     out: list[Point] = []
     for p in coords:
@@ -38,7 +48,12 @@ def _dedupe(coords: list[Point]) -> list[Point]:
 
 
 def segment_route(coords: list[Point], target_m: float = 50.0) -> list[Segment]:
-    """Ordered (lat, lng) route points -> ordered segments. Fewer than two distinct points -> []."""
+    """Ordered (lat, lng) route points -> ordered segments. Fewer than two distinct points -> [].
+
+    Raises ValueError for a point outside lat -90..90 / lng -180..180 (e.g. a (lng, lat) pair).
+    Order is never guessed or swapped here: Mapbox points must go through RouteCandidate.as_lat_lng().
+    """
+    _check_lat_lng(coords)
     pts = _dedupe(list(coords))
     if len(pts) < 2:
         return []

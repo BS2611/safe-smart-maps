@@ -20,6 +20,9 @@ def clean_app(monkeypatch, tmp_path):
         monkeypatch.delenv(var, raising=False)
     monkeypatch.setenv("CACHE_DIR", str(tmp_path / "places"))
     monkeypatch.setenv("PREFETCH_ON_STARTUP", "0")
+    # The app lifespan calls load_dotenv(); without this it would put the real keys from the
+    # repo-root .env back and the test would make real Mapbox/Overpass/Anthropic calls.
+    monkeypatch.setattr("server.main.load_dotenv", lambda *a, **k: False)
     if hasattr(app.state, "planner"):
         del app.state.planner
     yield app

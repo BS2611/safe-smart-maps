@@ -59,6 +59,44 @@ class SegmenterTests(unittest.TestCase):
         self.assertEqual(segment_route([(37.8, LNG)]), [])
         self.assertEqual(segment_route([(37.8, LNG), (37.8, LNG)]), [])
 
+    def test_latitude_above_90_rejected(self):
+        with self.assertRaises(ValueError):
+            segment_route([(37.8, LNG), (90.5, LNG)])
+
+    def test_latitude_below_minus_90_rejected(self):
+        with self.assertRaises(ValueError):
+            segment_route([(-90.5, LNG), (37.8, LNG)])
+
+    def test_longitude_above_180_rejected(self):
+        with self.assertRaises(ValueError):
+            segment_route([(37.8, LNG), (37.8, 180.5)])
+
+    def test_longitude_below_minus_180_rejected(self):
+        with self.assertRaises(ValueError):
+            segment_route([(37.8, -180.5), (37.8, LNG)])
+
+    def test_nan_rejected(self):
+        with self.assertRaises(ValueError):
+            segment_route([(37.8, LNG), (float("nan"), LNG)])
+
+    def test_swapped_lng_lat_is_rejected_not_fixed(self):
+        # Mapbox order (lng, lat) for the Palace of Fine Arts: lat slot holds -122.x
+        with self.assertRaises(ValueError):
+            segment_route([(-122.4484, 37.8029), (-122.4526, 37.7990)])
+
+    def test_invalid_point_rejected_even_if_it_would_be_a_duplicate_or_alone(self):
+        with self.assertRaises(ValueError):
+            segment_route([(95.0, LNG)])
+
+    def test_boundary_values_are_valid(self):
+        self.assertEqual(len(segment_route([(90.0, 0.0), (89.9995, 0.0)])), 1)
+        self.assertEqual(len(segment_route([(0.0, 179.9995), (0.0, 180.0)])), 1)
+
+    def test_palace_of_fine_arts_lat_lng_is_valid(self):
+        segs = segment_route([(37.8029, -122.4484), (37.7990, -122.4526)])
+        self.assertGreater(len(segs), 5)
+        self.assertEqual(segs[0].start, (37.8029, -122.4484))
+
     def test_total_length_and_order_preserved(self):
         coords = [(37.8, LNG), (37.8007, LNG + 0.0003), (37.8015, LNG + 0.0003), (37.8015, LNG + 0.001)]
         segs = segment_route(coords)
