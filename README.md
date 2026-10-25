@@ -38,7 +38,7 @@ python -m venv .venv && .venv/Scripts/pip install -r requirements-dev.txt   # Wi
 .venv/Scripts/python -m uvicorn server.main:app --port 8000
 ```
 ```bash
-cd web && npm install && npm run dev        # http://localhost:3100
+cd web && npm install && npm run dev        # http://localhost:3000
 ```
 Set `NEXT_PUBLIC_MAPBOX_TOKEN` (a URL-restricted public token) in `web/.env.local` for the map and address search.
 Set `PREWARM_DEMO=1` on the server to warm the caches for the demo corridor at startup.

@@ -96,13 +96,23 @@ def test_no_route_is_404():
     assert resp.status_code == 404 and resp.json()["error"]["code"] == "NO_ROUTE"
 
 
-def test_cors_allows_only_the_web_origin():
+def test_cors_allows_only_the_configured_web_origin():
+    from server.main import _origins
+    web = _origins[0]          # whatever WEB_ORIGINS says on this machine; never "*"
+    assert "*" not in _origins
     with client_with(fakes.make_planner()) as client:
         ok = client.options("/v1/routes", headers={
-            "Origin": "http://localhost:3100", "Access-Control-Request-Method": "POST",
+            "Origin": web, "Access-Control-Request-Method": "POST",
             "Access-Control-Request-Headers": "content-type"})
         other = client.options("/v1/routes", headers={
             "Origin": "http://evil.example", "Access-Control-Request-Method": "POST",
             "Access-Control-Request-Headers": "content-type"})
-    assert ok.headers.get("access-control-allow-origin") == "http://localhost:3100"
+    assert ok.headers.get("access-control-allow-origin") == web
     assert "access-control-allow-origin" not in other.headers
+
+
+def test_allowed_origins_parsing_and_default():
+    from server.main import DEFAULT_ORIGIN, allowed_origins
+    assert allowed_origins(None) == [DEFAULT_ORIGIN] == ["http://localhost:3000"]
+    assert allowed_origins("") == [DEFAULT_ORIGIN]
+    assert allowed_origins(" https://a.example , https://b.example ,, ") == ["https://a.example", "https://b.example"]

@@ -20,7 +20,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    // Port 3101 keeps tests away from the developer's own server on 3100. Sample-data mode is
+    // Port 3101 keeps tests away from the developer's own server on 3000. Sample-data mode is
     // forced off so the tests exercise the real request path (answered by the stubs in e2e/).
     // Tests run against a production build (what users get; React dev mode double-runs effects).
     command: "npm run build && npx next start -p 3101",

@@ -28,7 +28,16 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Safe Smart Maps API", lifespan=lifespan)
 
 # The web app runs on another port in development. Origins come from env, never "*".
-_origins = [o.strip() for o in os.environ.get("WEB_ORIGINS", "http://localhost:3100").split(",") if o.strip()]
+DEFAULT_ORIGIN = "http://localhost:3000"
+
+
+def allowed_origins(raw: str | None) -> list[str]:
+    """Comma-separated WEB_ORIGINS; an empty or missing value means the local web app only."""
+    origins = [o.strip() for o in (raw or "").split(",") if o.strip()]
+    return origins or [DEFAULT_ORIGIN]
+
+
+_origins = allowed_origins(os.environ.get("WEB_ORIGINS"))
 app.add_middleware(CORSMiddleware, allow_origins=_origins, allow_methods=["GET", "POST"],
                    allow_headers=["content-type"])
 
