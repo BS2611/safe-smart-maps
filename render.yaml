@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: safe-smart-maps-api
+    runtime: docker
+    dockerfilePath: ./server/Dockerfile
+    dockerContext: .
+    healthCheckPath: /v1/health
+    autoDeploy: true
+    envVars:
+      - key: BRIGHTDATA_API_KEY
+        sync: false
+      - key: BRIGHTDATA_PLACES_DATASET_ID
+        sync: false
+      - key: BRIGHTDATA_ZONE
+        sync: false
+      - key: APIFY_TOKEN
+        sync: false
+      - key: MAPBOX_TOKEN
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: OVERPASS_URL
+        sync: false
+      - key: WEB_ORIGINS
+        sync: false
+      - key: ANTHROPIC_MODEL
+        sync: false
+      - key: CACHE_TTL_SECONDS
+        value: "86400"
+      - key: CACHE_DIR
+        value: "/app/.cache/places"
+      - key: PREFETCH_ON_STARTUP
+        value: "0"
+      - key: PREWARM_DEMO
+        value: "0"

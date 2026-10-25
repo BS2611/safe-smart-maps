@@ -16,10 +16,10 @@ Last full review by a human: (date/time)
 ## Person B: Amey (backend / data)
 - Owns (do not edit without asking): `server/`, `scoring/`
 - Status: Bright Data places live + cached; OSM context provider built (live Overpass check still not done); M3.3 segment scoring and M3.4 continuity/route-level score done and tested (272 tests before Bhavpreet's PR #4; 439 pass now), committed locally on amey/backend, not pushed. Reviewed PR #4 (Mapbox provider): fixed test_wiring .env isolation, added lat/lng guard to segment_route.
-- Doing now: nothing. E2E check done (log 20261024-211821): /v1/routes works live; Claude explanations fixed (442 tests pass); Overpass unreachable from this network.
-- Files in progress: none
-- Next: find a reachable Overpass (OVERPASS_URL) + PREWARM_DEMO=1; decide coverage wording (log item 2); decide push of amey/backend; re-point web/ at the new /v1/routes response
-- Blocked on: approval to add Place model to CONTRACTS.md
+- Doing now: Render deployment packaging added for the current backend; Docker and Git verification are pending on a machine with Docker Desktop and Git write access.
+- Files in progress: `server/Dockerfile`, `render.yaml`, `.dockerignore` (deployment packaging; review needed)
+- Next: confirm `WEB_ORIGINS` and production API keys, run the Docker health check, then commit and push the deployment files for Render auto-deploy.
+- Blocked on: this environment cannot write Git refs or access the Docker engine; Amey/backend review is needed before deployment.
 
 ## Guide (third person, advice and submission content, little code)
 - Owns: Devpost text, demo script, community quotes, track questions (`docs/agent-context/OPEN_QUESTIONS.md`)

@@ -1,0 +1,15 @@
+# render-docker-deployment
+
+- When: 2026-10-24 21:58 PT
+- Who: bs2611 / Codex
+- Branch / commit: ui-only / uncommitted
+- Files touched: `server/Dockerfile`, `.dockerignore`, `render.yaml`, this log, `docs/agent-context/STATE.md` (Amey section)
+- What changed: Added a Python 3.12-slim Docker image for the FastAPI backend. It installs `server/requirements.txt`, copies `server/` and `scoring/`, creates the cache directory, binds Uvicorn to Render's `$PORT`, and exposes `/v1/health` for health checks. Added a Render Blueprint with automatic deploys, Docker build context, non-secret defaults, and every secret environment-variable name marked for entry in the Render dashboard.
+- Why: Render can build and redeploy the backend from GitHub without committing the local root `.env` or any secret values.
+- Decisions made in chat (also added to DECISIONS.md? yes/no): Deploy the current backend service through Render's Docker runtime; use GitHub auto-deploy; keep environment values in Render's dashboard; no new paid service or dependency added. No DECISIONS.md change needed because this is deployment configuration, not an application contract decision.
+- Contracts affected: None. Existing backend routes and environment-variable names are preserved.
+- How it was tested: `bash scripts/context-brief.sh` — blocked by Windows Bash access denied; manually read the required context files. `git pull --rebase` — blocked because `.git/FETCH_HEAD` is inaccessible. `docker --version` — Docker 29.2.0 is installed. `docker build -f server/Dockerfile -t safe-smart-maps-api .` — blocked because Docker Desktop's `docker_engine` pipe is not running. `.venv\Scripts\python.exe -m pytest -q` — blocked because the configured Python executable could not be created. No test suite or image build completed.
+- Unfinished / uncommitted: New deployment files and context updates are uncommitted. Existing unrelated `.cursor/settings.json` remains untracked and was not modified or included. Git branch creation/commit was blocked by permission to create `.git/refs/heads/main.lock`.
+- Open issues / risks: Render must be configured with the correct frontend URL in `WEB_ORIGINS`; set `MAPBOX_TOKEN`, `BRIGHTDATA_API_KEY`, and `ANTHROPIC_API_KEY` for full live functionality. `PREFETCH_ON_STARTUP=0` and `PREWARM_DEMO=0` avoid slow/paid startup work by default; enable deliberately for a warmed demo. Render's filesystem is ephemeral, so the places cache is not durable across deploys/restarts unless a disk or external cache is later added.
+- Next step for whoever continues: On a machine with Git write access and Docker Desktop running, run `docker build -f server/Dockerfile -t safe-smart-maps-api .`, start it with the Render environment variables, verify `GET /v1/health`, commit and push the deployment files on the deployment branch, and create the Render Web Service from `render.yaml` or select the repository and Docker runtime.
+- Needs from teammate: Confirm the production frontend URL for `WEB_ORIGINS`, confirm which live API keys should be entered into Render, and have Amey review the backend-owned Dockerfile before merge/deploy.
