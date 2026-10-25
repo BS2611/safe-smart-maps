@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { describeError } from "@/lib/api";
 import {
@@ -10,9 +10,11 @@ import {
 import { averageFactors } from "@/lib/routeStats";
 import { CONTINUITY_RULES, FACTORS } from "@/lib/scoring-info";
 import { isReady } from "@/lib/trip";
+import type { Route } from "@/lib/types";
 import { useRoutes } from "@/lib/useRoutes";
 
 import { AppHeader } from "./AppHeader";
+import { NavigationScreen } from "./NavigationScreen";
 import { Banner } from "./Banner";
 import { DisclaimerBanner } from "./DisclaimerBanner";
 import { RouteMap } from "./RouteMap";
@@ -20,9 +22,16 @@ import { ScoreRing } from "./ScoreVisuals";
 import { useTrip } from "./TripProvider";
 
 export function RouteDetailScreen({ routeId }: { routeId: string }) {
-  const { trip, ready } = useTrip();
+  const { trip, ready, updateTrip } = useTrip();
   const { state, retry } = useRoutes(trip);
   const [index, setIndex] = useState<number | null>(null);
+  const [navigating, setNavigating] = useState(false);
+  const shown = useRef<Route | null>(null);
+
+  function openNav(active: Route) {
+    shown.current = active;
+    setNavigating(true);
+  }
 
   if (!ready) return <div className="screen" aria-busy="true" />;
   if (!isReady(trip)) {
@@ -33,6 +42,16 @@ export function RouteDetailScreen({ routeId }: { routeId: string }) {
           Your trip is empty. <Link href="/plan" style={{ textDecoration: "underline" }}>Plan a walk</Link>.
         </Banner>
       </div>
+    );
+  }
+  if ((state.status === "idle" || state.status === "loading") && navigating && shown.current) {
+    return (
+      <NavigationScreen
+        route={shown.current}
+        recalculating
+        onClose={() => setNavigating(false)}
+        onReroute={(from) => updateTrip({ from })}
+      />
     );
   }
   if (state.status === "idle" || state.status === "loading") {
@@ -51,7 +70,9 @@ export function RouteDetailScreen({ routeId }: { routeId: string }) {
     );
   }
 
-  const route = state.data.routes.find((r) => r.route_id === routeId);
+  const route = state.data.routes.find((r) => r.route_id === routeId)
+    ?? (navigating ? state.data.routes.find((r) => r.label === shown.current?.label) ?? state.data.routes[0] : undefined);
+  if (route) shown.current = route;
   if (!route) {
     return (
       <div className="screen stack">
@@ -170,8 +191,16 @@ export function RouteDetailScreen({ routeId }: { routeId: string }) {
         {route.nearest_help_point
           ? ` Nearest help point: ${route.nearest_help_point.name}, ${formatMeters(route.nearest_help_point.distance_m)}.` : ""}
       </p>
-      <Link href="/routes" className="btn primary">Back to routes</Link>
+      <button type="button" className="btn primary" onClick={() => openNav(route)}>Start</button>
+      <Link href="/routes" className="btn secondary">Back to routes</Link>
       <DisclaimerBanner compact />
+      {navigating ? (
+        <NavigationScreen
+          route={route}
+          onClose={() => setNavigating(false)}
+          onReroute={(from) => updateTrip({ from })}
+        />
+      ) : null}
       </div>
       </div>
     </div>

@@ -28,3 +28,10 @@ Last full review by a human: (date/time)
 
 ## Shared areas (ask first, log every change)
 - `CONTRACTS.md`, `DECISIONS.md`, `OPEN_QUESTIONS.md`, `docs/specs/`, `README.md`, `.env.example`, `package.json`
+
+## Owner tasks (cursor, web)
+- Status: Walking navigation and compass on `cursor/walk-nav-01d5`, from main `13ccee7`. Street view and the phone-layout fixes stay on their own PRs.
+- Doing now: Opening the navigation pull request.
+- Files in progress: none
+- Next: Review the pull request. A phone build needs the same `BUILD_TARGET=android` and `NEXT_DIST_DIR=.next-android` on both `next build` and `cap sync`, because Next writes that export into `.next-android` rather than `out`.
+- Blocked on: STATE "Last full review by a human" is still blank. No Android SDK on the last check, so `gradlew assembleDebug` was not run. WebKit was not launched.

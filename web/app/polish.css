@@ -439,3 +439,160 @@ h3 { font-family: var(--font-display); font-size: 1.12rem; line-height: 1.25; le
   .pulse-route span { width: 100%; opacity: 0.7; }
   .btn:hover, .route-card:hover, .card:hover, .icon-btn:hover, .tab:hover { transform: none; }
 }
+
+.nav-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 35;
+  display: flex;
+  flex-direction: column;
+  background: #07110e;
+  color: #f7faf7;
+}
+.nav-map { position: relative; flex: 1; min-height: 0; min-width: 0; }
+.nav-svg, .nav-canvas { width: 100%; height: 100%; display: block; background: #07110e; }
+.nav-canvas { position: absolute; inset: 0; }
+.nav-puck {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 28px;
+  height: 28px;
+  margin: -22px 0 0 -14px;
+  z-index: 2;
+  pointer-events: none;
+}
+.nav-puck span {
+  display: block;
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 24px solid #f7fff9;
+}
+.nav-banner, .nav-alert, .nav-prompt {
+  background: #10241c;
+  color: #f7faf7;
+  border: 1px solid rgba(182, 255, 228, 0.45);
+  border-radius: 16px;
+}
+.nav-banner {
+  position: absolute;
+  top: calc(10px + var(--sat));
+  left: 12px;
+  right: 12px;
+  z-index: 3;
+  padding: 12px 14px;
+}
+.nav-banner h2 { margin: 2px 0 4px; font-size: 1.35rem; line-height: 1.2; color: #f7faf7; }
+.nav-meters { margin: 0; font-size: 1.55rem; font-weight: 700; color: #e7fff6; }
+.nav-remain, .nav-note, .nav-banner p, .nav-alert p, .nav-prompt p { margin: 0; color: #f7faf7; }
+.nav-note { margin-top: 4px; font-size: 0.85rem; }
+.nav-alert, .nav-prompt {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  z-index: 3;
+  padding: 10px 12px;
+}
+.nav-alert { top: calc(132px + var(--sat)); }
+.nav-prompt { bottom: calc(12px + var(--sab)); }
+.nav-prompt-actions { display: flex; gap: 8px; margin-top: 8px; }
+.nav-dock {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 12px calc(12px + var(--sab));
+  background: #07110e;
+}
+.nav-dock .btn { width: auto; flex: 1 1 42%; min-height: 48px; }
+.nav-compass-note { margin: 0; padding: 0 12px 8px; color: #f7faf7; font-size: 0.85rem; }
+@media (prefers-reduced-motion: no-preference) {
+  .nav-puck { transition: transform 0.3s linear; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-screen, .nav-screen * { animation: none !important; transition: none !important; }
+}
+
+.street-view {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: #07110e;
+  color: #f4fff9;
+}
+.sv-stage { position: absolute; inset: 0; }
+.sv-canvas { position: absolute; inset: 0; background: #07110e; }
+.sv-canvas > * { width: 100%; height: 100%; }
+.sv-message {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  width: min(320px, calc(100% - 32px));
+  text-align: center;
+  background: #10241c;
+  color: #f4fff9;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(182, 255, 228, 0.4);
+  z-index: 2;
+}
+.sv-card {
+  position: absolute;
+  top: calc(12px + var(--sat));
+  left: calc(12px + var(--sal));
+  width: min(340px, calc(100% - 84px));
+  max-height: 42%;
+  overflow: auto;
+  z-index: 2;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: #10241c;
+  color: #f4fff9;
+  border: 1px solid rgba(182, 255, 228, 0.4);
+}
+.sv-card h2 { margin: 0 0 4px; font-size: 1.05rem; color: #f4fff9; }
+.sv-score { margin: 0 0 6px; font-weight: 700; color: #f4fff9; }
+.sv-card .caption, .sv-card .reasons { color: #d7efe4; }
+.sv-card .reasons { margin: 6px 0; padding-left: 1.1rem; }
+.sv-mini {
+  position: absolute;
+  right: calc(12px + var(--sar));
+  bottom: calc(76px + var(--sab));
+  width: 168px;
+  height: 112px;
+  z-index: 2;
+  border-radius: 12px;
+  border: 1px solid rgba(182, 255, 228, 0.45);
+  background: #07110e;
+}
+.sv-navs {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: calc(12px + var(--sab));
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  z-index: 2;
+}
+.sv-step {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(182, 255, 228, 0.45);
+  background: #10241c;
+  color: #f4fff9;
+  font: inherit;
+  font-weight: 600;
+  font-size: 14px;
+}
+.sv-step:disabled { cursor: not-allowed; }
+.sv-close { position: absolute; top: calc(12px + var(--sat)); right: calc(12px + var(--sar)); z-index: 3; background: #10241c; color: #f4fff9; }
+@media (prefers-reduced-motion: reduce) {
+  .street-view, .street-view * { animation: none !important; transition: none !important; }
+}
