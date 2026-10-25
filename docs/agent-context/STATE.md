@@ -8,7 +8,7 @@ Last full review by a human: (date/time)
 ## Person A: Bhavpreet (frontend / map)
 - Owns (do not edit without asking): `web/`, `docs/agent-context/` entries by A
 - Status: Branch `bhav/mapbox-routes` (cut from amey/backend fc503b7) has 2 commits: (1) Mapbox walking-route provider from the handoff doc, (2) the `ui` backend rebuilt on Amey's modules: POST /v1/routes, planner, candidates (detours), continuity, selector, explain, wording, prewarm, SF open data + transit providers (unwired). Full suite green (see the newest log for the count). Frontend (`web/`) still lives only on branch `ui`.
-- Doing now: Local/demo frontend environment profiles added; local Mapbox/API settings are separated from the Render demo backend.
+- Doing now: Watch check UI done on branch `bhav/watch-ui` (see log 20261025-021121). Earlier: local/demo frontend environment profiles added; local Mapbox/API settings are separated from the Render demo backend.
 - Files in progress: `web/.env.demo.example`, `web/scripts/start-profile.mjs`, `web/package.json`, `web/README.md`
 - Next: copy `web/.env.demo.example` to ignored `web/.env.demo`, add the browser token, then run `npm run dev:local` and `npm run dev:demo` in separate terminals.
 - Blocked on: Amey's review; STATE "Last full review by a human" still blank
