@@ -58,7 +58,13 @@ Then make the APK, in **Android Studio**:
 2. Plug the phone in with USB debugging on (section A, step 1), or start an emulator.
 3. Press the green **Run** button to install and open it on the phone, **or** Build > Build Bundle(s) / APK(s) > **Build APK(s)**. The file is `web/android/app/build/outputs/apk/debug/app-debug.apk`; copy it to the phone and open it (allow "install unknown apps" once).
 
-Command line instead (needs the SDK installed and `ANDROID_HOME` set): `cd web/android && gradlew assembleDebug`.
+Command line instead, one command (Git Bash on Windows): `bash web/scripts/build-apk.sh` (add `--live` for the live-backend build). It needs the Android SDK in `~/Android/Sdk` and a JDK 17-21 in `~/Android/jdk/` (this PC has both). First build about 5 minutes, later builds about 1.5 minutes. Result: `web/android/app/build/outputs/apk/debug/app-debug.apk`.
+
+Two Windows gotchas found while building:
+- Gradle 8.14 does not run on Java 24 or newer (this PC had Java 25-27). Use JDK 21 (Temurin).
+- A long temp folder makes Java fail with "Unable to establish loopback connection". The script sets `TEMP=C:	mp`.
+
+Install on a phone with a cable: `~/Android/Sdk/platform-tools/adb install -r web/android/app/build/outputs/apk/debug/app-debug.apk` (USB debugging on), or copy the file to the phone and open it.
 
 Things to know:
 - The app contains the browser Mapbox token from `web/.env.local`. That token is restricted by URL; the app runs from `https://localhost`, so add `https://localhost` to the token's allowed URLs or the map falls back to the simple route drawing.
