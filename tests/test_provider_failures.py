@@ -7,6 +7,7 @@ auth, dataset id and open_hours shape remain unverified until a key is configure
 import json
 import os
 import unittest
+from datetime import datetime, timezone
 from unittest import mock
 
 import httpx
@@ -15,7 +16,6 @@ from server.data import brightdata
 from server.data.brightdata import BrightDataError, BrightDataPlacesProvider
 from server.data.models import BoundingBox, Place
 from server.data.places import PlacesProvider
-from datetime import datetime, timezone
 
 BOX = BoundingBox(37.70, -122.50, 37.80, -122.40)
 NOW = datetime(2026, 10, 24, 20, tzinfo=timezone.utc)

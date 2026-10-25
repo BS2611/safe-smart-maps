@@ -3,7 +3,12 @@ TEST FIXTURES shaped like vendor data. The real open_hours shape is still unveri
 import unittest
 from datetime import datetime, timezone
 
-from server.data.brightdata import _parse_response_body, _to_float, normalize_category, normalize_record
+from server.data.brightdata import (
+    _parse_response_body,
+    _to_float,
+    normalize_category,
+    normalize_record,
+)
 from server.data.models import BoundingBox
 from server.data.opening_hours import OpenStatus, evaluate_open_status
 
