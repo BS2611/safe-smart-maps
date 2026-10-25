@@ -2,7 +2,7 @@
 
 - When: 2026-10-25 04:54 PT
 - Who: owner (agent: cursor)
-- Branch / commit: cursor/mobile-fixes-01d5 / this commit
+- Branch / commit: cursor/mobile-fixes-01d5 / d9b4745
 - Files touched: web/app/polish.css, web/app/globals.css, web/components/PlanTripScreen.tsx, web/e2e/flow.spec.ts, web/android/app/src/main/res/mipmap-* (launcher, round, foreground), web/android/app/src/main/res/values/ic_launcher_background.xml, docs/agent-context/DECISIONS.md, docs/agent-context/STATE.md
 - What changed: Phone grids use one `minmax(0, 1fr)` column and `min-width: 0` on the children so the route map cannot widen the page. The plan hint sits inside the sticky Show routes bar, and that bar is an opaque page color, so the hint does not show through the button. Android launcher, round, and adaptive foreground icons are the night-route mark from web/public/icons/logo.svg, on plate #07110e.
 - Why: Copilot's uncommitted phone overflow fix, the plan hint showing through the sticky button, and the launcher icons still being the Capacitor placeholder.
