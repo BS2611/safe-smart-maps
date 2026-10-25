@@ -193,13 +193,23 @@ class SegmentScorer:
                 reason = "open streetlight outage nearby (street lighting tag is not sure)"
             else:
                 return None, "lighting not sure (not tagged)"
-        else:
-            value = float(tagged)
-            reason = "lit road" if lit == "yes" else "road tagged as not lit"
-            if lamps and lit == "yes":
-                reason = f"lit road, {lamps} street lamp{'s' if lamps != 1 else ''} nearby"
-        if outages and value is not None and tagged is not None:
-            value = max(0.0, value - params["lighting_outage_penalty"])
+            if value <= 0:
+                return None, "lighting not sure (not tagged)"
+            if outages and lamps:
+                value = max(float(params["lighting_outage_only"]), value - float(params["lighting_outage_penalty"]))
+                if value <= 0:
+                    return None, "lighting not sure (not tagged)"
+                reason += f"; {outages} open streetlight outage{'s' if outages != 1 else ''} nearby"
+            return value, reason
+        value = float(tagged)
+        reason = "lit road" if lit == "yes" else "road tagged as not lit"
+        if lit == "no" and lamps:
+            value = max(value, float(params.get("lighting_unlit_with_lamps", 40)))
+            reason = "road tagged as not lit, street lamp nearby"
+        elif lit == "yes" and lamps:
+            reason = f"lit road, {lamps} street lamp{'s' if lamps != 1 else ''} nearby"
+        if outages and lit == "yes":
+            value = max(float(params["lighting_outage_only"]), value - float(params["lighting_outage_penalty"]))
             reason += f"; {outages} open streetlight outage{'s' if outages != 1 else ''} nearby"
         return value, reason
 
@@ -261,7 +271,8 @@ class SegmentScorer:
         if count == 0:
             reason = f"no incident reports within {params['incident_radius_m']:g} m"
         else:
-            reason = f"{count} incident report{'s' if count != 1 else ''} within {params['incident_radius_m']:g} m"
+            reason = (f"{count} incident report{'s' if count != 1 else ''} within "
+                      f"{params['incident_radius_m']:g} m (low weight; reports can reflect policing patterns)")
         return FactorResult("incidents", value, reason, {"reports": count})
 
     def _transit(self, seg: Segment, arrival: datetime) -> FactorResult:
@@ -348,7 +359,7 @@ class SegmentScorer:
         for s in segments:
             scored.append(self.score_segment(
                 s, depart_at + timedelta(seconds=s.offset_m / speed), prev))
-            prev = _initial_bearing(s.coordinates)
+            prev = _final_bearing(s.coordinates)
         return scored
 
 
@@ -369,6 +380,14 @@ def _delta(a: float, b: float) -> float:
 
 def _initial_bearing(coords) -> float | None:
     for a, b in zip(coords, coords[1:], strict=False):
+        bearing = _bearing(a, b)
+        if bearing is not None:
+            return bearing
+    return None
+
+
+def _final_bearing(coords) -> float | None:
+    for a, b in reversed(list(zip(coords, coords[1:], strict=False))):
         bearing = _bearing(a, b)
         if bearing is not None:
             return bearing

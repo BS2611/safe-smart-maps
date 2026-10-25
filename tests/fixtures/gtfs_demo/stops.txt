@@ -1,2 +1,3 @@
 stop_id,stop_name,stop_lat,stop_lon
 montgomery,Montgomery BART,37.7894,-122.4013
+mapped,Mapped only,37.7895,-122.4014

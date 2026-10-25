@@ -1,5 +1,5 @@
 LABELED TEST FIXTURE. Not a live GTFS feed and not a Bright Data extract.
-One Montgomery stop. An 20:10 departure is inside an 8:00 PM window.
-The same stop also runs every 15 minutes from 5:00 PM to midnight, so it is
-in service when a walker who left the Palace at 8:00 PM arrives. 1:00 AM has
-no trip.
+Montgomery BART has one departure at 20:10 local time every day in 2026.
+"Mapped only" is a stop with coordinates and no trips, so it is not service.
+The demo-corridor test writes its own copy of this shape with a departure
+a few minutes after the walk actually reaches Montgomery.

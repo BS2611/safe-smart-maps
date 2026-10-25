@@ -117,7 +117,7 @@ Known limits: `via` is always `[]` (the Mapbox provider asks for `steps=false`, 
 - `get_places(area, time)` -> list of places with opening hours, `is_24h`, `category`, `source`, `fetched_at`.
   Implementations: `brightdata` (core), `apify` (supporting only), later `osm` / `overture`.
 - Same pattern for roads (OSM), lighting (SF 311), transit (511/GTFS), incidents (SF open data), routing (Mapbox).
-- `ContextProvider.get_area_context(area: BoundingBox) -> AreaContext` (server/data/context.py; implementation `OverpassContextProvider` in server/data/osm.py, source "osm"). `AreaContext` = `roads: list[RoadContext]`, `help_points: list[HelpPoint]`, `fetched_at`. `RoadContext`: `coordinates` ((lat,lng) points), `road_class` (motorway|trunk|primary|secondary|tertiary|residential|service|pedestrian|other|unknown), `lit` (yes|no|unknown; missing tag = unknown, never no), `osm_id`, `name`, `raw_highway`, `source`, `fetched_at`. `HelpPoint`: `type` (police|hospital|fire_station), `lat`, `lng`, `name`, `osm_id`, `source`, `fetched_at`. Not cached yet. Raises `OsmError` on upstream failure. Scoring must treat `unknown` as "not sure".
+- `ContextProvider.get_area_context(area: BoundingBox) -> AreaContext` (server/data/context.py; implementation `OverpassContextProvider` in server/data/osm.py, source "osm"). `AreaContext` = `roads`, `help_points`, `fetched_at`, plus `street_lamps`, `activity_points`, and `activity_known` (true only after a query that asked for shops and busy amenities). `RoadContext`: `coordinates` ((lat,lng) points), `road_class` (motorway|trunk|primary|secondary|tertiary|residential|service|pedestrian|other|unknown), `lit` (yes|no|unknown; missing tag = unknown, never no), `tunnel` (true only for an explicit `tunnel=yes` or `tunnel=building_passage`), `osm_id`, `name`, `raw_highway`, `source`, `fetched_at`. `HelpPoint`: `type` (police|hospital|fire_station), `lat`, `lng`, `name`, `osm_id`, `source`, `fetched_at`. OSM is cached in memory for 24 h. Raises `OsmError` on upstream failure. Scoring must treat `unknown` as "not sure". The segment JSON shape is unchanged: each factor is still 0-100 or null, with the same names.
 - Cache key: `(provider, area)`; `area` = the BoundingBox that was fetched (a request inside a cached box reuses it). No `hour_bucket`: listings are not hour-specific, open/closed is computed per request from cached hours. File cache in `CACHE_DIR` (default `.cache/places`, git-ignored). Route requests only READ the cache (never fetch); stale entries are served with their original `fetched_at` while a background refresh runs; a miss returns no places ("not sure").
 
 ## Config and env
@@ -127,7 +127,8 @@ Known limits: `via` is always `[]` (the Mapbox provider asks for `steps=false`, 
   ANTHROPIC_API_KEY, NEXT_PUBLIC_API_BASE_URL,
   CACHE_TTL_SECONDS (default 86400), CACHE_DIR (default .cache/places),
   OVERPASS_URL (optional, default public overpass-api.de),
-  GTFS_DIR (optional folder of an extracted GTFS feed; empty means transit stays not sure),
+  GTFS_DIR (optional folder or .zip of a public GTFS feed, SF Muni or BART; empty means transit stays not sure),
+  GTFS_DIR_EXTRA (optional second feed, same rules; no key),
   PREFETCH_ON_STARTUP (1 = background-refresh missing/stale demo areas at server start; needs BRIGHTDATA_API_KEY),
   WEB_ORIGINS (comma-separated browser origins allowed by CORS, default http://localhost:3000, never `*`),
   PREWARM_DEMO (1 = run the demo trip once at startup to warm the OSM cache; uses a few Mapbox calls),

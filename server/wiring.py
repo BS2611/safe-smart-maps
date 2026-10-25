@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 
 from server.data.cache import CachedPlacesProvider
-from server.data.gtfs import TransitFeedError, load_gtfs
+from server.data.gtfs import CombinedSchedule, TransitFeedError, TransitUnavailable, load_gtfs
 from server.data.mapbox import MapboxWalkingProvider
 from server.data.osm import OverpassContextProvider
 from server.data.sf_open_data import SocrataClient
@@ -12,13 +12,25 @@ from server.services.planner import Providers, RoutePlanner
 
 
 def _transit_schedule():
-    raw = os.environ.get("GTFS_DIR", "").strip()
-    if not raw:
+    """None when no feed is configured. A bad path is also None so the factor stays not sure."""
+    paths = [item for item in (
+        os.environ.get("GTFS_DIR", "").strip(),
+        os.environ.get("GTFS_DIR_EXTRA", "").strip(),
+    ) if item]
+    if not paths:
         return None
-    try:
-        return load_gtfs(Path(raw))
-    except TransitFeedError:
-        return None
+    loaded = []
+    failed = False
+    for raw in paths:
+        try:
+            loaded.append(load_gtfs(Path(raw)))
+        except TransitFeedError:
+            failed = True
+    if not loaded:
+        return TransitUnavailable()
+    schedule = loaded[0] if len(loaded) == 1 else CombinedSchedule(loaded)
+    schedule.partial_failure = failed
+    return schedule
 
 
 def build_planner(cfg: dict, places: CachedPlacesProvider) -> RoutePlanner:

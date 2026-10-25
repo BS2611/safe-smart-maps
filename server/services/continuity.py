@@ -6,7 +6,7 @@ safety measurement: the result describes how evenly contextual signals are sprea
 
   average      = length-weighted mean of known segment scores
   worst window = lowest length-weighted mean over any ~window_m stretch of the route
-  coverage     = share of the route (by length) within radii_m.coverage of an open place / help point
+  coverage     = share of the route (by length) within radii_m.coverage of an open place, help point, or (when a GTFS feed is loaded) an active transit stop
   longest gap  = longest consecutive stretch (meters) that is confirmed NOT covered
   penalty      = max(0, gap - gap_limit_m) * gap_penalty_per_m
   route score  = clamp(avg_weight*average + worst_window_weight*worst - penalty, 0, 100)

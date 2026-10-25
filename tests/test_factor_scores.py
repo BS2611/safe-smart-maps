@@ -50,6 +50,18 @@ class LightingTests(unittest.TestCase):
         self.assertLess(outage.value, plain.value)
         self.assertGreater(outage.value, 0)
 
+    def test_outage_does_not_score_an_unknown_tag_as_unlit(self):
+        outage = self.score("unknown", outages=[Outage(-122.45, north(25)[0], "2026-10-24")])
+        self.assertIsNotNone(outage.value)
+        self.assertGreater(outage.value, 0)
+        self.assertIn("not sure", outage.reason)
+
+    def test_lamps_raise_a_road_tagged_unlit(self):
+        raised = self.score("no", lamps=[StreetLamp(*north(25))])
+        self.assertGreater(raised.value, 0)
+        self.assertLess(raised.value, 100)
+        self.assertEqual(self.score("no").value, 0)
+
 
 class TurnTests(unittest.TestCase):
     def test_straight_is_high_and_a_corner_is_lower(self):
@@ -124,6 +136,17 @@ class ActivityIncidentTransitTests(unittest.TestCase):
         scorer = SegmentScorer(CFG, [], area(), transit=schedule)
         self.assertGreater(scorer.score_segment(seg, EVENING).factors["transit"].value, 50)
         self.assertEqual(scorer.score_segment(seg, ONE_AM).factors["transit"].value, 0)
+
+    def test_active_transit_covers_and_a_missing_feed_does_not_uncover(self):
+        stop = _Stop("s", "Test stop", *north(10))
+        visit = _Visit("s", "wk", 20 * 60 + 10)
+        service = _Service(days=(True,) * 7, start="20260101", end="20261231")
+        schedule = TransitSchedule({"s": stop}, [visit], {"wk": service}, [])
+        seg = self.segment()
+        with_feed = SegmentScorer(CFG, [], area(), transit=schedule).score_segment(seg, EVENING)
+        without = SegmentScorer(CFG, [], area()).score_segment(seg, EVENING)
+        self.assertTrue(with_feed.covered)
+        self.assertIs(without.covered, False)
 
     def test_open_place_hours_follow_arrival(self):
         scorer = SegmentScorer(CFG, [place()], area())

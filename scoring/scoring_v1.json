@@ -27,6 +27,7 @@
     "outage_radius_m": 45,
     "lighting_outage_penalty": 55,
     "lighting_outage_only": 35,
+    "lighting_unlit_with_lamps": 40,
     "turn_min_deg": 35,
     "turn_moderate_deg": 70,
     "turn_sharp_deg": 110,
@@ -37,13 +38,13 @@
     "dark_turn_penalty": 30,
     "tunnel_penalty": 25,
     "activity_radius_m": 60,
-    "activity_by_count": [20, 50, 75, 90],
+    "activity_by_count": [0, 50, 75, 100],
     "activity_time_factor": {"day": 1.0, "evening": 0.75, "late": 0.45},
     "activity_evening_start_hour": 18,
     "activity_late_end_hour": 7,
     "incident_radius_m": 80,
     "incidents_by_count": [100, 70, 45, 25],
-    "transit_radius_m": 180,
+    "transit_radius_m": 75,
     "transit_window_min": 15
   },
   "continuity": {

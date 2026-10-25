@@ -146,6 +146,20 @@ class ProviderTests(unittest.TestCase):
         query = post.call_args.kwargs["data"]["data"]
         self.assertIn("37.797,-122.455,37.809,-122.44", query)
         self.assertIn("police|hospital|fire_station", query)
+        self.assertIn("street_lamp", query)
+
+    def test_lamps_shops_and_tunnel_are_kept_and_a_missing_lit_tag_stays_unknown(self):
+        ctx = normalize_elements([
+            way({"highway": "footway", "tunnel": "yes"}, id=4),
+            {"type": "node", "id": 9, "lat": 37.8, "lon": -122.45, "tags": {"highway": "street_lamp"}},
+            {"type": "node", "id": 11, "lat": 37.801, "lon": -122.449, "tags": {"shop": "convenience"}},
+            node("cafe", id=12, lat=37.802),
+        ], NOW)
+        self.assertEqual(ctx.roads[0].tunnel, True)
+        self.assertEqual(ctx.roads[0].lit, "unknown")
+        self.assertEqual(len(ctx.street_lamps), 1)
+        self.assertTrue(ctx.activity_known)
+        self.assertEqual(sorted(p.kind for p in ctx.activity_points), ["cafe", "shop:convenience"])
 
     def test_is_a_context_provider(self):
         self.assertIsInstance(OverpassContextProvider(), ContextProvider)

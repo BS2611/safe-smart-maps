@@ -104,7 +104,7 @@ class RoutePlanner:
                 ("osm", rounded), lambda: self.p.context.get_area_context(rounded))
         except OsmError:
             warnings.append("Street and lighting map data (OpenStreetMap): not available right now, "
-                            "so lighting, road type and help points show as not sure.")
+                            "so lighting, road type, help points and the activity estimate show as not sure.")
             return None
 
     def _cached_points(self, name: str, area: BoundingBox, loader, warning: str, warnings: list[str]):
@@ -190,12 +190,18 @@ class RoutePlanner:
             "outages", area, None if self.p.outages is None else self.p.outages.get_open_outages,
             "Streetlight outage reports are not available right now, so lighting uses the map tag only.",
             warnings)
-        if self.p.transit is None:
-            warnings.append("Transit schedules are not connected, so transit shows as not sure.")
+        transit = self.p.transit
+        if transit is None:
+            warnings.append("Transit schedules are not configured, so transit shows as not sure.")
+        elif getattr(transit, "failed", False):
+            warnings.append("Transit schedules could not be read, so transit shows as not sure.")
+            transit = None
+        elif getattr(transit, "partial_failure", False):
+            warnings.append("One transit feed could not be read. Stops from the feed that loaded are still used.")
         weights = apply_priorities(self.cfg["weights"], req.settings.priorities,
                                    self.cfg["priorities"]["boost"])
         scorer = SegmentScorer(self.cfg, found.places, context, weights,
-                               incidents=incidents, outages=outages, transit=self.p.transit)
+                               incidents=incidents, outages=outages, transit=transit)
 
         results = {}
         for cand in candidates:

@@ -29,7 +29,7 @@ describe("CheckingScreen", () => {
 
 describe("SourcesPanel", () => {
   it("shows which sources were not available", () => {
-    renderWithTrip(<SourcesPanel warnings={["Transit schedules are not connected."]} />);
+    renderWithTrip(<SourcesPanel warnings={["Transit schedules are not configured, so transit shows as not sure."]} />);
     expect(screen.getByText("What we checked")).toBeInTheDocument();
     expect(screen.getByText("Not sure")).toBeInTheDocument();
     expect(screen.getAllByText("Done")).toHaveLength(4);
@@ -76,12 +76,12 @@ describe("RoutesScreen", () => {
     expect(screen.getByRole("button", { name: /^Fastest/ })).toHaveAttribute("aria-pressed", "true");
   });
 
-  it("lists the missing information from the server, including transit not connected", async () => {
+  it("lists the missing information from the server, including transit not configured", async () => {
     stubFetch();
     renderWithTrip(<RoutesScreen />, READY_TRIP);
     await screen.findByRole("heading", { name: "Why this route" });
     expect(screen.getByText("Some information is missing")).toBeInTheDocument();
-    expect(screen.getByText(/Transit schedules are not connected/)).toBeInTheDocument();
+    expect(screen.getByText(/Transit schedules are not configured/)).toBeInTheDocument();
   });
 
   it("warns when the data is old", async () => {
