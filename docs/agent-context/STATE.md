@@ -15,11 +15,11 @@ Last full review by a human: (date/time)
 
 ## Person B: Amey (backend / data)
 - Owns (do not edit without asking): `server/`, `scoring/`
-- Status: M2.2/M2.3 code done on amey/brightdata-places (Place model, Bright Data provider, open/closed/unknown evaluator, 16 unit tests passing). Live Bright Data call NOT run: no key.
+- Status: Bright Data places provider, Place model, hours evaluator merged. 140 unit tests pass on amey/backend (local commit, not pushed). Live Bright Data call NOT run: no key. Provider and normalization are unit-tested only; real network integration unverified.
 - Doing now: nothing
 - Files in progress: none
-- Next: put BRIGHTDATA_API_KEY in .env, run `.venv/bin/python -m scripts.brightdata_smoke`, check real open_hours shape; then Mapbox/OSM
-- Blocked on: Bright Data API key; CONTRACTS.md items in the log (incl. approving Place model)
+- Next: decide the 8 open behaviors in the 20261024-174045 log; put BRIGHTDATA_API_KEY in .env, run `.venv/bin/python -m scripts.brightdata_smoke`, check real open_hours shape; then Mapbox/OSM or segment scoring
+- Blocked on: Bright Data API key; approval to add Place model to CONTRACTS.md
 
 ## Guide (third person, advice and submission content, little code)
 - Owns: Devpost text, demo script, community quotes, track questions (`docs/agent-context/OPEN_QUESTIONS.md`)

@@ -4,6 +4,7 @@ Raw Bright Data fields are read ONLY in this file and converted to `Place`.
 Credentials come from environment variables and are never logged.
 """
 import json
+import math
 import os
 import re
 from datetime import datetime, timezone
@@ -47,9 +48,10 @@ def normalize_category(raw: Any) -> str:
 
 def _to_float(v: Any) -> float | None:
     try:
-        return float(v)
+        f = float(v)
     except (TypeError, ValueError):
         return None
+    return f if math.isfinite(f) else None  # "nan" / "inf" are not coordinates
 
 
 def normalize_record(rec: dict, fetched_at: datetime) -> Place | None:
