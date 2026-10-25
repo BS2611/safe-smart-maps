@@ -1,0 +1,141 @@
+{
+ "_label": "TEST FIXTURE: fields trimmed from one real Bright Data Google Maps response (2026-10-24, Palace of Fine Arts). Public business data; no credentials.",
+ "records": [
+  {
+   "name": "Home Plate",
+   "place_id": "ChIJEYJz0taAhYARICHu7u5Tc4w",
+   "category": "Breakfast restaurant",
+   "lat": 37.8000407,
+   "lon": -122.4371697,
+   "open_hours": {
+    "Sunday": "7 am–3 pm",
+    "Saturday": "7 am–3 pm",
+    "Friday": "7 am–2 pm",
+    "Thursday": "7 am–2 pm",
+    "Wednesday": "7 am–2 pm",
+    "Tuesday": "7 am–2 pm",
+    "Monday": "7 am–2 pm"
+   }
+  },
+  {
+   "name": "Rose's Cafe",
+   "place_id": "ChIJk1ouQ9CAhYARMTJs_oaxhFQ",
+   "category": "Italian restaurant",
+   "lat": 37.7970494,
+   "lon": -122.4370587,
+   "open_hours": {
+    "Sunday": "9 AM–9 PM",
+    "Saturday": "9 AM–9 PM",
+    "Friday": "9 AM–9 PM",
+    "Thursday": "9 AM–9 PM",
+    "Wednesday": "9 AM–9 PM",
+    "Tuesday": "9 AM–3 PM",
+    "Monday": "9 AM–3 PM"
+   }
+  },
+  {
+   "name": "Peet's Coffee",
+   "place_id": "ChIJkbruI9eAhYAR3n1thaTDbEY",
+   "category": "Coffee shop",
+   "lat": 37.8007727,
+   "lon": -122.437882,
+   "open_hours": {
+    "Sunday": "5:30 am–7:30 pm",
+    "Saturday": "5:30 am–7:30 pm",
+    "Friday": "5 am–7:30 pm",
+    "Thursday": "5 am–7:30 pm",
+    "Wednesday": "5 am–7:30 pm",
+    "Tuesday": "5 am–7:30 pm",
+    "Monday": "5 am–7:30 pm"
+   }
+  },
+  {
+   "name": "Fuel 24:7 - Lombard",
+   "place_id": "ChIJ-ThdjtSAhYARQA0ggZORD1w",
+   "category": "Gas station",
+   "lat": 37.7985302,
+   "lon": -122.4445552,
+   "open_hours": {
+    "Sunday": "Open 24 hours",
+    "Saturday": "Open 24 hours",
+    "Friday": "Open 24 hours",
+    "Thursday": "Open 24 hours",
+    "Wednesday": "Open 24 hours",
+    "Tuesday": "Open 24 hours",
+    "Monday": "Open 24 hours"
+   }
+  },
+  {
+   "name": "Cafe RX",
+   "place_id": "ChIJ4ykYANaGhYARkYsI0ZOenug",
+   "category": "Cafe",
+   "lat": 37.800266,
+   "lon": -122.4519322,
+   "open_hours": {
+    "Sunday": "Closed",
+    "Saturday": "Closed",
+    "Friday": "8 AM–2:30 PM",
+    "Thursday": "8 AM–2:30 PM",
+    "Wednesday": "8 AM–2:30 PM",
+    "Tuesday": "8 AM–2:30 PM",
+    "Monday": "8 AM–2:30 PM"
+   }
+  },
+  {
+   "name": "The Interval at Long Now",
+   "place_id": "ChIJg67PeyeBhYAROkno8i7ZxlI",
+   "category": "Cocktail bar",
+   "lat": 37.8066031,
+   "lon": -122.4321667,
+   "open_hours": {
+    "Sunday": "3–10 PM",
+    "Saturday": "5–11 PM",
+    "Friday": "10 AM–11 PM",
+    "Thursday": "10 AM–11 PM",
+    "Wednesday": "10 AM–11 PM",
+    "Tuesday": "10 AM–11 PM",
+    "Monday": "5–10 PM"
+   }
+  },
+  {
+   "name": "Albertino's",
+   "place_id": "ChIJx-miStqAhYARhdvS1CjiY9c",
+   "category": "Convenience store",
+   "lat": 37.8001289,
+   "lon": -122.4326139,
+   "open_hours": {
+    "Sunday": "8 AM–1 AM",
+    "Saturday": "8 AM–2 AM",
+    "Friday": "8 AM–2 AM",
+    "Thursday": "8 AM–2 AM",
+    "Wednesday": "8 AM–1 AM",
+    "Tuesday": "8 AM–1 AM",
+    "Monday": "8 AM–1 AM"
+   }
+  },
+  {
+   "name": "Starbucks Coffee Company",
+   "place_id": "ChIJXaDe9yqHhYARh78sF8k1uSA",
+   "category": "Coffee shop",
+   "lat": 37.79925,
+   "lon": -122.44935,
+   "open_hours": {
+    "Sunday": "5.00 am–6.30 pm",
+    "Saturday": "5.00 am–6.30 pm",
+    "Friday": "5.00 am–6.30 pm",
+    "Thursday": "5.00 am–6.30 pm",
+    "Wednesday": "5.00 am–6.30 pm",
+    "Tuesday": "5.00 am–6.30 pm",
+    "Monday": "5.00 am–6.30 pm"
+   }
+  },
+  {
+   "name": "Dean's Cafe",
+   "place_id": "ChIJ-VoTcZOHhYARIjR5IBepHbQ",
+   "category": "Cafe",
+   "lat": 37.7988828,
+   "lon": -122.4493335,
+   "open_hours": null
+  }
+ ]
+}
