@@ -44,11 +44,15 @@ Not measurements of safety; tunable constants all live in `scoring/scoring_v1.js
 - Arrival at a segment = `depart_at + offset_m / walking_speed_mps` (1.4 m/s) until the routing provider supplies timing.
 - `score = sum(w_i * f_i over known) / sum(w_i over known)`; weights can be overridden per user and are renormalized.
 - `open_places`: places OPEN at arrival within `radii_m.open_place` of the segment path -> `open_places_by_count[min(n, 3)]` = 0/50/75/100. Place data unavailable (`None`) -> unknown; available with zero open -> 0; unknown-hours places never count as open or closed, kept as evidence.
-- `lighting` / `main_road`: nearest `RoadContext` within `radii_m.road_match` (25 m) of the midpoint. lit yes=100, no=0, unknown=unknown. Class trunk/primary/secondary/tertiary=100, residential=60, service=40, pedestrian=40; motorway/other/unknown/no match = unknown.
+- `lighting` / `main_road`: nearest `RoadContext` within `radii_m.road_match` (25 m) of the midpoint. Road class trunk/primary/secondary/tertiary=100, residential=60, service=40, pedestrian=40; motorway/other/unknown/no match = unknown. Lighting is the bullet below.
 - `help_points`: nearest police/hospital/fire_station to the segment, `max(0, 100*(1 - d/150))`. AreaContext unavailable -> unknown; available but empty -> 0 ("none found in queried area").
-- `transit`, `incidents`, `activity`, `turns`: always unknown for now (no providers).
+- `transit`: nearest stop with a GTFS departure in the next 15 minutes at the segment arrival (`GTFS_DIR`). No feed, or a feed that fails to load, stays null ("not sure"). A stop with no trip in the window scores 0.
+- `activity`: estimate from OSM shop/busy-amenity density near the segment, multiplied down in the evening and after midnight. Not a count of people. Null when that OSM query did not run.
+- `incidents`: SF open-data reports within 80 m. No dataset stays null. Zero reports scores 100, which means "no reports in the extract", not a safety claim. Weight stays 0.05 because the record reflects policing as much as events.
+- `turns`: bearing change along the route. A turn is darker only when the matched road is tagged unlit. Unknown lighting is not a dark turn. `tunnel=yes` lowers the score. Always known from the route shape.
+- `lighting`: OSM `lit` yes=100, no=0, missing or anything else stays null unless a mapped street lamp or an open 311 streetlight outage is nearby. Unknown is never scored as unlit.
 - Scorer inputs: `SegmentScorer(config, places: list[Place] | None, area_context: AreaContext | None, weights=None)`; `None` = dataset unavailable, empty = available but nothing found. Scoring reads only; it never fetches.
-- Segment score also carries `covered` (internal, not in `to_dict()`): True if an OPEN place (at arrival) or a help point is within `radii_m.coverage` (75 m) of the segment; False only when places and area data are both available and nothing could count (no unknown-hours place nearby either); None = not sure. Transit is not counted yet.
+- Segment score also carries `covered` (internal, not in `to_dict()`): True if an OPEN place (at arrival), a help point, or (when a GTFS feed is loaded) an active transit stop is within `radii_m.coverage` (75 m) of the segment; False only when places and area data are both available and nothing could count (no unknown-hours place nearby either); None = not sure. A missing transit feed does not mark a segment uncovered.
 - Continuity (server/services/continuity.py, `compute_continuity(config, list[SegmentScore]) -> ContinuityResult`, `.to_dict()` gives the Route result's `route_score` + `continuity`): `average_score` = length-weighted mean of known scores; `worst_window_score` = lowest length-weighted mean over any `window_m` (200 m) stretch (whole route if shorter), with `worst_window_start_m/end_m`; `coverage_pct` = covered length / length with known coverage; `longest_gap_m` = longest consecutive run of segments with `covered == False`, in meters (unknown breaks a run, never extends one), `longest_gap_note` = "from X m to Y m along the route"; `gap_penalty` = max(0, gap - gap_limit_m) * gap_penalty_per_m, `gap_penalty_applied` = min(penalty, base); `route_score` = clamp(avg_weight*average + worst_window_weight*worst - applied, 0, 100). `route_score` is `null` (and `continuity.insufficient_data` true) when no segment has a score. Extra `continuity` keys: `average_score, gap_penalty, gap_penalty_applied, meets_coverage_target, route_length_m, unknown_length_m, insufficient_data, notes`. Unknown share is reported in `notes`/`unknown_length_m`, never scored as 0.
 - Routing provider (Mapbox, other developer) must supply: ordered walking-route `(lat, lng)` points (legs concatenated), total duration/distance, and ideally per-leg timing. Feed `segment_route(points, cfg["segment_length_m"])`. Now provided by `RouteCandidate.as_lat_lng()`, `distance_m`, `duration_s` (see Routing provider below; no per-leg timing, steps are off).
 
@@ -75,7 +79,7 @@ Wires existing modules; it adds no scoring rules.
 5. Selection (`selector.py`): Fastest, Safest (best score within `max_extra_minutes`) and Balanced (`balanced_points_per_extra_min`); a route winning two labels is returned once with `also_labels`. A route with no score can only be Fastest. The API label is `safest`; the UI must say "better lit and more active" (never "safe").
 6. Explanation (`explain.py`): Claude when `ANTHROPIC_API_KEY` is set, a fixed template otherwise or when the text breaks the wording rules (`wording.py`); `explanation_source` = `ai | template`.
 Known limits: `via` is always `[]` (the Mapbox provider asks for `steps=false`, so there are no street names; `longest_gap_note` is Amey's "from X m to Y m along the route"); `segment_id` is `seg-<n>`; `open_places_count` counts distinct places open within 50 m of any segment at that segment's arrival time.
-`SfDataError`-based providers in `data/sf_open_data.py` (311 streetlight outages, incidents) and `data/transit.py` (always unknown) exist but are NOT wired into scoring; the factors stay "not sure".
+`SfDataError`-based providers in `data/sf_open_data.py` (311 streetlight outages, incidents) are wired through the planner and cached per area. A failure leaves that factor "not sure" and adds a warning. Transit is `GTFS_DIR` (`server/data/gtfs.py`); with no folder, transit stays "not sure".
 
 ## Route result
 ```json
@@ -123,6 +127,7 @@ Known limits: `via` is always `[]` (the Mapbox provider asks for `steps=false`, 
   ANTHROPIC_API_KEY, NEXT_PUBLIC_API_BASE_URL,
   CACHE_TTL_SECONDS (default 86400), CACHE_DIR (default .cache/places),
   OVERPASS_URL (optional, default public overpass-api.de),
+  GTFS_DIR (optional folder of an extracted GTFS feed; empty means transit stays not sure),
   PREFETCH_ON_STARTUP (1 = background-refresh missing/stale demo areas at server start; needs BRIGHTDATA_API_KEY),
   WEB_ORIGINS (comma-separated browser origins allowed by CORS, default http://localhost:3000, never `*`),
   PREWARM_DEMO (1 = run the demo trip once at startup to warm the OSM cache; uses a few Mapbox calls),

@@ -165,7 +165,7 @@ describe("HowScoresScreen", () => {
     renderWithTrip(<HowScoresScreen />);
     expect(screen.getByText("100% total")).toBeInTheDocument();
     for (const f of FACTORS) expect(screen.getByRole("heading", { name: new RegExp(f.label) })).toBeInTheDocument();
-    expect(screen.getByText("25%")).toBeInTheDocument();
+    expect(screen.getByText("13%")).toBeInTheDocument();
   });
 
   it("explains the whole-route rule and shows the formula", () => {
@@ -177,7 +177,7 @@ describe("HowScoresScreen", () => {
 
   it("is honest about sources, limits and privacy, and offers 911", () => {
     const { container } = renderWithTrip(<HowScoresScreen />);
-    expect(screen.getByText(/Transit:/).parentElement).toHaveTextContent(/not connected yet/);
+    expect(screen.getByText(/Transit:/).parentElement).toHaveTextContent(/when a feed is configured/);
     expect(screen.getByText(/AI can be wrong/)).toBeInTheDocument();
     expect(screen.getByText(/Incident data can be unfair/)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Call 911" })).toHaveAttribute("href", "tel:911");
