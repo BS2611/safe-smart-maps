@@ -6,7 +6,7 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 
-from server.api import cache, health, routes
+from server.api import cache, health, routes, watch
 from server.services.prefetch import build_places_provider, prefetch_enabled, start_prefetch
 from server.services.prewarm import start_prewarm_thread
 from server.services.scoring_config import load_scoring_config
@@ -44,7 +44,7 @@ def allowed_origins(raw: str | None) -> list[str]:
 
 _origins = allowed_origins(os.environ.get("WEB_ORIGINS"))
 app.add_middleware(CORSMiddleware, allow_origins=_origins, allow_methods=["GET", "POST"],
-                   allow_headers=["content-type"])
+                   allow_headers=["content-type", "authorization"])
 
 
 @app.exception_handler(RequestValidationError)
@@ -57,3 +57,4 @@ async def validation_error(request: Request, exc: RequestValidationError):
 app.include_router(health.router)
 app.include_router(cache.router)
 app.include_router(routes.router)
+app.include_router(watch.router)
