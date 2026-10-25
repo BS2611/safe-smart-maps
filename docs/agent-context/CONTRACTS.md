@@ -129,10 +129,10 @@ Known limits: `via` is always `[]` (the Mapbox provider asks for `steps=false`, 
 ## Config and env
 - Score weights: `scoring/scoring_v1.json` (weights must sum to 1.0)
 - Env vars (names only, see `.env.example`): BRIGHTDATA_API_KEY, APIFY_TOKEN,
-  MAPBOX_TOKEN (server), NEXT_PUBLIC_MAPBOX_TOKEN (browser, URL-restricted),
-  ANTHROPIC_API_KEY, NEXT_PUBLIC_API_BASE_URL,
+  MAPBOX_TOKEN (server), NEXT_PUBLIC_MAPBOX_TOKEN (browser, URL-restricted; also used to ask Mapbox for walking steps during navigation),
   NEXT_PUBLIC_MAPILLARY_TOKEN (browser, Mapillary client token for street-level photos; empty means the screen says street view is unavailable),
   NEXT_PUBLIC_GOOGLE_MAPS_API_KEY (optional browser key; if set, street view uses Google Street View instead of Mapillary),
+  ANTHROPIC_API_KEY, NEXT_PUBLIC_API_BASE_URL,
   CACHE_TTL_SECONDS (default 86400), CACHE_DIR (default .cache/places),
   OVERPASS_URL (optional, default public overpass-api.de),
   GTFS_DIR (optional folder or .zip of a public GTFS feed, SF Muni or BART; empty means transit stays not sure),

@@ -45,6 +45,13 @@ test.describe("plan, routes, details", () => {
 
     await page.getByRole("link", { name: "Details" }).first().click();
     await expect(page.getByRole("heading", { name: "Along the whole walk" })).toBeVisible();
+    await page.getByRole("button", { name: "Start" }).click();
+    await expect(page.getByRole("region", { name: "Next maneuver" })).toBeVisible();
+    await page.getByRole("button", { name: "Simulate walk" }).click();
+    await expect(page.getByText("Simulated")).toBeVisible();
+    await expectNoSideScroll(page);
+    await page.getByRole("button", { name: "End" }).click();
+    await expect(page.getByRole("heading", { name: "Along the whole walk" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "What we checked" })).toBeVisible();
     await page.getByRole("group", { name: "Route segments" }).getByRole("button").first().click();
     await expect(page.getByRole("list", { name: "Reasons" })).toBeVisible();

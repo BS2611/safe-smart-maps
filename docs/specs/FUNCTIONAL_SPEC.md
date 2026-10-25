@@ -66,12 +66,16 @@ Total = 100%.
 ### 5.5 Map and comparison cards
 Colored segments on the map. Each route card: extra minutes, coverage %, longest gap, number of open places, nearest help point, data-fetched-at time, and the AI explanation with reasons.
 
+### 5.6 Walking navigation
+Start, on the route detail, opens a full-screen walk for that route. It shows the next maneuver, the distance to it, the street name (or "not sure"), and the time and distance left. Position comes from the phone's GPS in the Android app and from the browser on the web. If location is denied or there is no fix, the screen says so and offers a walk labeled Simulated that replays the route. Steps advance as the walker passes each maneuver. Leaving the line by more than about 35 m asks before recalculating from the current point. A low-scoring stretch or a stretch with no open places ahead is called out in plain words. A compass button switches the map between heading-up and north-up; if there is no compass, the map uses the GPS direction of travel or stays north-up. Street view opens the panorama at the current point. Vibration on turns can be turned off, and it stays off when the device asks for reduced motion.
+
+### 5.7 Street-level photos
 On a route's detail map, tap a point or drag the peg to open a street-level photo at that spot. Drag to look around, step forward and back along the walk, and read that stretch's score and reasons on the photo. A mini map shows position and heading. One button opens the darkest stretch. With no photo token, the screen says street view is unavailable and the rest of the walk still works. Photos are Mapillary unless a Google browser key is set.
 
-### 5.6 Time-awareness demo
+### 5.8 Time-awareness demo
 Same trip run at 8 PM and 1 AM: shops close, coverage drops, and the Safest route changes. The UI must make this visible (side-by-side or quick toggle).
 
-### 5.7 Heartbeat alert (stretch, opt-in)
+### 5.9 Heartbeat alert (stretch, opt-in)
 - Consent screen; user picks contact and threshold; contact must agree to receive alerts.
 - Trigger: heart rate rises abnormally vs the user's own walking baseline **plus** another sign (sudden stop, large route deviation, very fast pace).
 - Flow: "Are you OK?" prompt → no answer in ~30 s → message to contact with live location and route.
@@ -85,7 +89,8 @@ Same trip run at 8 PM and 1 AM: shops close, coverage drops, and the Safest rout
 | Page blocked / source fails | Fall back to cached data with its age; else "not sure" for that factor |
 | No results for an area | "We don't have enough data here yet"; do not invent a score |
 | No route within extra-time cap | Say so and show Fastest only |
-| Location denied | Manual start entry only |
+| Location denied | Manual start entry only. During navigation, say location is off and offer the simulated walk |
+| No compass | Map stays north-up, or uses GPS direction of travel when that exists |
 
 ## 7. Acceptance criteria
 1. Entering the demo corridor trip returns three (or two, when merged) labeled routes with colored segments.
