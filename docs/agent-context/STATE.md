@@ -15,7 +15,7 @@ Last full review by a human: (date/time)
 
 ## Person B: Amey (backend / data)
 - Owns (do not edit without asking): `server/`, `scoring/`
-- Status: Bright Data places provider LIVE-VERIFIED 2026-10-24 (real call, 60 records, all normalized, 59 with parsed hours). 148 unit tests pass on amey/backend (local commits, not pushed). See log *brightdata-live-verification.
+- Status: Bright Data places provider LIVE-VERIFIED 2026-10-24 (repo smoke test passed end to end, 19 places in the Palace box; earlier raw call, 60 records, all normalized, 59 with parsed hours). 148 unit tests pass on amey/backend (local commits, not pushed). See log *brightdata-live-verification.
 - Doing now: nothing
 - Files in progress: none
 - Next: cache/prefetch layer for Bright Data places (a call takes 60+ s); decide the 8 open behaviors in the 20261024-174045 log; then OSM/Mapbox or segment scoring

@@ -91,7 +91,7 @@ def _parse_response_body(text: str) -> list[dict]:
 
 class BrightDataPlacesProvider(PlacesProvider):
     def __init__(self, keywords=DEFAULT_KEYWORDS, zoom_level: int = 16,
-                 limit_per_keyword: int = 20, timeout_s: float = 90.0,
+                 limit_per_keyword: int = 20, timeout_s: float = 180.0,
                  max_wait_s: float = 300.0, poll_interval_s: float = 5.0):
         self.keywords = keywords
         self.zoom_level = zoom_level
