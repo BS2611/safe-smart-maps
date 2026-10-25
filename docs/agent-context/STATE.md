@@ -8,7 +8,7 @@ Last full review by a human: (date/time)
 ## Person A: Bhavpreet (frontend / map)
 - Owns (do not edit without asking): `web/`, `docs/agent-context/` entries by A
 - Status: Branch `bhav/mapbox-routes` (cut from amey/backend fc503b7) has 2 commits: (1) Mapbox walking-route provider from the handoff doc, (2) the `ui` backend rebuilt on Amey's modules: POST /v1/routes, planner, candidates (detours), continuity, selector, explain, wording, prewarm, SF open data + transit providers (unwired). Full suite green (see the newest log for the count). Frontend (`web/`) still lives only on branch `ui`.
-- Doing now: Watch system done on branch `bhav/watch-system` (relay in server/, phone screen, watch/ Wear OS app; see log 20261025-025345). Needs: build APK and test on the Galaxy Watch; Amey review of server/api/watch.py.
+- Doing now: Watch system (relay in server/, phone Watch screen, watch/ Wear OS app) merged with latest main on branch `bhav/watch-integration`; paired and sent real heart-rate readings from a Galaxy Watch 4 (log 20261025-062445). Earlier: backend-data merged into main (log 20261025-042439). Needs: phone-screen test with the watch, then PR to main; Amey review of server/api/watch.py.
 - Files in progress: none
 - Next: copy `web/.env.demo.example` to ignored `web/.env.demo`, add the browser token, then run `npm run dev:local` and `npm run dev:demo` in separate terminals.
 - Blocked on: Amey's review; STATE "Last full review by a human" still blank
@@ -26,5 +26,26 @@ Last full review by a human: (date/time)
 - Status:
 - Next:
 
+## Owner tasks (cursor, on the owner's request)
+- Status: Street-level photos on the route detail map, branch `cursor/street-view-01d5`
+- Doing now: nothing
+- Files in progress: none
+- Next: none
+- Blocked on: STATE "Last full review by a human" is still blank. Bhavpreet owns `web/`; this edit was an explicit owner task.
+
+## Owner tasks (cursor agent; do not edit Bhavpreet or Amey)
+- Status: Phone layout and night-route launcher icons on `cursor/mobile-fixes-01d5`, merged with main after street view landed.
+- Doing now: Nothing. The phone grid, the plan hint, and the mipmap icons stay on this branch.
+- Files in progress: none
+- Next: Review the updated pull request.
+- Blocked on: STATE "Last full review by a human" is still blank
+
 ## Shared areas (ask first, log every change)
 - `CONTRACTS.md`, `DECISIONS.md`, `OPEN_QUESTIONS.md`, `docs/specs/`, `README.md`, `.env.example`, `package.json`
+
+## Owner tasks (cursor, web)
+- Status: Walking navigation and compass on `cursor/walk-nav-01d5`, merged with main after street view landed. Phone-layout fixes stay on their own PR.
+- Doing now: Opening the navigation pull request, then updating the phone-layout branch onto main.
+- Files in progress: none
+- Next: Review the pull request. A phone build needs the same `BUILD_TARGET=android` and `NEXT_DIST_DIR=.next-android` on both `next build` and `cap sync`, because Next writes that export into `.next-android` rather than `out`.
+- Blocked on: STATE "Last full review by a human" is still blank. No Android SDK on the last check, so `gradlew assembleDebug` was not run. WebKit was not launched.

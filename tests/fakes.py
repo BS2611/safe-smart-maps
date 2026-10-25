@@ -133,6 +133,8 @@ def make_planner(directory: Path, **overrides) -> RoutePlanner:
         places=overrides["places"] if "places" in overrides else make_places_provider(directory, places()),
         context=overrides.get("context", FakeContext()),
         explainer=overrides.get("explainer", FakeExplainer()),
+        auditor=overrides.get("auditor"),
+        photos=overrides.get("photos"),
     )
     return RoutePlanner(providers, load_scoring_config())
 

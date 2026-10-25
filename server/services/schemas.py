@@ -75,6 +75,23 @@ class LineString(BaseModel):
     coordinates: list[tuple[float, float]]   # [lng, lat]
 
 
+class StretchAuditOut(BaseModel):
+    """Claude's reading of one street photo for a weak or not-sure stretch. Daytime, possibly old; it is a
+    labeled extra signal and never changes the score."""
+    segment_id: str
+    photo_id: str
+    photo_url: str
+    captured_at: str | None
+    attribution: str
+    streetlights_visible: Literal["yes", "no", "unclear"]
+    open_storefronts: Literal["yes", "no", "unclear"]
+    sidewalk_visibility: Literal["good", "poor", "unclear"]
+    construction: Literal["yes", "no", "unclear"]
+    confidence: Literal["low", "medium", "high"]
+    evidence: str
+    label: str
+
+
 class RouteOut(BaseModel):
     label: Label
     also_labels: list[Label]
@@ -91,6 +108,7 @@ class RouteOut(BaseModel):
     segments: list[SegmentOut]
     explanation: str
     explanation_source: Literal["ai", "template"]
+    street_photo_audits: list[StretchAuditOut] = []   # empty when no photo source / key / photo
 
 
 class RoutesResponse(BaseModel):

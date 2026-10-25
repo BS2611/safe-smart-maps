@@ -45,6 +45,13 @@ test.describe("plan, routes, details", () => {
 
     await page.getByRole("link", { name: "Details" }).first().click();
     await expect(page.getByRole("heading", { name: "Along the whole walk" })).toBeVisible();
+    await page.getByRole("button", { name: "Start" }).click();
+    await expect(page.getByRole("region", { name: "Next maneuver" })).toBeVisible();
+    await page.getByRole("button", { name: "Simulate walk" }).click();
+    await expect(page.getByText("Simulated")).toBeVisible();
+    await expectNoSideScroll(page);
+    await page.getByRole("button", { name: "End" }).click();
+    await expect(page.getByRole("heading", { name: "Along the whole walk" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "What we checked" })).toBeVisible();
     await page.getByRole("group", { name: "Route segments" }).getByRole("button").first().click();
     await expect(page.getByRole("list", { name: "Reasons" })).toBeVisible();
@@ -138,5 +145,43 @@ test.describe("when things go wrong", () => {
       await page.waitForLoadState("networkidle");
       await expectNoSideScroll(page);
     }
+  });
+
+  test("a planned walk fits the phone on plan, routes, detail, and compare", async ({ page }) => {
+    await stubApi(page);
+    await page.goto("/plan");
+    const hint = page.getByText(/Live data covers the demo area/);
+    await expect(hint).toBeVisible();
+    await hint.scrollIntoViewIfNeeded();
+    const sticky = await page.locator(".plan-page .sticky-cta").evaluate((el) => {
+      const style = getComputedStyle(el);
+      const hintEl = [...document.querySelectorAll("p")].find((node) =>
+        (node.textContent ?? "").includes("Live data covers the demo area"));
+      const button = el.querySelector("button");
+      if (!hintEl || !button) return { opaque: false, overlap: 1, image: style.backgroundImage };
+      const hintBox = hintEl.getBoundingClientRect();
+      const buttonBox = button.getBoundingClientRect();
+      const overlap = Math.min(hintBox.bottom, buttonBox.bottom) - Math.max(hintBox.top, buttonBox.top);
+      const color = style.backgroundColor.match(/rgba?\(([^)]+)\)/)?.[1].split(",").map((part) => Number(part.trim())) ?? [];
+      const alpha = color.length === 4 ? color[3] : color.length === 3 ? 1 : 0;
+      return { opaque: alpha === 1 && style.backgroundImage === "none", overlap, image: style.backgroundImage };
+    });
+    expect(sticky.opaque).toBe(true);
+    expect(sticky.overlap).toBeLessThanOrEqual(0);
+    await expectNoSideScroll(page);
+
+    await planDemoTrip(page);
+    await expectNoSideScroll(page);
+    await page.getByRole("button", { name: "Show routes" }).click();
+    await expect(page.getByRole("heading", { name: "Why this route" })).toBeVisible();
+    await expectNoSideScroll(page);
+
+    await page.getByRole("link", { name: "Details" }).first().click();
+    await expect(page.getByRole("heading", { name: "Along the whole walk" })).toBeVisible();
+    await expectNoSideScroll(page);
+
+    await page.goto("/compare");
+    await expect(page.getByRole("heading", { name: /Key difference/ })).toBeVisible();
+    await expectNoSideScroll(page);
   });
 });

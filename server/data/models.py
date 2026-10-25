@@ -1,5 +1,5 @@
 """Internal data shapes for the data layer. Nothing here knows about Bright Data."""
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 
 
@@ -52,6 +52,7 @@ class RoadContext:
     osm_id: int | None = None
     name: str | None = None
     raw_highway: str | None = None      # original tag value, for debugging only
+    tunnel: bool = False                # explicit OSM tunnel=yes only; never guessed
 
 
 @dataclass(frozen=True)
@@ -66,7 +67,27 @@ class HelpPoint:
 
 
 @dataclass(frozen=True)
+class StreetLamp:
+    """One mapped street lamp. Presence is evidence of lighting; absence is not 'unlit'."""
+    lat: float
+    lng: float
+    osm_id: int | None = None
+
+
+@dataclass(frozen=True)
+class ActivityPoint:
+    """A mapped shop or busy amenity. A proxy for foot traffic, not a count of people."""
+    lat: float
+    lng: float
+    kind: str
+    osm_id: int | None = None
+
+
+@dataclass(frozen=True)
 class AreaContext:
     roads: list[RoadContext]
     help_points: list[HelpPoint]
     fetched_at: datetime
+    street_lamps: list[StreetLamp] = field(default_factory=list)
+    activity_points: list[ActivityPoint] = field(default_factory=list)
+    activity_known: bool = False        # True only after a query that asked for busy places

@@ -78,7 +78,7 @@
             "no open places nearby",
             "lit street",
             "main road",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "high"
@@ -111,7 +111,7 @@
             "no open places nearby",
             "lit street",
             "main road",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "high"
@@ -144,7 +144,7 @@
             "no open places nearby",
             "lit street",
             "main road",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "high"
@@ -177,7 +177,7 @@
             "no open places nearby",
             "lit street",
             "main road",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "high"
@@ -210,7 +210,7 @@
             "no open places nearby",
             "lit street",
             "main road",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "high"
@@ -244,7 +244,7 @@
             "lit street",
             "main road",
             "help point 108 m away",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "high"
@@ -278,7 +278,7 @@
             "lit street",
             "main road",
             "help point 57 m away",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "high"
@@ -312,7 +312,7 @@
             "lit street",
             "main road",
             "help point 27 m away",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "high"
@@ -346,7 +346,7 @@
             "lit street",
             "main road",
             "help point 69 m away",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "high"
@@ -380,7 +380,7 @@
             "lit street",
             "main road",
             "help point 118 m away",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "high"
@@ -413,7 +413,7 @@
             "2 open places within 50 m",
             "lit street",
             "main road",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "high"
@@ -447,7 +447,7 @@
             "lit street",
             "main road",
             "help point 134 m away",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "high"
@@ -481,7 +481,7 @@
             "lit street",
             "main road",
             "help point 83 m away",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "high"
@@ -515,7 +515,7 @@
             "lit street",
             "main road",
             "help point 33 m away",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "high"
@@ -549,7 +549,7 @@
             "lit street",
             "main road",
             "help point 19 m away",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "high"
@@ -583,7 +583,7 @@
             "lit street",
             "main road",
             "help point 70 m away",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "high"
@@ -617,7 +617,7 @@
             "lit street",
             "main road",
             "help point 120 m away",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "high"
@@ -650,7 +650,7 @@
             "2 open places within 50 m",
             "lit street",
             "main road",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "high"
@@ -683,7 +683,7 @@
             "no open places nearby",
             "lit street",
             "main road",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "high"
@@ -716,7 +716,7 @@
             "no open places nearby",
             "lit street",
             "main road",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "high"
@@ -749,7 +749,7 @@
             "no open places nearby",
             "lit street",
             "main road",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "high"
@@ -782,7 +782,7 @@
             "no open places nearby",
             "lit street",
             "main road",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "high"
@@ -815,7 +815,7 @@
             "no open places nearby",
             "lit street",
             "main road",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "high"
@@ -848,7 +848,7 @@
             "no open places nearby",
             "lit street",
             "main road",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "high"
@@ -926,7 +926,7 @@
             "no open places nearby",
             "not sure: lighting data missing",
             "side street",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "low"
@@ -959,7 +959,7 @@
             "2 open places within 50 m",
             "not sure: lighting data missing",
             "side street",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "low"
@@ -992,7 +992,7 @@
             "2 open places within 50 m",
             "not sure: lighting data missing",
             "side street",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "low"
@@ -1025,7 +1025,7 @@
             "2 open places within 50 m",
             "not sure: lighting data missing",
             "side street",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "low"
@@ -1058,7 +1058,7 @@
             "2 open places within 50 m",
             "not sure: lighting data missing",
             "side street",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "low"
@@ -1091,7 +1091,7 @@
             "2 open places within 50 m",
             "not sure: lighting data missing",
             "side street",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "low"
@@ -1124,7 +1124,7 @@
             "2 open places within 50 m",
             "not sure: lighting data missing",
             "side street",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "low"
@@ -1157,7 +1157,7 @@
             "1 open place within 50 m",
             "not sure: lighting data missing",
             "side street",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "low"
@@ -1190,7 +1190,7 @@
             "1 open place within 50 m",
             "not sure: lighting data missing",
             "side street",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "low"
@@ -1223,7 +1223,7 @@
             "no open places nearby",
             "not sure: lighting data missing",
             "side street",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "low"
@@ -1256,7 +1256,7 @@
             "no open places nearby",
             "not sure: lighting data missing",
             "side street",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "low"
@@ -1289,7 +1289,7 @@
             "no open places nearby",
             "not sure: lighting data missing",
             "side street",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "low"
@@ -1322,7 +1322,7 @@
             "no open places nearby",
             "not sure: lighting data missing",
             "side street",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "low"
@@ -1355,7 +1355,7 @@
             "no open places nearby",
             "not sure: lighting data missing",
             "side street",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "low"
@@ -1388,7 +1388,7 @@
             "no open places nearby",
             "not sure: lighting data missing",
             "side street",
-            "not sure: transit schedule not connected"
+            "transit not sure (no schedule feed)"
           ],
           "data_fetched_at": "2026-10-24T22:31:00Z",
           "confidence": "low"
@@ -1399,7 +1399,7 @@
     }
   ],
   "warnings": [
-    "Transit schedules are not connected, so transit shows as not sure.",
+    "Transit schedules are not configured, so transit shows as not sure.",
     "1 place had opening hours we could not read; it was not counted as open."
   ]
 }

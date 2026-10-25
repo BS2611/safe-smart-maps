@@ -49,10 +49,10 @@ export function PlanTripScreen() {
       <div className="card">
         <DepartureField value={trip.departISO} onChange={(departISO) => updateTrip({ departISO })} />
       </div>
-      <p className="caption">
-        Live data covers the demo area around Palace of Fine Arts and Montgomery BART. Trips up to about 5 km.
-      </p>
       <div className="sticky-cta">
+        <p className="caption">
+          Live data covers the demo area around Palace of Fine Arts and Montgomery BART. Trips up to about 5 km.
+        </p>
         <button type="button" className="btn primary" disabled={!isReady(trip)} onClick={showRoutes}>
           Show routes
         </button>

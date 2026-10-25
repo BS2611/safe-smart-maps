@@ -1,7 +1,7 @@
-"""Transit provider interface. No schedule feed is configured yet, so the default says "unknown".
+"""Transit provider interface. The GTFS reader lives in server/data/gtfs.py.
 
-We do NOT treat a mapped bus stop as "service running": that needs a schedule (511 / GTFS).
-Until a real provider is added here, the transit factor is "not sure" and the response says so.
+We do NOT treat a mapped bus stop as "service running": that needs a departure in the
+arrival window. NoTransitProvider is the stand-in when GTFS_DIR is unset: it returns None.
 """
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
