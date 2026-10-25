@@ -19,7 +19,6 @@ from server.data.models import AreaContext, BoundingBox, Place
 from server.data.opening_hours import OpenStatus, evaluate_open_status
 from server.data.osm import OsmError
 from server.data.sf_open_data import SfDataError
-from server.data.transit import TransitError
 from server.data.ttl_cache import TTLCache
 from server.services.candidates import generate_candidates
 from server.services.continuity import compute_continuity
@@ -63,10 +62,11 @@ class Providers:
     places: Any           # CachedPlacesProvider (reads saved listings only; never fetches)
     context: Any          # ContextProvider: get_area_context(BoundingBox) -> AreaContext
     explainer: Any        # explain(facts) -> (text, source)
-    transit: Any = None   # Muni511Provider-like: get_snapshot() -> TransitSnapshot; None = not connected
+    incidents: Any = None # get_recent_incidents(area) -> list, or None if not configured
+    outages: Any = None   # get_open_outages(area) -> list, or None if not configured
+    transit: Any = None   # TransitSchedule, or None when no GTFS feed is configured
     auditor: Any = None   # StreetAuditor-like: audit(photo) -> StretchAudit | None; needs `photos` too
     photos: Any = None    # PhotoSource-like: photo_near(lat, lng) -> Photo | None
-    sf: Any = None        # SocrataClient-like: get_recent_incidents(area), get_open_outages(area); None = not connected
 
 
 def apply_priorities(weights: dict[str, float], priorities: list[str], boost: float) -> dict[str, float]:
@@ -102,10 +102,6 @@ class RoutePlanner:
         self.cfg = cfg
         # OpenStreetMap (Overpass) is slow (20-40 s) and changes rarely: keep it for a day.
         self.context_cache = context_cache or TTLCache(24 * 3600)
-        # City open data (incidents, streetlight reports) is fast but changes daily: keep it 6 hours.
-        self.sf_cache = TTLCache(6 * 3600)
-        # Live 511 arrivals change by the minute but 511 allows ~60 requests an hour: keep them 3 minutes.
-        self.transit_cache = TTLCache(180)
 
     # ---------- data gathering ----------
     def _context(self, area: BoundingBox, warnings: list[str]) -> AreaContext | None:
@@ -115,37 +111,18 @@ class RoutePlanner:
                 ("osm", rounded), lambda: self.p.context.get_area_context(rounded))
         except OsmError:
             warnings.append("Street and lighting map data (OpenStreetMap): not available right now, "
-                            "so lighting, road type and help points show as not sure.")
+                            "so lighting, road type, help points and the activity estimate show as not sure.")
             return None
 
-    def _sf_data(self, area: BoundingBox, warnings: list[str]) -> tuple[list | None, list | None]:
-        """(incidents, outages) from SF open data. None = not available (that factor stays "not sure")."""
-        if self.p.sf is None:
-            return None, None
+    def _cached_points(self, name: str, area: BoundingBox, loader, warning: str, warnings: list[str]):
+        if loader is None:
+            return None
         rounded = _round_area(area)
-        out = []
-        for key, label, loader in (
-            ("incidents", "Past incident reports (SF open data)", lambda: self.p.sf.get_recent_incidents(rounded)),
-            ("outages", "Streetlight outage reports (SF 311)", lambda: self.p.sf.get_open_outages(rounded)),
-        ):
-            try:
-                out.append(self.sf_cache.get_or_load((key, rounded), loader))
-            except SfDataError:
-                warnings.append(f"{label}: not available right now, so it shows as not sure.")
-                out.append(None)
-        return out[0], out[1]
-
-    def _transit_data(self, area: BoundingBox, warnings: list[str]):
-        """Live bus and train arrivals near the route, or None (the factor stays "not sure")."""
-        if self.p.transit is None:
-            return None
         try:
-            snap = self.transit_cache.get_or_load("snapshot", self.p.transit.get_snapshot)
-        except TransitError as e:
-            if e.kind != "not_configured":
-                warnings.append("Live transit arrivals (511): not available right now, so transit shows as not sure.")
+            return self.context_cache.get_or_load((name, rounded), lambda: loader(rounded))
+        except SfDataError:
+            warnings.append(warning)
             return None
-        return snap.within(area)
 
     def _audit_stretches(self, scored: list[SegmentScore]) -> list[StretchAuditOut]:
         """Ask Claude to look at street photos of the weakest or not-sure stretches (a few, spread apart).
@@ -247,11 +224,26 @@ class RoutePlanner:
         if found.warning:
             warnings.append(found.warning)
         context = self._context(area, warnings)
+        incidents = self._cached_points(
+            "incidents", area, None if self.p.incidents is None else self.p.incidents.get_recent_incidents,
+            "Past incident reports are not available right now, so that part of the score shows as not sure.",
+            warnings)
+        outages = self._cached_points(
+            "outages", area, None if self.p.outages is None else self.p.outages.get_open_outages,
+            "Streetlight outage reports are not available right now, so lighting uses the map tag only.",
+            warnings)
+        transit = self.p.transit
+        if transit is None:
+            warnings.append("Transit schedules are not configured, so transit shows as not sure.")
+        elif getattr(transit, "failed", False):
+            warnings.append("Transit schedules could not be read, so transit shows as not sure.")
+            transit = None
+        elif getattr(transit, "partial_failure", False):
+            warnings.append("One transit feed could not be read. Stops from the feed that loaded are still used.")
         weights = apply_priorities(self.cfg["weights"], req.settings.priorities,
                                    self.cfg["priorities"]["boost"])
-        incidents, outages = self._sf_data(area, warnings)
-        scorer = SegmentScorer(self.cfg, found.places, context, weights, incidents=incidents, outages=outages,
-                              transit=self._transit_data(area, warnings))
+        scorer = SegmentScorer(self.cfg, found.places, context, weights,
+                               incidents=incidents, outages=outages, transit=transit)
 
         results = {}
         for cand in candidates:

@@ -12,7 +12,7 @@ describe("averageFactors", () => {
     const route = early.routes[0];
     const avg = averageFactors(route);
     expect(Object.keys(avg).sort()).toEqual(Object.keys(route.segments[0].factors).sort());
-    expect(avg.transit).toBeNull();                     // transit is not connected in the fixtures
+    expect(avg.transit).toBeNull();                     // transit is null in these saved responses
     expect(avg.turns).toBeGreaterThan(0);
     for (const v of Object.values(avg)) if (v !== null) expect(v).toBeGreaterThanOrEqual(0);
   });
@@ -76,7 +76,7 @@ describe("sources", () => {
   it("marks only the sources named in warnings as not sure", () => {
     const s = sourceStatuses("success", [
       "Live business listings: not available right now (failed).",
-      "Transit schedules are not connected, so transit shows as not sure.",
+      "Transit schedules are not configured, so transit shows as not sure.",
     ]);
     expect(s.places).toBe("unavailable");
     expect(s.transit).toBe("unavailable");

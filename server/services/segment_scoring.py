@@ -8,10 +8,12 @@ The score is NOT a safety claim; it summarizes contextual signals.
 import math
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 from server.data.models import AreaContext, Place
-from server.data.opening_hours import PLACE_TZ, OpenStatus, evaluate_open_status
-from server.services.geo import bearing_deg, point_to_polyline_m, turn_angle_deg
+from server.data.opening_hours import OpenStatus, evaluate_open_status
+from server.data.sf_open_data import Incident, Outage
+from server.services.geo import haversine_m, point_to_polyline_m
 from server.services.scoring_config import ScoringConfigError
 from server.services.segmenter import Segment
 
@@ -78,14 +80,15 @@ class SegmentScorer:
 
     def __init__(self, config: dict, places: list[Place] | None,
                  area_context: AreaContext | None, weights: dict[str, float] | None = None,
-                 incidents: list | None = None, outages: list | None = None, transit=None):
+                 incidents: list[Incident] | None = None, outages: list[Outage] | None = None,
+                 transit=None):
         check_scoring_params(config)
         self.config = config
         self.places = places
         self.area_context = area_context
-        self.incidents = incidents      # Incident(lat, lng) list; None = source unavailable
-        self.outages = outages          # Outage(lat, lng) list of OPEN streetlight reports; None = unavailable
-        self.transit = transit          # TransitSnapshot (live arrivals); None = unavailable
+        self.incidents = incidents          # None = dataset unavailable; [] = none reported
+        self.outages = outages              # None = 311 unavailable; [] = no open outage
+        self.transit = transit              # None = no schedule; else .active_stops(when, window)
         self.weights = dict(weights or config["weights"])
         if set(self.weights) != set(config["weights"]):
             raise ScoringConfigError("weights override must use the same factor names as the config")
@@ -138,12 +141,11 @@ class SegmentScorer:
         ev = {"osm_id": road.osm_id, "name": road.name, "road_class": road.road_class,
               "lit": road.lit, "match_distance_m": round(dist, 1)}
         params = self.config["factor_params"]
-        lit_value = params["lighting_by_lit"].get(road.lit)
+        lit_value, lit_reason = self._lighting_value(seg, road.lit)
         if lit_value is None:
-            lighting = FactorResult("lighting", None, "lighting not sure (not tagged)", ev)
+            lighting = FactorResult("lighting", None, lit_reason, ev)
         else:
-            lighting = FactorResult("lighting", float(lit_value),
-                                    "lit road" if road.lit == "yes" else "road tagged as not lit", ev)
+            lighting = FactorResult("lighting", lit_value, lit_reason, ev)
         class_value = params["main_road_by_class"].get(road.road_class)
         if class_value is None:
             main = FactorResult("main_road", None, f"road type not sure ({road.road_class})", ev)
@@ -170,88 +172,143 @@ class SegmentScorer:
                             f"nearest help point: {best.type.replace('_', ' ')} ({label}), {best_d:.0f} m",
                             {"type": best.type, "name": best.name, "distance_m": round(best_d, 1)})
 
-    def _turns(self, seg: Segment, prev: Segment | None) -> FactorResult:
-        """Fewer sharp turns is easier to follow. Pure geometry, always known."""
-        params = self.config["factor_params"]["turns_by_angle"]
-        if prev is None:
-            return FactorResult("turns", float(params["gentle"]), "start of the route (no turn)")
-        angle = turn_angle_deg(bearing_deg(prev.start, prev.end), bearing_deg(seg.start, seg.end))
-        if angle < params["gentle_max_deg"]:
-            value, word = params["gentle"], "gentle"
-        elif angle < params["moderate_max_deg"]:
-            value, word = params["moderate"], "moderate"
+    def _count_near(self, seg: Segment, points, radius: float) -> int:
+        return sum(1 for p in points if point_to_polyline_m((p.lat, p.lng), seg.coordinates) <= radius)
+
+    def _lighting_value(self, seg: Segment, lit: str) -> tuple[float | None, str]:
+        """Unknown lit tags stay unknown. Lamps or an open outage can still be evidence."""
+        params = self.config["factor_params"]
+        lamps = 0
+        if self.area_context is not None:
+            lamps = self._count_near(seg, self.area_context.street_lamps, params["streetlight_radius_m"])
+        outages = None if self.outages is None else self._count_near(seg, self.outages, params["outage_radius_m"])
+        tagged = params["lighting_by_lit"].get(lit)
+        if tagged is None:
+            if lamps > 0:
+                table = params["lighting_from_lamps"]
+                value = float(table[min(lamps, len(table) - 1)])
+                reason = f"{lamps} street lamp{'s' if lamps != 1 else ''} nearby (street lighting tag is not sure)"
+            elif outages:
+                value = float(params["lighting_outage_only"])
+                reason = "open streetlight outage nearby (street lighting tag is not sure)"
+            else:
+                return None, "lighting not sure (not tagged)"
+            if value <= 0:
+                return None, "lighting not sure (not tagged)"
+            if outages and lamps:
+                value = max(float(params["lighting_outage_only"]), value - float(params["lighting_outage_penalty"]))
+                if value <= 0:
+                    return None, "lighting not sure (not tagged)"
+                reason += f"; {outages} open streetlight outage{'s' if outages != 1 else ''} nearby"
+            return value, reason
+        value = float(tagged)
+        reason = "lit road" if lit == "yes" else "road tagged as not lit"
+        if lit == "no" and lamps:
+            value = max(value, float(params.get("lighting_unlit_with_lamps", 40)))
+            reason = "road tagged as not lit, street lamp nearby"
+        elif lit == "yes" and lamps:
+            reason = f"lit road, {lamps} street lamp{'s' if lamps != 1 else ''} nearby"
+        if outages and lit == "yes":
+            value = max(float(params["lighting_outage_only"]), value - float(params["lighting_outage_penalty"]))
+            reason += f"; {outages} open streetlight outage{'s' if outages != 1 else ''} nearby"
+        return value, reason
+
+    def _turns(self, seg: Segment, prev_bearing: float | None) -> FactorResult:
+        params = self.config["factor_params"]
+        change = _max_turn_deg(seg.coordinates, prev_bearing)
+        if change < params["turn_min_deg"]:
+            value = float(params["turn_score_straight"])
+            reason = "straight stretch"
+        elif change < params["turn_moderate_deg"]:
+            value = float(params["turn_score_moderate"])
+            reason = f"moderate turn ({change:.0f}°)"
+        elif change < params["turn_sharp_deg"]:
+            value = float(params["turn_score_sharp"])
+            reason = f"sharp turn ({change:.0f}°)"
         else:
-            value, word = params["sharp"], "sharp"
-        return FactorResult("turns", float(value), f"{word} turn ({angle:.0f} degrees)", {"angle_deg": round(angle, 1)})
+            value = float(params["turn_score_reversal"])
+            reason = f"very sharp turn ({change:.0f}°)"
+        road, _dist = self._match_road(seg)
+        dark = road is not None and road.lit == "no" and change >= params["turn_min_deg"]
+        if dark:
+            value = max(0.0, value - params["dark_turn_penalty"])
+            reason += " on a street tagged as not lit"
+        if road is not None and road.tunnel:
+            value = max(0.0, value - params["tunnel_penalty"])
+            reason += "; underpass"
+        return FactorResult("turns", value, reason, {"turn_deg": round(change, 1), "dark": dark,
+                                                      "tunnel": bool(road and road.tunnel)})
 
     def _activity(self, seg: Segment, arrival: datetime) -> FactorResult:
-        """ESTIMATE of how busy the street is: open places nearby x time of day. Not a count of people."""
-        if self.places is None:
-            return FactorResult("activity", None, "activity estimate: no place data (not sure)")
-        radius = self.config["radii_m"]["activity"]
-        open_n = sum(
-            1 for p in self.places
-            if point_to_polyline_m((p.lat, p.lng), seg.coordinates) <= radius
-            and evaluate_open_status(p, arrival) is OpenStatus.OPEN)
-        params = self.config["factor_params"]["activity"]
-        hour = arrival.astimezone(PLACE_TZ).hour
-        starts = sorted(int(k) for k in params["time_of_day"])
-        key = str(max([s for s in starts if s <= hour], default=starts[0]))
-        weight = params["time_of_day"][key]
-        value = min(100.0, open_n * params["points_per_open_place"]) * weight
+        if self.area_context is None or not self.area_context.activity_known:
+            return FactorResult("activity", None, "activity not sure (no place-density data)")
+        params = self.config["factor_params"]
+        count = self._count_near(seg, self.area_context.activity_points, params["activity_radius_m"])
+        table = params["activity_by_count"]
+        base = float(table[min(count, len(table) - 1)])
+        local_hour = arrival.astimezone(ZoneInfo("America/Los_Angeles")).hour
+        # arrival is already timezone-aware; use its clock hour in that zone
+        factors = params["activity_time_factor"]
+        if local_hour < params["activity_late_end_hour"]:
+            label, mult = "late night", factors["late"]
+        elif local_hour >= params["activity_evening_start_hour"]:
+            label, mult = "evening", factors["evening"]
+        else:
+            label, mult = "daytime", factors["day"]
+        value = max(0.0, min(100.0, base * mult))
         return FactorResult(
             "activity", value,
-            f"activity estimate: {open_n} open place{'s' if open_n != 1 else ''} within {radius:g} m at this hour "
-            "(an estimate, not a count of people)", {"open": open_n, "time_weight": weight})
+            f"activity estimate: {count} busy place{'s' if count != 1 else ''} nearby, {label}",
+            {"places": count, "time": label})
 
     def _incidents(self, seg: Segment) -> FactorResult:
-        """Past police incident reports nearby. Low weight on purpose: it reflects policing as much as danger."""
         if self.incidents is None:
-            return FactorResult("incidents", None, "past incidents: no data (not sure)")
-        radius = self.config["radii_m"]["incident"]
-        n = sum(1 for i in self.incidents if point_to_polyline_m((i.lat, i.lng), seg.coordinates) <= radius)
-        value = max(0.0, 100.0 - n * self.config["factor_params"]["incident_points_each"])
-        return FactorResult("incidents", value,
-                            f"{n} past incident report{'s' if n != 1 else ''} within {radius:g} m (low weight)",
-                            {"count": n})
-
-    def _outage_penalty(self, lighting: FactorResult, seg: Segment) -> FactorResult:
-        """Open streetlight-outage reports near the segment lower a KNOWN lighting value. They never
-        turn "not sure" into a number: an outage report alone does not say the street is unlit."""
-        if self.outages is None or lighting.value is None:
-            return lighting
-        radius = self.config["radii_m"]["outage"]
-        n = sum(1 for o in self.outages if point_to_polyline_m((o.lat, o.lng), seg.coordinates) <= radius)
-        if not n:
-            return lighting
-        value = max(0.0, lighting.value - n * self.config["factor_params"]["outage_penalty_each"])
-        return FactorResult("lighting", value, f"{lighting.reason}; {n} open streetlight outage report"
-                            f"{'s' if n != 1 else ''} nearby", {**lighting.evidence, "outages": n})
+            return FactorResult("incidents", None, "past incidents not sure (no incident data)")
+        params = self.config["factor_params"]
+        count = self._count_near(seg, self.incidents, params["incident_radius_m"])
+        table = params["incidents_by_count"]
+        value = float(table[min(count, len(table) - 1)])
+        if count == 0:
+            reason = f"no incident reports within {params['incident_radius_m']:g} m"
+        else:
+            reason = (f"{count} incident report{'s' if count != 1 else ''} within "
+                      f"{params['incident_radius_m']:g} m (low weight; reports can reflect policing patterns)")
+        return FactorResult("incidents", value, reason, {"reports": count})
 
     def _transit(self, seg: Segment, arrival: datetime) -> FactorResult:
-        """Vehicles predicted at nearby stops around the arrival time. Live feed only: later than the
-        feed's horizon (or before it) is "not sure", never a guess."""
-        snap = self.transit
-        if snap is None:
-            return FactorResult("transit", None, "transit: no live feed (not sure)")
-        if arrival > snap.horizon or arrival < snap.fetched_at - timedelta(minutes=5):
-            return FactorResult("transit", None, "transit: live arrivals only cover the next ~30 minutes (not sure)")
-        radius = self.config["radii_m"]["transit"]
-        win = self.config["factor_params"]["transit_window_min"]
-        lo, hi = arrival - timedelta(minutes=win["before"]), arrival + timedelta(minutes=win["after"])
-        n = sum(1 for a in snap.arrivals if lo <= a.time <= hi
-                and point_to_polyline_m((a.lat, a.lng), seg.coordinates) <= radius)
-        table = self.config["factor_params"]["transit_by_count"]
-        return FactorResult("transit", float(table[min(n, len(table) - 1)]),
-                            f"{n} bus or train arrival{'s' if n != 1 else ''} predicted within {radius:g} m "
-                            f"in the next {win['after']} min (live feed)", {"arrivals": n})
+        if self.transit is None:
+            return FactorResult("transit", None, "transit not sure (no schedule)")
+        params = self.config["factor_params"]
+        window = int(params["transit_window_min"])
+        stops = self.transit.active_stops(arrival, window)
+        if not stops:
+            return FactorResult("transit", 0.0, f"no stop with service in the next {window} minutes",
+                                {"active_stops": 0})
+        best, best_d = None, math.inf
+        for stop in stops:
+            dist = point_to_polyline_m((stop.lat, stop.lng), seg.coordinates)
+            if dist < best_d:
+                best, best_d = stop, dist
+        radius = params["transit_radius_m"]
+        if best_d > radius:
+            return FactorResult("transit", 0.0, f"nearest running stop is {best_d:.0f} m away",
+                                {"distance_m": round(best_d, 1)})
+        value = max(0.0, 100.0 * (1 - best_d / radius))
+        return FactorResult("transit", value,
+                            f"{best.name}, {best_d:.0f} m, departure within {window} minutes",
+                            {"name": best.name, "distance_m": round(best_d, 1)})
 
     def _covered(self, seg: Segment, arrival: datetime) -> bool | None:
         """Continuity coverage (TECHNICAL_SPEC s5): an OPEN place or a help point within
         radii_m.coverage of the segment. True as soon as one is found. False only when both
         datasets are available and nothing could count (no place with unknown hours nearby either);
-        otherwise None = not sure. Transit is not available yet."""
+        otherwise None = not sure. An active transit stop counts only when a schedule is loaded."""
         radius = self.config["radii_m"]["coverage"]
+        if self.transit is not None:
+            window = int(self.config["factor_params"]["transit_window_min"])
+            for stop in self.transit.active_stops(arrival, window):
+                if point_to_polyline_m((stop.lat, stop.lng), seg.coordinates) <= radius:
+                    return True
         if self.area_context is not None and any(
                 point_to_polyline_m((h.lat, h.lng), seg.coordinates) <= radius
                 for h in self.area_context.help_points):
@@ -268,25 +325,19 @@ class SegmentScorer:
         return False
 
     # ---- score -------------------------------------------------------------------
-    def score_segment(self, seg: Segment, arrival: datetime, prev: Segment | None = None) -> SegmentScore:
+    def score_segment(self, seg: Segment, arrival: datetime,
+                      prev_bearing: float | None = None) -> SegmentScore:
         if arrival.tzinfo is None:
             raise ValueError("arrival must be timezone-aware")
         lighting, main_road = self._road_factors(seg)
-        lighting = self._outage_penalty(lighting, seg)
-        found = {f.name: f for f in (self._open_places(seg, arrival), lighting, main_road,
-                                     self._help_points(seg), self._turns(seg, prev),
-                                     self._activity(seg, arrival), self._incidents(seg),
-                                     self._transit(seg, arrival))}
-        for name in self.config["factor_params"]["not_yet_implemented"]:
-            found[name] = FactorResult(name, None, f"{name.replace('_', ' ')}: not available yet (not sure)")
+        found = {f.name: f for f in (
+            self._open_places(seg, arrival), lighting, main_road, self._help_points(seg),
+            self._transit(seg, arrival), self._activity(seg, arrival), self._incidents(seg),
+            self._turns(seg, prev_bearing))}
         factors = {name: found[name] for name in self.weights}   # config order
         known = {n: f for n, f in factors.items() if f.value is not None}
         known_w = sum(self.weights[n] for n in known)
-        # "turns" is route geometry, not a condition of the street: with nothing else known there is
-        # nothing to score, so the segment stays "not sure" instead of looking perfect.
-        has_evidence = any(n != "turns" for n in known)
-        score = (sum(self.weights[n] * f.value for n, f in known.items()) / known_w
-                 if known and known_w > 0 and has_evidence else None)
+        score = sum(self.weights[n] * f.value for n, f in known.items()) / known_w if known else None
         bands = self.config["bands"]
         band = ("unknown" if score is None else "green" if score >= bands["green_min"]
                 else "yellow" if score >= bands["yellow_min"] else "red")
@@ -303,6 +354,54 @@ class SegmentScorer:
     def score_route(self, segments: list[Segment], depart_at: datetime) -> list[SegmentScore]:
         """Arrival at each segment's start = depart_at + offset / walking speed."""
         speed = self.config["walking_speed_mps"]
-        return [self.score_segment(s, depart_at + timedelta(seconds=s.offset_m / speed),
-                                   segments[i - 1] if i else None)
-                for i, s in enumerate(segments)]
+        scored = []
+        prev = None
+        for s in segments:
+            scored.append(self.score_segment(
+                s, depart_at + timedelta(seconds=s.offset_m / speed), prev))
+            prev = _final_bearing(s.coordinates)
+        return scored
+
+
+def _bearing(a, b) -> float | None:
+    if haversine_m(a, b) < 1:
+        return None
+    lat1, lon1 = math.radians(a[0]), math.radians(a[1])
+    lat2, lon2 = math.radians(b[0]), math.radians(b[1])
+    dlon = lon2 - lon1
+    x = math.sin(dlon) * math.cos(lat2)
+    y = math.cos(lat1) * math.sin(lat2) - math.sin(lat1) * math.cos(lat2) * math.cos(dlon)
+    return (math.degrees(math.atan2(x, y)) + 360) % 360
+
+
+def _delta(a: float, b: float) -> float:
+    return abs((b - a + 180) % 360 - 180)
+
+
+def _initial_bearing(coords) -> float | None:
+    for a, b in zip(coords, coords[1:], strict=False):
+        bearing = _bearing(a, b)
+        if bearing is not None:
+            return bearing
+    return None
+
+
+def _final_bearing(coords) -> float | None:
+    for a, b in reversed(list(zip(coords, coords[1:], strict=False))):
+        bearing = _bearing(a, b)
+        if bearing is not None:
+            return bearing
+    return None
+
+
+def _max_turn_deg(coords, prev_bearing: float | None) -> float:
+    bearings = []
+    for a, b in zip(coords, coords[1:], strict=False):
+        bearing = _bearing(a, b)
+        if bearing is not None:
+            bearings.append(bearing)
+    deltas = []
+    if prev_bearing is not None and bearings:
+        deltas.append(_delta(prev_bearing, bearings[0]))
+    deltas.extend(_delta(a, b) for a, b in zip(bearings, bearings[1:], strict=False))
+    return max(deltas) if deltas else 0.0

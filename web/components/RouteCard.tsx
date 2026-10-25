@@ -35,7 +35,7 @@ export function RouteCard({ route, selected, onSelect }: Props) {
         </span>
         <ScoreRibbon segments={route.segments} />
       </button>
-      {selected ? <p className="caption on-map">Showing on the map</p> : null}
+      {selected ? <p className="caption on-map">On the map</p> : null}
       {merged.length ? (
         <p className="small muted" style={{ marginTop: 8 }}>
           {[LABEL_NAMES[route.label], ...merged].join(" and ")} are the same route.

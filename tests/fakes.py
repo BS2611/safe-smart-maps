@@ -133,32 +133,10 @@ def make_planner(directory: Path, **overrides) -> RoutePlanner:
         places=overrides["places"] if "places" in overrides else make_places_provider(directory, places()),
         context=overrides.get("context", FakeContext()),
         explainer=overrides.get("explainer", FakeExplainer()),
-        transit=overrides.get("transit"),
         auditor=overrides.get("auditor"),
         photos=overrides.get("photos"),
-        sf=overrides.get("sf"),  # None = SF open data not connected, so those factors stay not sure
     )
     return RoutePlanner(providers, load_scoring_config())
-
-
-class FakeSf:
-    """LABELED FIXTURE for SF open data: fixed incident and streetlight-outage lists, or an error."""
-
-    def __init__(self, incidents=(), outages=(), error=None):
-        self.incidents, self.outages, self.error = list(incidents), list(outages), error
-        self.calls = 0
-
-    def get_recent_incidents(self, area):
-        self.calls += 1
-        if self.error:
-            raise self.error
-        return self.incidents
-
-    def get_open_outages(self, area):
-        self.calls += 1
-        if self.error:
-            raise self.error
-        return self.outages
 
 
 def osm_down() -> OsmError:

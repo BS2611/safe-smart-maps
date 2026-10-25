@@ -57,8 +57,8 @@ Place model includes `open_intervals`, `is_24h`, `category`, `source`, `fetched_
 ```json
 {
   "version": "scoring_v1",
-  "weights": {"open_places":0.25,"lighting":0.20,"main_road":0.15,"help_points":0.10,
-              "transit":0.10,"activity":0.10,"incidents":0.05,"turns":0.05},
+  "weights": {"open_places":0.22,"lighting":0.22,"main_road":0.13,"help_points":0.10,
+              "transit":0.12,"activity":0.08,"incidents":0.05,"turns":0.08},
   "segment_length_m": 50,
   "radii_m": {"open_place":50,"help_point":150,"coverage":75},
   "continuity": {"coverage_target":0.80,"gap_limit_m":150,"window_m":200,

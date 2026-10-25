@@ -78,7 +78,7 @@ describe("RouteDetailScreen", () => {
   it("handles errors and an empty trip", async () => {
     stubFetch({ status: 502, respond: () => ({ error: { code: "UPSTREAM_ERROR", message: "x" } }) });
     renderWithTrip(<RouteDetailScreen routeId="x" />, READY_TRIP);
-    expect(await screen.findByText("We could not load this route")).toBeInTheDocument();
+    expect(await screen.findByText("This route didn't load")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Try again" })).toBeInTheDocument();
   });
 
@@ -146,7 +146,7 @@ describe("CompareScreen", () => {
   it("shows an error if either check fails", async () => {
     stubFetch({ respond: (body) => (body?.depart_time.startsWith("2026-10-25T08") ? new Error("offline") : fixtureFor(body?.depart_time)) });
     renderWithTrip(<CompareScreen now={NOW} />, tripBoth);
-    expect(await screen.findByText("We could not compare the two times")).toBeInTheDocument();
+    expect(await screen.findByText("The comparison didn't finish")).toBeInTheDocument();
     await userEvent.setup().click(screen.getByRole("button", { name: "Try again" }));
   });
 
@@ -165,7 +165,7 @@ describe("HowScoresScreen", () => {
     renderWithTrip(<HowScoresScreen />);
     expect(screen.getByText("100% total")).toBeInTheDocument();
     for (const f of FACTORS) expect(screen.getByRole("heading", { name: new RegExp(f.label) })).toBeInTheDocument();
-    expect(screen.getByText("25%")).toBeInTheDocument();
+    expect(screen.getByText("13%")).toBeInTheDocument();
   });
 
   it("explains the whole-route rule and shows the formula", () => {
@@ -177,7 +177,7 @@ describe("HowScoresScreen", () => {
 
   it("is honest about sources, limits and privacy, and offers 911", () => {
     const { container } = renderWithTrip(<HowScoresScreen />);
-    expect(screen.getByText(/Transit:/).parentElement).toHaveTextContent(/not connected yet/);
+    expect(screen.getByText(/Transit:/).parentElement).toHaveTextContent(/when a feed is configured/);
     expect(screen.getByText(/AI can be wrong/)).toBeInTheDocument();
     expect(screen.getByText(/Incident data can be unfair/)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Call 911" })).toHaveAttribute("href", "tel:911");

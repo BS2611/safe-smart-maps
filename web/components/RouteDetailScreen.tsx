@@ -42,7 +42,7 @@ export function RouteDetailScreen({ routeId }: { routeId: string }) {
     return (
       <div className="screen stack">
         <AppHeader title="Route details" backHref="/routes" />
-        <Banner kind="error" title="We could not load this route">{describeError(state.error)}</Banner>
+        <Banner kind="error" title="This route didn't load">{describeError(state.error)}</Banner>
         <div className="stack-sm">
           <button type="button" className="btn primary" onClick={retry}>Try again</button>
           <Link href="/plan" className="btn secondary">Plan a walk</Link>
@@ -115,7 +115,7 @@ export function RouteDetailScreen({ routeId }: { routeId: string }) {
 
       <section className="card stack-sm" aria-labelledby="strip-h">
         <h2 id="strip-h">Every stretch of the route</h2>
-        <p className="small muted">Tap a part to see why it is rated that way.</p>
+        <p className="small muted">Tap a stretch to see why.</p>
         <div className="strip" role="group" aria-label="Route segments">
           {route.segments.map((s, i) => (
             <button key={s.segment_id} type="button" className={`band-${s.band}`}

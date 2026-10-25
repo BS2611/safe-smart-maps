@@ -11,17 +11,17 @@ export type FactorInfo = {
 
 export const FACTORS: FactorInfo[] = [
   {
-    id: "open_places", label: "Open places", weight: 25,
+    id: "open_places", label: "Open places", weight: 22,
     description: "Shops, cafes and restaurants that are open when you reach them, within about 50 m. 24-hour pharmacies, gas stations, stores and restaurants count more.",
     source: "Public business listings, fetched live",
   },
   {
-    id: "lighting", label: "Lighting", weight: 20,
-    description: "Streets marked as lit on OpenStreetMap. Open streetlight outage reports lower the score. Many streets have no lighting tag, and then we say not sure.",
-    source: "OpenStreetMap, SF 311 streetlight reports",
+    id: "lighting", label: "Lighting", weight: 22,
+    description: "Streets tagged as lit, plus nearby street lamps. An open streetlight outage lowers the score. A missing lighting tag stays not sure. It is never treated as unlit.",
+    source: "OpenStreetMap lit tags and street lamps, SF 311 open outages",
   },
   {
-    id: "main_road", label: "Main roads", weight: 15,
+    id: "main_road", label: "Main roads", weight: 13,
     description: "Main roads rather than alleys, paths or dead ends.",
     source: "OpenStreetMap",
   },
@@ -31,24 +31,24 @@ export const FACTORS: FactorInfo[] = [
     source: "OpenStreetMap, public business listings",
   },
   {
-    id: "transit", label: "Running transit", weight: 10,
-    description: "A stop with service in the next 15 minutes. Transit schedules are not connected yet, so this shows as not sure.",
-    source: "Transit schedules (511 / GTFS), not connected yet",
+    id: "transit", label: "Running transit", weight: 12,
+    description: "A stop with a departure in the next 15 minutes. If no schedule feed is configured, this shows as not sure.",
+    source: "SF Muni and BART GTFS, when a feed is configured",
   },
   {
-    id: "activity", label: "Activity estimate", weight: 10, estimate: true,
-    description: "An estimate from the open places nearby and the time of day. It is not a count of people.",
-    source: "Derived from open places and time of day",
+    id: "activity", label: "Activity estimate", weight: 8, estimate: true,
+    description: "An estimate of how busy the street is, from nearby shops and busy places on the map and the time of day. It is not a count of people.",
+    source: "OpenStreetMap places and time of day",
   },
   {
     id: "incidents", label: "Past incidents", weight: 5,
-    description: "Past incident reports, kept at a low weight on purpose: they can reflect policing patterns as much as danger.",
+    description: "Past incident reports, kept at a low weight on purpose: they can reflect policing patterns as much as the events.",
     source: "SF open data (police incident reports)",
   },
   {
-    id: "turns", label: "Turns & dead ends", weight: 5,
-    description: "Fewer sharp turns and no underpasses make a route easier to follow.",
-    source: "Route shape, OpenStreetMap",
+    id: "turns", label: "Turns & dead ends", weight: 8,
+    description: "How sharp the turn is. A turn on a street tagged as unlit counts as a dark turn. Unknown lighting is not treated as dark. An underpass lowers the score.",
+    source: "Route shape and OpenStreetMap tunnel tags",
   },
 ];
 

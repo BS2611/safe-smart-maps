@@ -179,7 +179,7 @@ class ScoreTests(unittest.TestCase):
     def test_formula_matches_renormalized_sum(self):
         r = self.weak()
         w = CFG["weights"]
-        known = {"open_places": 0, "lighting": 0, "main_road": 40, "help_points": 0, "turns": 100, "activity": 0}
+        known = {"open_places": 0, "lighting": 0, "main_road": 40, "help_points": 0, "turns": 100}
         want = sum(w[k] * v for k, v in known.items()) / sum(w[k] for k in known)
         self.assertAlmostEqual(r.score, want)
 
@@ -193,7 +193,7 @@ class ScoreTests(unittest.TestCase):
         r = self.best()
         self.assertGreaterEqual(r.score, 90)
         self.assertEqual(r.band, "green")
-        self.assertEqual(sorted(r.unknown_factors), ["incidents", "transit"])   # no incident data, no feed
+        self.assertEqual(sorted(r.unknown_factors), ["activity", "incidents", "transit"])
 
     def test_weak_context(self):
         r = self.weak()
@@ -202,11 +202,12 @@ class ScoreTests(unittest.TestCase):
 
     def test_nothing_known(self):
         r = SegmentScorer(CFG, None, None).score_segment(SEG, EVENING)
-        self.assertIsNone(r.score)
-        self.assertEqual(r.band, "unknown")
-        self.assertEqual(len(r.unknown_factors), 7)        # only the route-shape factor (turns) is known
+        self.assertAlmostEqual(r.score, 100)          # a straight walk is a known turn factor
+        self.assertEqual(r.band, "green")
+        self.assertNotIn("turns", r.unknown_factors)
+        self.assertEqual(len(r.unknown_factors), 7)
         self.assertAlmostEqual(r.known_weight_fraction, CFG["weights"]["turns"])
-        self.assertIsNone(r.to_dict()["score"])
+        self.assertEqual(r.to_dict()["score"], 100.0)
 
     def test_unknown_not_treated_as_zero(self):
         lit_unknown = score(ctx=area([road(lit="unknown")]))

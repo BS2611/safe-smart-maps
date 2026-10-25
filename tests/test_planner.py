@@ -73,9 +73,12 @@ class ContractTests(PlannerCase):
 
     def test_unavailable_factors_stay_not_sure_never_zero(self):
         seg = self.planner().plan(request()).routes[0].segments[0]
-        for name in CFG["factor_params"]["not_yet_implemented"]:
+        for name in ("activity", "incidents", "transit"):
             self.assertIsNone(seg.factors[name], name)
             self.assertIn(name, seg.unknown_factors)
+        self.assertIsNotNone(seg.factors["turns"])
+        self.assertNotIn("turns", seg.unknown_factors)
+        self.assertTrue(any("Transit schedules" in w for w in self.planner().plan(request()).warnings))
 
     def test_wording_has_no_safety_promises(self):
         resp = self.planner().plan(request())
