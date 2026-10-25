@@ -46,7 +46,7 @@ Not measurements of safety; tunable constants all live in `scoring/scoring_v1.js
 - `open_places`: places OPEN at arrival within `radii_m.open_place` of the segment path -> `open_places_by_count[min(n, 3)]` = 0/50/75/100. Place data unavailable (`None`) -> unknown; available with zero open -> 0; unknown-hours places never count as open or closed, kept as evidence.
 - `lighting` / `main_road`: nearest `RoadContext` within `radii_m.road_match` (25 m) of the midpoint. lit yes=100, no=0, unknown=unknown. Class trunk/primary/secondary/tertiary=100, residential=60, service=40, pedestrian=40; motorway/other/unknown/no match = unknown.
 - `help_points`: nearest police/hospital/fire_station to the segment, `max(0, 100*(1 - d/150))`. AreaContext unavailable -> unknown; available but empty -> 0 ("none found in queried area").
-- `turns` (route geometry: angle at the corner 100/70/40), `activity` (open places within 100 m x time-of-day weight; an estimate, not a count of people) and `incidents` (100 minus 10 per SF police report within 100 m in 90 days; not sure when SF open data is unavailable) are implemented. `lighting` is lowered by 30 per open SF 311 streetlight outage within 50 m, only when OSM lighting is already known. `transit`: always unknown for now (no provider wired).
+- `transit` (live 511 arrivals within 100 m, 0/50/75/100 for 0/1/2/3+ in the next 15 min; not sure outside the live window) is implemented. `turns` (route geometry: angle at the corner 100/70/40), `activity` (open places within 100 m x time-of-day weight; an estimate, not a count of people) and `incidents` (100 minus 10 per SF police report within 100 m in 90 days; not sure when SF open data is unavailable) are implemented. `lighting` is lowered by 30 per open SF 311 streetlight outage within 50 m, only when OSM lighting is already known. 
 - Scorer inputs: `SegmentScorer(config, places: list[Place] | None, area_context: AreaContext | None, weights=None)`; `None` = dataset unavailable, empty = available but nothing found. Scoring reads only; it never fetches.
 - Segment score also carries `covered` (internal, not in `to_dict()`): True if an OPEN place (at arrival) or a help point is within `radii_m.coverage` (75 m) of the segment; False only when places and area data are both available and nothing could count (no unknown-hours place nearby either); None = not sure. Transit is not counted yet.
 - Continuity (server/services/continuity.py, `compute_continuity(config, list[SegmentScore]) -> ContinuityResult`, `.to_dict()` gives the Route result's `route_score` + `continuity`): `average_score` = length-weighted mean of known scores; `worst_window_score` = lowest length-weighted mean over any `window_m` (200 m) stretch (whole route if shorter), with `worst_window_start_m/end_m`; `coverage_pct` = covered length / length with known coverage; `longest_gap_m` = longest consecutive run of segments with `covered == False`, in meters (unknown breaks a run, never extends one), `longest_gap_note` = "from X m to Y m along the route"; `gap_penalty` = max(0, gap - gap_limit_m) * gap_penalty_per_m, `gap_penalty_applied` = min(penalty, base); `route_score` = clamp(avg_weight*average + worst_window_weight*worst - applied, 0, 100). `route_score` is `null` (and `continuity.insufficient_data` true) when no segment has a score. Extra `continuity` keys: `average_score, gap_penalty, gap_penalty_applied, meets_coverage_target, route_length_m, unknown_length_m, insufficient_data, notes`. Unknown share is reported in `notes`/`unknown_length_m`, never scored as 0.
@@ -75,7 +75,8 @@ Wires existing modules; it adds no scoring rules.
 5. Selection (`selector.py`): Fastest, Safest (best score within `max_extra_minutes`) and Balanced (`balanced_points_per_extra_min`); a route winning two labels is returned once with `also_labels`. A route with no score can only be Fastest. The API label is `safest`; the UI must say "better lit and more active" (never "safe").
 6. Explanation (`explain.py`): Claude when `ANTHROPIC_API_KEY` is set, a fixed template otherwise or when the text breaks the wording rules (`wording.py`); `explanation_source` = `ai | template`.
 Known limits: `via` is always `[]` (the Mapbox provider asks for `steps=false`, so there are no street names; `longest_gap_note` is Amey's "from X m to Y m along the route"); `segment_id` is `seg-<n>`; `open_places_count` counts distinct places open within 50 m of any segment at that segment's arrival time.
-`data/sf_open_data.py` (311 streetlight outages, incidents) is wired into the planner via `Providers.sf` (cached 6 h, failures become warnings and the factors stay "not sure"). `data/transit.py` (always unknown) is still NOT wired.
+`data/sf_open_data.py` (311 streetlight outages, incidents) is wired into the planner via `Providers.sf` (cached 6 h, failures become warnings and the factors stay "not sure"). `data/transit.py` (`Muni511Provider`, 511.org StopMonitoring, token `API_511_KEY`) is wired via `Providers.transit` (3-minute cache). It is a LIVE feed: transit is scored only for arrival times within ~30 min of now, otherwise "not sure"; failures add a warning, a missing token adds none.
+`data/mapillary.py` (`MapillaryPhotoSource`, `MAPILLARY_TOKEN`) + `services/audit.py` (`StreetAuditor`, Claude vision) feed `Providers.photos` / `Providers.auditor`: for the FIRST route only, up to `AUDIT_MAX_CALLS_PER_REQUEST` (default 3) weak or not-sure stretches (100 m apart) get a labeled daytime-photo reading in `street_photo_audits`. It never changes a score; any failure gives an empty list. `data/apify.py` is the places fallback: it runs only if Bright Data fails and `APIFY_TOKEN` is set (`Place.source` = `apify`).
 
 ## Route result
 ```json
@@ -93,7 +94,12 @@ Known limits: `via` is always `[]` (the Mapbox provider asks for `steps=false`, 
   "geometry": "GeoJSON LineString",
   "segments": ["Segment score"],
   "explanation": "plain-language text from the Claude API",
-  "explanation_source": "ai | template"
+  "explanation_source": "ai | template",
+  "street_photo_audits": [ { "segment_id": "seg-3", "photo_id": "string", "photo_url": "mapillary link",
+      "captured_at": "2025-08-30 | null", "attribution": "Photo: Mapillary contributors, CC BY-SA 4.0",
+      "streetlights_visible": "yes | no | unclear", "open_storefronts": "yes | no | unclear",
+      "sidewalk_visibility": "good | poor | unclear", "construction": "yes | no | unclear",
+      "confidence": "low | medium | high", "evidence": "one sentence", "label": "daytime photo, Claude reading" } ]
 }
 ```
 `also_labels` is filled when two labels pick the same route (show it once).
@@ -126,4 +132,6 @@ Known limits: `via` is always `[]` (the Mapbox provider asks for `steps=false`, 
   PREFETCH_ON_STARTUP (1 = background-refresh missing/stale demo areas at server start; needs BRIGHTDATA_API_KEY),
   WEB_ORIGINS (comma-separated browser origins allowed by CORS, default http://localhost:3000, never `*`),
   PREWARM_DEMO (1 = run the demo trip once at startup to warm the OSM cache; uses a few Mapbox calls),
-  ANTHROPIC_MODEL (optional, default claude-haiku-5-5)
+  ANTHROPIC_MODEL (optional, default claude-haiku-5-5),
+  API_511_KEY (511.org transit token), MAPILLARY_TOKEN (street photos), AUDIT_MAX_CALLS_PER_REQUEST (default 3), AUDIT_MAX_CALLS_TOTAL (default 200),
+  EXPLAINER_PROVIDER (claude | openai_compat) with EXPLAINER_BASE_URL / EXPLAINER_API_KEY / EXPLAINER_MODEL
