@@ -23,4 +23,19 @@ describe("NavigationScreen", () => {
     expect(screen.getByRole("button", { name: "North up" })).toHaveAttribute("aria-pressed", "false");
     expect(findBannedWording(container.textContent ?? "")).toEqual([]);
   });
+
+  it("opens street view at the current point, toggles heading, and ends", async () => {
+    const user = userEvent.setup();
+    const onClose = vi.fn();
+    renderWithTrip(<NavigationScreen route={route} onClose={onClose} onReroute={() => {}} />);
+    await user.click(await screen.findByRole("button", { name: "Street view" }));
+    expect(await screen.findByText(/Street view is unavailable/)).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Close street view" }));
+    await user.click(screen.getByRole("button", { name: "North up" }));
+    expect(screen.getByRole("button", { name: /North up|Heading up/ })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Vibrate on" }));
+    expect(screen.getByRole("button", { name: "Vibrate off" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "End" }));
+    expect(onClose).toHaveBeenCalledOnce();
+  });
 });

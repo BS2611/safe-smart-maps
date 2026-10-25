@@ -1,5 +1,5 @@
 import { destination, type LngLat } from "./geo";
-import { fetchMapboxSteps, navigationProgress, stepsFromGeometry, stepsFromMapbox } from "./steps";
+import { fetchMapboxSteps, navigationProgress, sampleCoords, stepsFromGeometry, stepsFromMapbox } from "./steps";
 
 const start: LngLat = [-122.45, 37.8];
 
@@ -114,6 +114,31 @@ describe("step progression", () => {
     fetchSpy.mockRejectedValueOnce(new Error("offline"));
     await expect(fetchMapboxSteps(cornerRoute(), "pk.test")).resolves.toBeNull();
     fetchSpy.mockRestore();
+  });
+
+  it("thins a long line and fills in a missing Mapbox instruction", () => {
+    const many: LngLat[] = Array.from({ length: 40 }, (_, i) => [start[0] + i * 0.0001, start[1]]);
+    const thin = sampleCoords(many, 5);
+    expect(thin.length).toBeLessThanOrEqual(5);
+    expect(thin[0]).toEqual(many[0]);
+    expect(thin.at(-1)).toEqual(many[39]);
+    expect(sampleCoords(Array.from({ length: 10 }, () => start), 4)).toEqual([start]);
+
+    const parsed = stepsFromMapbox({
+      routes: [{
+        legs: [
+          { steps: "nope" },
+          {
+            steps: [
+              null,
+              { name: "  ", maneuver: { type: "turn", modifier: "slight right", location: start } },
+              { maneuver: { type: "continue", location: start } },
+            ],
+          },
+        ],
+      }],
+    });
+    expect(parsed.map((step) => step.instruction)).toEqual(["Bear right", "Continue"]);
   });
 
   it("ignores a broken Mapbox payload and skips the network without a token", async () => {
