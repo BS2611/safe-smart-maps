@@ -66,6 +66,8 @@ Total = 100%.
 ### 5.5 Map and comparison cards
 Colored segments on the map. Each route card: extra minutes, coverage %, longest gap, number of open places, nearest help point, data-fetched-at time, and the AI explanation with reasons.
 
+On a route's detail map, tap a point or drag the peg to open a street-level photo at that spot. Drag to look around, step forward and back along the walk, and read that stretch's score and reasons on the photo. A mini map shows position and heading. One button opens the darkest stretch. With no photo token, the screen says street view is unavailable and the rest of the walk still works. Photos are Mapillary unless a Google browser key is set.
+
 ### 5.6 Time-awareness demo
 Same trip run at 8 PM and 1 AM: shops close, coverage drops, and the Safest route changes. The UI must make this visible (side-by-side or quick toggle).
 

@@ -26,5 +26,12 @@ Last full review by a human: (date/time)
 - Status:
 - Next:
 
+## Owner tasks (cursor, on the owner's request)
+- Status: Street-level photos on the route detail map, branch `cursor/street-view-01d5`
+- Doing now: nothing
+- Files in progress: none
+- Next: none
+- Blocked on: STATE "Last full review by a human" is still blank. Bhavpreet owns `web/`; this edit was an explicit owner task.
+
 ## Shared areas (ask first, log every change)
 - `CONTRACTS.md`, `DECISIONS.md`, `OPEN_QUESTIONS.md`, `docs/specs/`, `README.md`, `.env.example`, `package.json`
