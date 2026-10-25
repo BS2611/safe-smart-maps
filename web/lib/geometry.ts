@@ -3,9 +3,17 @@ import type { Band, Route, Segment } from "./types";
 
 export type Projector = (lng: number, lat: number) => [number, number];
 
-export function makeProjector(routes: Route[], width: number, height: number, pad = 16): Projector {
+export type Frame = {
+  project: Projector;
+  unproject: (x: number, y: number) => [number, number];
+};
+
+/** Project route points into a box, and map a pixel in that box back to longitude, latitude. */
+export function frameOf(routes: Route[], width: number, height: number, pad = 16): Frame {
   const pts = routes.flatMap((r) => r.geometry.coordinates);
-  if (pts.length === 0) return () => [width / 2, height / 2];
+  if (pts.length === 0) {
+    return { project: () => [width / 2, height / 2], unproject: () => [0, 0] };
+  }
   const lngs = pts.map((p) => p[0]);
   const lats = pts.map((p) => p[1]);
   const minLng = Math.min(...lngs), maxLng = Math.max(...lngs);
@@ -16,7 +24,14 @@ export function makeProjector(routes: Route[], width: number, height: number, pa
   const scale = Math.min((width - 2 * pad) / spanX, (height - 2 * pad) / spanY);
   const offX = (width - spanX * scale) / 2;
   const offY = (height - spanY * scale) / 2;
-  return (lng, lat) => [offX + (lng - minLng) * cosLat * scale, height - offY - (lat - minLat) * scale];
+  return {
+    project: (lng, lat) => [offX + (lng - minLng) * cosLat * scale, height - offY - (lat - minLat) * scale],
+    unproject: (x, y) => [minLng + (x - offX) / (cosLat * scale), minLat + (height - offY - y) / scale],
+  };
+}
+
+export function makeProjector(routes: Route[], width: number, height: number, pad = 16): Projector {
+  return frameOf(routes, width, height, pad).project;
 }
 
 export function pathFor(coords: [number, number][], project: Projector): string {
