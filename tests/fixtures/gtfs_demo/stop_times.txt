@@ -1,0 +1,3 @@
+trip_id,arrival_time,departure_time,stop_id,stop_sequence
+evening,20:10:00,20:10:00,montgomery,1
+later,21:00:00,21:00:00,montgomery,1

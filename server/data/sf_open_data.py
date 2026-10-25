@@ -1,9 +1,7 @@
 """San Francisco open data (Socrata, public, no key): open streetlight 311 reports and incidents.
 
-NOT wired into scoring yet: segment_scoring.py keeps incidents as "not sure" and has no outage
-factor. This is the data-layer provider for when Amey adds them. Fields are named lat / lng.
-
-Incident data is used with a low weight on purpose: it reflects policing as much as danger.
+The planner calls this. A failed request becomes a warning and a null factor. Fields are
+named lat / lng. Incident data stays at a low weight: it reflects policing as much as events.
 """
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone

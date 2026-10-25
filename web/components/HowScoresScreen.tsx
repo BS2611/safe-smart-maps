@@ -65,14 +65,14 @@ export function HowScoresScreen({ backHref = "/" }: { backHref?: string }) {
           <li><strong>Streets and lighting tags:</strong> OpenStreetMap. Many streets have no lighting tag.</li>
           <li><strong>Streetlight outage reports:</strong> San Francisco 311, open reports only.</li>
           <li><strong>Past incidents:</strong> San Francisco open data. It can be late and uneven.</li>
-          <li><strong>Transit:</strong> schedules are not connected yet, so transit shows as not sure.</li>
+          <li><strong>Transit:</strong> SF Muni and BART schedules, when a feed is configured. Otherwise not sure.</li>
         </ul>
       </section>
 
       <section className="card stack-sm" aria-labelledby="limits-h">
         <h2 id="limits-h">4. Limits and privacy</h2>
         <ul className="small" style={{ margin: 0, paddingLeft: 18 }}>
-          <li><strong>No cameras or tracking of people.</strong> Activity is estimated from open places and the time of day.</li>
+          <li><strong>No cameras or tracking of people.</strong> Activity is estimated from nearby places on the map and the time of day.</li>
           <li><strong>Opening hours can be wrong.</strong> Places close early, hours change, holidays differ.</li>
           <li><strong>Incident data can be unfair.</strong> It reflects policing as much as events, so it has a low weight (5%).</li>
           <li><strong>Missing data stays missing.</strong> We show &quot;not sure&quot; and never fill a blank with a guess.</li>

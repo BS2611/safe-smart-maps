@@ -16,6 +16,7 @@ from server.data.mapbox import MapboxError, RouteCandidate
 from server.data.models import AreaContext, BoundingBox, Place
 from server.data.opening_hours import OpenStatus, evaluate_open_status
 from server.data.osm import OsmError
+from server.data.sf_open_data import SfDataError
 from server.data.ttl_cache import TTLCache
 from server.services.candidates import generate_candidates
 from server.services.continuity import compute_continuity
@@ -56,6 +57,9 @@ class Providers:
     places: Any           # CachedPlacesProvider (reads saved listings only; never fetches)
     context: Any          # ContextProvider: get_area_context(BoundingBox) -> AreaContext
     explainer: Any        # explain(facts) -> (text, source)
+    incidents: Any = None # get_recent_incidents(area) -> list, or None if not configured
+    outages: Any = None   # get_open_outages(area) -> list, or None if not configured
+    transit: Any = None   # TransitSchedule, or None when no GTFS feed is configured
 
 
 def apply_priorities(weights: dict[str, float], priorities: list[str], boost: float) -> dict[str, float]:
@@ -100,7 +104,17 @@ class RoutePlanner:
                 ("osm", rounded), lambda: self.p.context.get_area_context(rounded))
         except OsmError:
             warnings.append("Street and lighting map data (OpenStreetMap): not available right now, "
-                            "so lighting, road type and help points show as not sure.")
+                            "so lighting, road type, help points and the activity estimate show as not sure.")
+            return None
+
+    def _cached_points(self, name: str, area: BoundingBox, loader, warning: str, warnings: list[str]):
+        if loader is None:
+            return None
+        rounded = _round_area(area)
+        try:
+            return self.context_cache.get_or_load((name, rounded), lambda: loader(rounded))
+        except SfDataError:
+            warnings.append(warning)
             return None
 
     # ---------- per-route work ----------
@@ -168,9 +182,26 @@ class RoutePlanner:
         if found.warning:
             warnings.append(found.warning)
         context = self._context(area, warnings)
+        incidents = self._cached_points(
+            "incidents", area, None if self.p.incidents is None else self.p.incidents.get_recent_incidents,
+            "Past incident reports are not available right now, so that part of the score shows as not sure.",
+            warnings)
+        outages = self._cached_points(
+            "outages", area, None if self.p.outages is None else self.p.outages.get_open_outages,
+            "Streetlight outage reports are not available right now, so lighting uses the map tag only.",
+            warnings)
+        transit = self.p.transit
+        if transit is None:
+            warnings.append("Transit schedules are not configured, so transit shows as not sure.")
+        elif getattr(transit, "failed", False):
+            warnings.append("Transit schedules could not be read, so transit shows as not sure.")
+            transit = None
+        elif getattr(transit, "partial_failure", False):
+            warnings.append("One transit feed could not be read. Stops from the feed that loaded are still used.")
         weights = apply_priorities(self.cfg["weights"], req.settings.priorities,
                                    self.cfg["priorities"]["boost"])
-        scorer = SegmentScorer(self.cfg, found.places, context, weights)
+        scorer = SegmentScorer(self.cfg, found.places, context, weights,
+                               incidents=incidents, outages=outages, transit=transit)
 
         results = {}
         for cand in candidates:

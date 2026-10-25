@@ -1,14 +1,14 @@
 {
   "version": "scoring_v1",
   "weights": {
-    "open_places": 0.25,
-    "lighting": 0.20,
-    "main_road": 0.15,
+    "open_places": 0.22,
+    "lighting": 0.22,
+    "main_road": 0.13,
     "help_points": 0.10,
-    "transit": 0.10,
-    "activity": 0.10,
+    "transit": 0.12,
+    "activity": 0.08,
     "incidents": 0.05,
-    "turns": 0.05
+    "turns": 0.08
   },
   "segment_length_m": 50,
   "radii_m": {"open_place": 50, "help_point": 150, "coverage": 75, "road_match": 25},
@@ -22,7 +22,30 @@
       "residential": 60, "service": 40, "pedestrian": 40
     },
     "help_point_max_value": 100,
-    "not_yet_implemented": ["transit", "incidents", "activity", "turns"]
+    "streetlight_radius_m": 40,
+    "lighting_from_lamps": [0, 60, 85, 100],
+    "outage_radius_m": 45,
+    "lighting_outage_penalty": 55,
+    "lighting_outage_only": 35,
+    "lighting_unlit_with_lamps": 40,
+    "turn_min_deg": 35,
+    "turn_moderate_deg": 70,
+    "turn_sharp_deg": 110,
+    "turn_score_straight": 100,
+    "turn_score_moderate": 70,
+    "turn_score_sharp": 40,
+    "turn_score_reversal": 15,
+    "dark_turn_penalty": 30,
+    "tunnel_penalty": 25,
+    "activity_radius_m": 60,
+    "activity_by_count": [0, 50, 75, 100],
+    "activity_time_factor": {"day": 1.0, "evening": 0.75, "late": 0.45},
+    "activity_evening_start_hour": 18,
+    "activity_late_end_hour": 7,
+    "incident_radius_m": 80,
+    "incidents_by_count": [100, 70, 45, 25],
+    "transit_radius_m": 75,
+    "transit_window_min": 15
   },
   "continuity": {
     "coverage_target": 0.80,
