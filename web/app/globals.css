@@ -175,6 +175,6 @@ h1.brand { margin: 0; }
 .tab .t { font-weight: 600; }
 .tab .c { font-size: 13px; color: var(--muted); }
 
-.sticky-cta { position: sticky; bottom: 0; padding-top: 12px; padding-bottom: var(--sab); background: linear-gradient(transparent, var(--bg) 40%); }
+.sticky-cta { position: sticky; bottom: 0; z-index: 5; padding-top: 12px; padding-bottom: var(--sab); background-color: var(--bg); background-image: none; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 figure { margin: 0; }

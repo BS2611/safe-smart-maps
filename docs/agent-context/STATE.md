@@ -26,5 +26,12 @@ Last full review by a human: (date/time)
 - Status:
 - Next:
 
+## Owner tasks (cursor agent; do not edit Bhavpreet or Amey)
+- Status: Phone layout and night-route launcher icons on `cursor/mobile-fixes-01d5`, branched from latest main (`13ccee7`). Separate from street view (PR #12).
+- Doing now: Nothing. The phone grid, the plan hint, and the mipmap icons are committed on this branch.
+- Files in progress: none
+- Next: Review the PR, then merge it on its own.
+- Blocked on: STATE "Last full review by a human" is still blank
+
 ## Shared areas (ask first, log every change)
 - `CONTRACTS.md`, `DECISIONS.md`, `OPEN_QUESTIONS.md`, `docs/specs/`, `README.md`, `.env.example`, `package.json`
