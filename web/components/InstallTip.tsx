@@ -23,7 +23,10 @@ export function InstallTip() {
     setPlatform(detectPlatform(navigator.userAgent, navigator.maxTouchPoints));
     const standalone = window.matchMedia?.("(display-mode: standalone)").matches
       || (navigator as unknown as { standalone?: boolean }).standalone === true;
-    setInstalled(Boolean(standalone));
+    // Inside the Android app (Capacitor) there is nothing to install.
+    const inNativeApp = (window as unknown as { Capacitor?: { isNativePlatform?: () => boolean } })
+      .Capacitor?.isNativePlatform?.() === true;
+    setInstalled(Boolean(standalone) || inNativeApp);
     try { setDismissed(window.localStorage.getItem("ssm.install.dismissed") === "1"); } catch { /* blocked */ }
     const onPrompt = (e: Event) => { e.preventDefault(); setPrompt(e as InstallEvent); };
     window.addEventListener("beforeinstallprompt", onPrompt);

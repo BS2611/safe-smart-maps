@@ -56,6 +56,14 @@ describe("InstallTip", () => {
     expect(second.container).toBeEmptyDOMElement();
   });
 
+  it("is hidden inside the Android app, where there is nothing to install", () => {
+    setup(ANDROID);
+    (window as unknown as { Capacitor: unknown }).Capacitor = { isNativePlatform: () => true };
+    const { container } = render(<InstallTip />);
+    expect(container).toBeEmptyDOMElement();
+    delete (window as unknown as { Capacitor?: unknown }).Capacitor;
+  });
+
   it("remembers 'Not now'", async () => {
     setup(IPHONE);
     const { unmount } = render(<InstallTip />);

@@ -18,6 +18,12 @@
   --radius: 12px;
   --radius-sm: 8px;
   --radius-xs: 4px;
+  /* Notch and navigation-bar spacing: env() on iPhone and new Android WebViews; the injected --safe-area-inset-* variable inside
+     the Android app (Capacitor). max() uses whichever is larger, so they never add up. */
+  --sat: max(env(safe-area-inset-top, 0px), var(--safe-area-inset-top, 0px));
+  --sar: max(env(safe-area-inset-right, 0px), var(--safe-area-inset-right, 0px));
+  --sab: max(env(safe-area-inset-bottom, 0px), var(--safe-area-inset-bottom, 0px));
+  --sal: max(env(safe-area-inset-left, 0px), var(--safe-area-inset-left, 0px));
   --font: var(--font-inter), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
@@ -31,7 +37,7 @@ body {
   font-family: var(--font);
   font-size: 16px;
   line-height: 1.5;
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  padding: var(--sat) var(--sar) var(--sab) var(--sal);
 }
 
 a { color: inherit; text-decoration: none; }
@@ -169,6 +175,6 @@ h1.brand { margin: 0; }
 .tab .t { font-weight: 600; }
 .tab .c { font-size: 13px; color: var(--muted); }
 
-.sticky-cta { position: sticky; bottom: 0; padding-top: 12px; background: linear-gradient(transparent, var(--bg) 40%); }
+.sticky-cta { position: sticky; bottom: 0; padding-top: 12px; padding-bottom: var(--sab); background: linear-gradient(transparent, var(--bg) 40%); }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 figure { margin: 0; }
