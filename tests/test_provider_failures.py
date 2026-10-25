@@ -57,6 +57,11 @@ class ConfigFailureTests(unittest.TestCase):
 
 
 class RequestShapeTests(unittest.TestCase):
+    def test_blank_dataset_id_in_env_falls_back_to_default(self):
+        # .env.example ships `BRIGHTDATA_PLACES_DATASET_ID=` (blank); real API rejected "" with HTTP 400.
+        _, post = run(FakeResp(200, "[]"), env={"BRIGHTDATA_API_KEY": FAKE_KEY, "BRIGHTDATA_PLACES_DATASET_ID": ""})
+        self.assertEqual(post.call_args.kwargs["params"]["dataset_id"], brightdata.DEFAULT_DATASET_ID)
+
     def test_request_built_from_area_and_env(self):
         _, post = run(FakeResp(200, "[]"), env={"BRIGHTDATA_API_KEY": FAKE_KEY,
                                                "BRIGHTDATA_PLACES_DATASET_ID": "gd_test"})

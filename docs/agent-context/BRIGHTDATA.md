@@ -24,7 +24,7 @@ Track: "Best Agent/App Using Public Web Data". Public, logged-out data only.
 ## Hackpack facts that matter to us
 - Sync scrape returns 202 + `snapshot_id` if it runs over ~1 min. Then poll
   `GET /datasets/v3/progress/<id>` until `ready`, download `GET /datasets/v3/snapshot/<id>?format=json`.
-  Our provider currently raises on 202: add the polling path if the smoke test hits it.
+  Our provider now does this (verified live 2026-10-24: sync call returned 202 after ~60 s; real records use `lat`/`lon`).
 - A 200 can still contain records with `error` / `error_code`; skip those (provider already does).
 - Latency 4 s to several minutes. Never fetch on a user click: cache (CACHE_TTL_SECONDS) and
   prefetch; show the data time ("not sure" if old).

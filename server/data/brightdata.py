@@ -7,6 +7,7 @@ import json
 import math
 import os
 import re
+import time
 from datetime import datetime, timezone
 from typing import Any
 
@@ -16,7 +17,8 @@ from server.data.models import BoundingBox, Place
 from server.data.opening_hours import parse_weekly_hours
 from server.data.places import PlacesProvider
 
-SCRAPE_URL = "https://api.brightdata.com/datasets/v3/scrape"
+API_BASE = "https://api.brightdata.com/datasets/v3"
+SCRAPE_URL = f"{API_BASE}/scrape"
 DEFAULT_DATASET_ID = "gd_m8ebnr0q2qlklc02fz"  # Google Maps places (public dataset id)
 DEFAULT_KEYWORDS = ("restaurant", "cafe", "convenience store")
 
@@ -59,7 +61,9 @@ def normalize_record(rec: dict, fetched_at: datetime) -> Place | None:
     if not isinstance(rec, dict) or rec.get("error"):
         return None
     name = rec.get("name")
-    lat, lng = _to_float(rec.get("latitude")), _to_float(rec.get("longitude"))
+    # live Google Maps records use lat/lon; latitude/longitude kept as a fallback
+    lat = _to_float(rec.get("lat", rec.get("latitude")))
+    lng = _to_float(rec.get("lon", rec.get("longitude")))
     if not isinstance(name, str) or not name.strip() or lat is None or lng is None:
         return None
     weekly, is_24h = parse_weekly_hours(rec.get("open_hours"))
@@ -87,11 +91,38 @@ def _parse_response_body(text: str) -> list[dict]:
 
 class BrightDataPlacesProvider(PlacesProvider):
     def __init__(self, keywords=DEFAULT_KEYWORDS, zoom_level: int = 16,
-                 limit_per_keyword: int = 20, timeout_s: float = 90.0):
+                 limit_per_keyword: int = 20, timeout_s: float = 90.0,
+                 max_wait_s: float = 300.0, poll_interval_s: float = 5.0):
         self.keywords = keywords
         self.zoom_level = zoom_level
         self.limit_per_keyword = limit_per_keyword
         self.timeout_s = timeout_s
+        self.max_wait_s = max_wait_s
+        self.poll_interval_s = poll_interval_s
+
+    def _wait_for_snapshot(self, resp, api_key: str):
+        """Sync scrape ran long (HTTP 202 + snapshot_id): poll progress, then download."""
+        try:
+            snapshot_id = json.loads(resp.text)["snapshot_id"]
+        except (ValueError, KeyError, TypeError):
+            raise BrightDataError("Bright Data answered 202 without a snapshot_id") from None
+        headers = {"Authorization": f"Bearer {api_key}"}
+        deadline = time.monotonic() + self.max_wait_s
+        try:
+            while True:
+                prog = httpx.get(f"{API_BASE}/progress/{snapshot_id}", headers=headers, timeout=30)
+                status = json.loads(prog.text).get("status") if prog.status_code == 200 else None
+                if status == "ready":
+                    break
+                if status == "failed" or prog.status_code in (401, 403, 404):
+                    raise BrightDataError(f"Bright Data snapshot {status or prog.status_code}")
+                if time.monotonic() >= deadline:
+                    raise BrightDataError("Bright Data snapshot not ready before max_wait_s")
+                time.sleep(self.poll_interval_s)
+            return httpx.get(f"{API_BASE}/snapshot/{snapshot_id}", params={"format": "json"},
+                             headers=headers, timeout=self.timeout_s)
+        except (httpx.HTTPError, ValueError) as e:
+            raise BrightDataError(f"Bright Data snapshot request failed: {type(e).__name__}") from None
 
     def get_places(self, area: BoundingBox, time: datetime) -> list[Place]:
         """Live places inside `area`. `time` is not used for fetching (listings are not
@@ -99,7 +130,7 @@ class BrightDataPlacesProvider(PlacesProvider):
         api_key = os.environ.get("BRIGHTDATA_API_KEY")
         if not api_key:
             raise BrightDataError("BRIGHTDATA_API_KEY is not set")
-        dataset_id = os.environ.get("BRIGHTDATA_PLACES_DATASET_ID", DEFAULT_DATASET_ID)
+        dataset_id = os.environ.get("BRIGHTDATA_PLACES_DATASET_ID") or DEFAULT_DATASET_ID  # blank in .env = unset
         lat, lng = area.center
         body = {
             "input": [{"country": "US", "lat": lat, "long": lng,
@@ -114,7 +145,7 @@ class BrightDataPlacesProvider(PlacesProvider):
         except httpx.HTTPError as e:
             raise BrightDataError(f"Bright Data request failed: {type(e).__name__}") from None
         if resp.status_code == 202:
-            raise BrightDataError("Bright Data answered 202 (async job); sync scrape did not finish in time")
+            resp = self._wait_for_snapshot(resp, api_key)
         if resp.status_code != 200:
             raise BrightDataError(f"Bright Data returned HTTP {resp.status_code}")
         try:

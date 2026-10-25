@@ -18,8 +18,9 @@ _DAYS = {"monday": 0, "tuesday": 1, "wednesday": 2, "thursday": 3,
          "friday": 4, "saturday": 5, "sunday": 6}
 _DAYS.update({k[:3]: v for k, v in list(_DAYS.items())})
 
-_TIME = r"(\d{1,2})(?::(\d{2}))?\s*([ap])\.?m?\.?"
-_RANGE = re.compile(_TIME + r"\s*[-–—]\s*" + _TIME, re.I)
+_TIME = r"(\d{1,2})(?:[:.](\d{2}))?\s*([ap])\.?m?\.?"
+_TIME_START = r"(\d{1,2})(?:[:.](\d{2}))?\s*(?:([ap])\.?m?\.?)?"  # meridiem optional: "5-10 PM"
+_RANGE = re.compile(_TIME_START + r"\s*[-–—]\s*" + _TIME, re.I)
 _24H = re.compile(r"open\s*24\s*hours?|24\s*hours?", re.I)
 _CLOSED = re.compile(r"^\s*closed\s*$", re.I)
 
@@ -46,8 +47,13 @@ def _parse_day_text(text: str) -> list[tuple[int, int]] | None:
         return [(0, 1440)]
     intervals = []
     for m in _RANGE.finditer(text):
-        start = _minutes(m.group(1), m.group(2), m.group(3))
         end = _minutes(m.group(4), m.group(5), m.group(6))
+        if m.group(3):
+            start = _minutes(m.group(1), m.group(2), m.group(3))
+        else:  # "5-10 PM": start shares the end's am/pm unless that makes it start after the end
+            start = _minutes(m.group(1), m.group(2), m.group(6))
+            if start is not None and end is not None and start >= end:
+                start = _minutes(m.group(1), m.group(2), "a" if m.group(6).lower() == "p" else "p")
         if start is None or end is None:
             return None
         if end <= start:  # runs past midnight (12 AM-12 AM also lands here = full day)
