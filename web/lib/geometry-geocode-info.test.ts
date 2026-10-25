@@ -3,7 +3,7 @@ import { join } from "node:path";
 
 import { loadFixture } from "@/test-utils/fixtures";
 
-import { BAND_COLOR, BAND_DASH, makeProjector, pathFor, segmentPath } from "./geometry";
+import { BAND_COLOR, BAND_DASH, frameOf, makeProjector, pathFor, segmentPath } from "./geometry";
 import { hasGeocoding, parseGeocode, searchPlaces } from "./geocode";
 import { CONTINUITY_RULES, FACTORS, factorLabel, SCORE_FORMULA } from "./scoring-info";
 import { findBannedWording } from "./wording";
@@ -35,6 +35,16 @@ describe("geometry", () => {
     expect(pathFor(data.routes[0].geometry.coordinates, project)).toMatch(/^M[\d.]+,[\d.]+ L/);
     expect(segmentPath(data.routes[0].segments[0], project)).toMatch(/^M.* L/);
     expect(makeProjector([], 100, 50)(0, 0)).toEqual([50, 25]);
+    expect(frameOf([], 100, 50).unproject(10, 10)).toEqual([0, 0]);
+  });
+
+  it("maps a projected point back to the same longitude and latitude", () => {
+    const frame = frameOf(data.routes, 300, 200, 16);
+    const [lng, lat] = data.routes[0].geometry.coordinates[0];
+    const [x, y] = frame.project(lng, lat);
+    const [backLng, backLat] = frame.unproject(x, y);
+    expect(backLng).toBeCloseTo(lng, 6);
+    expect(backLat).toBeCloseTo(lat, 6);
   });
 
   it("gives every band a distinct color and a pattern for non-green bands", () => {

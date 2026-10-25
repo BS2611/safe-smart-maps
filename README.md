@@ -21,3 +21,15 @@ The app compares a few walks by lighting, open places, main roads, help points, 
 | `docs/specs/` | What the product does |
 
 Do not commit API keys. Names live in `.env.example`.
+
+## Street-level photos
+
+On a route, tap the map or drag the peg to look at that spot from street level. Step forward and back along the walk. One button opens the darkest stretch. The photo is a picture of the street; the score and reasons are the same numbers as the rest of the app.
+
+Photos come from [Mapillary](https://www.mapillary.com/) through `mapillary-js`. Put a Mapillary client token in `web/.env.local`:
+
+`NEXT_PUBLIC_MAPILLARY_TOKEN`
+
+Create it in the Mapillary dashboard (a client token, restricted by site URL). The browser can see it, so do not use a secret token, and do not commit it.
+
+To use Google Street View instead, set `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` (a browser key, restricted by HTTP referrer, with the Maps JavaScript API enabled). If that name is set, the app uses Google and does not use the Mapillary token. If neither name is set, the screen says street view is unavailable and the rest of the walk still works.
