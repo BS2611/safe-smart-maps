@@ -42,7 +42,7 @@ export const FACTORS: FactorInfo[] = [
   },
   {
     id: "incidents", label: "Past incidents", weight: 5,
-    description: "Past incident reports, kept at a low weight on purpose: they can reflect policing patterns as much as danger.",
+    description: "Past incident reports, kept at a low weight on purpose: they can reflect policing patterns as much as the events.",
     source: "SF open data (police incident reports)",
   },
   {

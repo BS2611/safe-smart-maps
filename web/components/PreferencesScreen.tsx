@@ -53,7 +53,7 @@ export function PreferencesScreen({ next = "/plan" }: { next?: string }) {
           <button type="button" aria-pressed={settings.withCompanion} onClick={() => set({ withCompanion: true })}>With someone</button>
         </div>
         <p className="small muted">
-          Walking with someone does not change the street scores. We keep your choice for the next version.
+          Walking with someone does not change the scores yet. Your choice is saved.
         </p>
       </section>
 
@@ -78,7 +78,7 @@ export function PreferencesScreen({ next = "/plan" }: { next?: string }) {
         <div className="banner">
           <h3>About past incidents</h3>
           <p className="small muted">
-            Past-incident data has a low weight (5%) because it can reflect policing patterns as much as danger.
+            Past incidents stay a small part of the score (5%). The record can reflect policing as much as events.
           </p>
         </div>
       </section>

@@ -7,9 +7,9 @@ import { ClockIcon, InfoIcon, LocationOffIcon, RouteIcon, SearchIcon, StoreIcon 
 import { RouteIllustration } from "./RouteIllustration";
 
 const POINTS = [
-  { icon: <RouteIcon />, title: "Three routes", text: "Compare time and street conditions." },
-  { icon: <StoreIcon />, title: "Reasons shown", text: "See open places, lighting, and gaps." },
-  { icon: <ClockIcon />, title: "Time matters", text: "Check what's open when you arrive." },
+  { icon: <RouteIcon />, title: "Three routes", text: "Time and street conditions, side by side." },
+  { icon: <StoreIcon />, title: "Reasons shown", text: "Open places, lighting, and gaps." },
+  { icon: <ClockIcon />, title: "Time matters", text: "What's open when you arrive." },
 ];
 
 export function WelcomeScreen({ locationOff = false }: { locationOff?: boolean }) {
@@ -27,11 +27,11 @@ export function WelcomeScreen({ locationOff = false }: { locationOff?: boolean }
       <AppHeader />
       <section className="hero">
         <div className="hero-copy">
-          <p className="eyebrow">For students walking home after dark</p>
+          <p className="eyebrow">For walks home after dark</p>
           <h1>See more of the walk ahead.</h1>
-          <p className="lede">Compare walking routes for the time you&apos;ll be on the street.</p>
+          <p className="lede">Compare a few walks for the hour you&apos;ll be out.</p>
           <p className="hero-note">
-            Each route is scored stretch by stretch: lighting, open places, main roads, and the empty gaps between them.
+            Lighting, open places, main roads, and quiet gaps, scored stretch by stretch.
           </p>
           <div className="hero-actions">
             <Link href="/plan" className="btn primary">
@@ -42,7 +42,7 @@ export function WelcomeScreen({ locationOff = false }: { locationOff?: boolean }
               <InfoIcon /> How scores work
             </Link>
           </div>
-          <p className="caption">You can enter your start manually.</p>
+          <p className="caption">You can type your start. GPS is optional.</p>
         </div>
         <RouteIllustration />
       </section>
@@ -60,7 +60,7 @@ export function WelcomeScreen({ locationOff = false }: { locationOff?: boolean }
       <div className="welcome-foot">
         <DisclaimerBanner />
         <InstallTip />
-        <p className="caption center">Trip location is temporary. Sharing is optional.</p>
+        <p className="caption center">This trip stays in this tab. Sharing is optional.</p>
       </div>
     </div>
   );

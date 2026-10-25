@@ -31,12 +31,12 @@ export function DepartureField({ value, onChange, now }: Props) {
 
   return (
     <div className="field">
-      <span className="label" id="depart-label">Leave</span>
+      <span className="label" id="depart-label">Heading out</span>
       <div className="chips" role="group" aria-labelledby="depart-label">
-        <button type="button" className="chip" aria-pressed={mode === "now"} onClick={() => choose("now")}>Leave now</button>
-        <button type="button" className="chip" aria-pressed={mode === "eight"} onClick={() => choose("eight")}>Tonight 8 PM</button>
-        <button type="button" className="chip" aria-pressed={mode === "one"} onClick={() => choose("one")}>Tonight 1 AM</button>
-        <button type="button" className="chip" aria-pressed={mode === "pick"} onClick={() => choose("pick")}>Pick a time</button>
+        <button type="button" className="chip" aria-pressed={mode === "now"} onClick={() => choose("now")}>Now</button>
+        <button type="button" className="chip" aria-pressed={mode === "eight"} onClick={() => choose("eight")}>8 PM</button>
+        <button type="button" className="chip" aria-pressed={mode === "one"} onClick={() => choose("one")}>1 AM</button>
+        <button type="button" className="chip" aria-pressed={mode === "pick"} onClick={() => choose("pick")}>Custom</button>
       </div>
       {mode === "pick" ? (
         <input
@@ -50,8 +50,9 @@ export function DepartureField({ value, onChange, now }: Props) {
         />
       ) : null}
       <p className="small muted" style={{ marginTop: 8 }}>
-        {value ? `${formatDayClock(value)} (San Francisco time). ` : "Now. "}
-        Scores use the time you reach each street, not when you leave.
+        {value
+          ? `${formatDayClock(value)} (San Francisco time). Scores follow when you reach each street.`
+          : "Right now. Scores follow when you reach each street."}
       </p>
     </div>
   );

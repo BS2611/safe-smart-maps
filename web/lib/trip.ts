@@ -1,5 +1,5 @@
 // The trip the user is planning. Kept in sessionStorage only (cleared when the tab closes), which
-// matches "Trip location is temporary" on the welcome screen.
+// matches "This trip stays in this tab" on the welcome screen.
 import type { Place } from "./types";
 
 export const PRIORITY_OPTIONS = [

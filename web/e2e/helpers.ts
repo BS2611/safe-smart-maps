@@ -42,7 +42,7 @@ export async function stubApi(page: Page, options: { delayMs?: number; fail?: "5
   return stub;
 }
 
-export async function planDemoTrip(page: Page, when: "Tonight 8 PM" | "Tonight 1 AM" | "Leave now" = "Tonight 8 PM") {
+export async function planDemoTrip(page: Page, when: "8 PM" | "1 AM" | "Now" = "8 PM") {
   await page.goto("/plan");
   await page.getByRole("button", { name: "Palace of Fine Arts" }).first().click();
   await page.getByRole("button", { name: "Montgomery BART Station" }).last().click();

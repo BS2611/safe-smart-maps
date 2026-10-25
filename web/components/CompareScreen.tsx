@@ -54,7 +54,7 @@ export function CompareScreen({ now }: { now?: Date }) {
     return (
       <div className="screen stack">
         <AppHeader title="The same walk, later" backHref="/routes" />
-        <Banner kind="error" title="We could not compare the two times">{describeError(error)}</Banner>
+        <Banner kind="error" title="The comparison didn't finish">{describeError(error)}</Banner>
         <button type="button" className="btn primary" onClick={() => { a.retry(); b.retry(); }}>Try again</button>
         <Link href="/routes" className="btn secondary">Back to routes</Link>
       </div>
@@ -87,7 +87,7 @@ export function CompareScreen({ now }: { now?: Date }) {
 
   return (
     <div className="screen stack compare-page">
-      <AppHeader title="The same walk, later" subtitle="Places may close before you reach them." backHref="/routes" />
+      <AppHeader title="The same walk, later" subtitle="Places may close before you arrive." backHref="/routes" />
       {devFixturesEnabled() ? <Banner kind="warn" title="Sample data">Saved sample data for design review, not a live check.</Banner> : null}
       <div className="card tight trip-summary">
         <strong>{trip.from?.name} → {trip.to?.name}</strong>
@@ -172,7 +172,7 @@ export function CompareScreen({ now }: { now?: Date }) {
           onClick={() => { updateTrip({ departISO: times.oneAm.toISOString() }); router.push("/routes"); }}>
           Use 1:00 AM departure
         </button>
-        <p className="caption center">Recalculates open places and routes for the time you choose.</p>
+        <p className="caption center">Recalculates the walk for the time you pick.</p>
       </div>
       <DisclaimerBanner compact />
     </div>

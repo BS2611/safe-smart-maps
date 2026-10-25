@@ -60,14 +60,14 @@ export function PlanTripScreen() {
       </div>
       <aside className="plan-aside card stack-sm">
         <p className="eyebrow">Demo corridor</p>
-        <h2>A real late walk</h2>
-        <p className="muted">Palace of Fine Arts to Montgomery BART. The score follows the minute you will be on each street.</p>
+        <h2>A late walk home</h2>
+        <p className="muted">Palace of Fine Arts to Montgomery BART. Scores follow when you reach each street.</p>
         <ol className="steps">
           <li>Set the start and the destination.</li>
-          <li>Leave now, at 8 PM, or at 1 AM.</li>
-          <li>Read the score, the empty stretches, and the reasons.</li>
+          <li>Choose now, 8 PM, or 1 AM.</li>
+          <li>Read the score, the gaps, and the reasons.</li>
         </ol>
-        <p className="caption">The same walk later shows what has closed.</p>
+        <p className="caption">The later time shows what has closed.</p>
       </aside>
       </div>
     </div>
