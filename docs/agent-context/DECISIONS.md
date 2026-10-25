@@ -2,6 +2,7 @@
 
 Format: `YYYY-MM-DD HH:MM | who | decision | reason`
 
+2026-10-25 03:06 | owner via cursor | The product mark is a night route on #07110e: the walk turns a corner, coral at the start, amber at the turn, mint glow at the lit point. It is the header mark, favicon.ico, apple-touch icon, manifest PNGs, and web/public/icons/logo.svg. The wordmark stays "Safe Smart Maps". No Open Graph image existed, so none was added. | The owner wanted one distinctive mark in the night-map score colors that still reads at favicon size
 2026-10-25 02:45 | owner via cursor | Departure chips are Now, 8 PM, 1 AM, and Custom, under the label Heading out. The helper is one line: the clock in San Francisco, then "Scores follow when you reach each street." | The longer "after midnight" wording was hard to read at a glance
 2026-10-25 02:40 | owner via cursor | The plan screen asks "When do you leave?" with chips Leave now, 8 PM tonight, and 1 AM, after midnight. 1 AM is described as after midnight, later the same night. The times themselves are unchanged. | "Leave" and "Tonight 1 AM" did not say that 1 AM is after midnight
 2026-10-25 00:50 | owner via cursor | No login, sign-in, or sign-up screen exists under web/app, so none was added. The bolder color, type, and motion pass stays in web/app/polish.css and the landing illustration. | Owner asked to polish every existing screen, and to include login only if it was already there
