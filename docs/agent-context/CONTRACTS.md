@@ -31,9 +31,11 @@ Add fields freely; never remove or rename a field within a version.
   "unknown_factors": ["transit", "activity", "incidents", "turns"],
   "reasons": ["2 open places within 50 m", "lit road"],
   "data_fetched_at": "ISO time (oldest source used) or null",
-  "known_weight_fraction": 0.7
+  "known_weight_fraction": 0.7,
+  "confidence": "high | low | unknown"
 }
 ```
+`confidence` (added with POST /v1/routes, additive) is derived from `known_weight_fraction` with `scoring_v1.json` `confidence`: >= 0.8 high, >= 0.5 low, else unknown. `unknown` must render as "not sure".
 Factor names are exactly the keys of `scoring_v1.json` `weights` (`activity`, NOT `activity_estimate`; renamed 2026-10-24). A factor value is 0-100 or `null` = unknown, shown as "not sure". `score` is `null` and `band` is `unknown` when no factor is known. `known_weight_fraction` = share of total weight backed by known factors (a simple signal for how much the score rests on; no `confidence` label is defined yet). Bands are display labels, not a claim a route is safe or unsafe.
 
 ### Segment scoring (server/services/segmenter.py, segment_scoring.py) - hackathon-v1 heuristics
@@ -52,15 +54,26 @@ Not measurements of safety; tunable constants all live in `scoring/scoring_v1.js
 Candidate generation only: no scoring, ranking or labels. Mapbox JSON is read only in this file.
 ```python
 RouteCandidate(id: str, provider: str, coordinates: list[(lng, lat)], distance_m: float, duration_s: float)
-MapboxWalkingProvider(token=None, timeout_s=12.0, client=None).get_walking_routes(origin, dest) -> list[RouteCandidate]
+MapboxWalkingProvider(token=None, timeout_s=12.0, client=None).get_walking_routes(origin, dest, waypoints=()) -> list[RouteCandidate]
 ```
 - **Coordinate order is (longitude, latitude)** in `coordinates`, `origin` and `dest` (GeoJSON/Mapbox order). The segmenter and `geo.py` use (lat, lng): call `route.as_lat_lng()` to get that order; never swap by hand. A latitude outside +-90 is rejected, so an accidental swap fails loudly.
 - `id` = `"mapbox-<n>"`, n = position in Mapbox's answer (0 = Mapbox's preferred route). A dropped bad route leaves a gap; ids never shift. `provider` is always `"mapbox"`.
 - `distance_m` meters and `duration_s` seconds, exactly as Mapbox sends them (no conversion). Mapbox's walking time is its own estimate; segment arrival times still use 1.4 m/s unless changed.
-- Request: Directions v5 `walking` profile, `alternatives=true`, `geometries=geojson`, `overview=full`, `steps=false`. Mapbox often returns only ONE walking route even with alternatives on (seen live), so do not assume 2-3 candidates; extra candidates need detours (later, service layer).
+- Request: Directions v5 `walking` profile, `alternatives=true`, `geometries=geojson`, `overview=full`, `steps=false`. Mapbox often returns only ONE walking route even with alternatives on (seen live), so do not assume 2-3 candidates. `waypoints` (optional `(lng, lat)` via points) forces one route through them (alternatives are off then); `services/candidates.py` uses it to build detours.
 - Errors: `MapboxError` (a `RuntimeError`) with `kind`: `not_configured` (no `MAPBOX_TOKEN`, no request made), `timeout`, `failed` (HTTP error, bad JSON, no usable geometry), `empty` (Mapbox found no route). Invalid `origin`/`dest` raise `ValueError`. Messages never contain the token, URL or coordinates.
 - A route with missing/short/non-numeric geometry or a non-positive distance/duration is dropped; unknown Mapbox fields are ignored.
 - Feeding the segmenter: `segment_route(route.as_lat_lng(), cfg["segment_length_m"])`.
+
+### Route planner (server/services/planner.py) - POST /v1/routes
+Wires existing modules; it adds no scoring rules.
+1. Candidates: `generate_candidates` (services/candidates.py) = Mapbox's own routes, then two detours forced through a via point left and right of the middle of the trip, near-duplicates removed (`scoring_v1.json` `candidates`). Ids are renumbered `mapbox-0..n` across the merged list. A failing detour is skipped; a failing main request fails the request.
+2. Data: saved business listings are READ from the places cache (`places_lookup.py`; never fetches; no listing near the route -> `null` / "not sure" plus a warning; stale listings are used with their real date and a warning). OSM `AreaContext` comes from `OverpassContextProvider`, cached in memory per 0.01-degree area for 24 h (`data/ttl_cache.py`); failure -> lighting/road/help points "not sure" plus a warning.
+3. Score: `segment_route(route.as_lat_lng(), segment_length_m)` -> `SegmentScorer(...).score_route(...)`. User `settings.priorities` boost up to two factors by `priorities.boost`, renormalized.
+4. Continuity (`continuity.py`): per-segment `covered` = an OPEN place within `radii_m.coverage` (`null` when no place data). Route score = `avg_weight` * length-weighted average + `worst_window_weight` * worst 200 m window - `gap_penalty_per_m` * (longest gap - `gap_limit_m`), clamped 0-100.
+5. Selection (`selector.py`): Fastest, Safest (best score within `max_extra_minutes`) and Balanced (`balanced_points_per_extra_min`); a route winning two labels is returned once with `also_labels`. A route with no score can only be Fastest. The API label is `safest`; the UI must say "better lit and more active" (never "safe").
+6. Explanation (`explain.py`): Claude when `ANTHROPIC_API_KEY` is set, a fixed template otherwise or when the text breaks the wording rules (`wording.py`); `explanation_source` = `ai | template`.
+Known limits: `via` is always `[]` and `longest_gap_note` is `null` (the Mapbox provider asks for `steps=false`, so there are no street names); `segment_id` is `seg-<n>`; `open_places_count` counts distinct places open within 50 m of any segment at that segment's arrival time.
+`SfDataError`-based providers in `data/sf_open_data.py` (311 streetlight outages, incidents) and `data/transit.py` (always unknown) exist but are NOT wired into scoring; the factors stay "not sure".
 
 ## Route result
 ```json
@@ -88,7 +101,8 @@ MapboxWalkingProvider(token=None, timeout_s=12.0, client=None).get_walking_route
 - `POST /v1/routes`
   body: `{ "from": {lat,lng}, "to": {lat,lng}, "depart_time": "ISO", "settings": { "max_extra_minutes": 10, "with_companion": false, "priorities": ["lighting"] } }`
   -> `{ "api_version", "scoring_version", "data_fetched_at", "routes": [Route result], "warnings": ["string"] }`
-- Errors: `{ "error": { "code": "NO_ROUTE | UPSTREAM_TIMEOUT | BAD_REQUEST", "message": "string" } }`
+- Errors: `{ "error": { "code": "NO_ROUTE | UPSTREAM_TIMEOUT | UPSTREAM_ERROR | NOT_CONFIGURED | BAD_REQUEST", "message": "string" } }`
+  HTTP status: BAD_REQUEST 400, NO_ROUTE 404, UPSTREAM_ERROR 502, NOT_CONFIGURED 503, UPSTREAM_TIMEOUT 504. Validation errors list field names only, never the submitted values.
   Partial upstream failure returns 200 with `warnings`.
 - `GET /v1/cache/status` -> `{ api_version, provider, ttl_seconds, areas: [{ area, status: fresh|stale|miss, refreshing, places, data_fetched_at, age_seconds, last_error }] }`
 - (add more here)
@@ -107,4 +121,7 @@ MapboxWalkingProvider(token=None, timeout_s=12.0, client=None).get_walking_route
   ANTHROPIC_API_KEY, NEXT_PUBLIC_API_BASE_URL,
   CACHE_TTL_SECONDS (default 86400), CACHE_DIR (default .cache/places),
   OVERPASS_URL (optional, default public overpass-api.de),
-  PREFETCH_ON_STARTUP (1 = background-refresh missing/stale demo areas at server start; needs BRIGHTDATA_API_KEY)
+  PREFETCH_ON_STARTUP (1 = background-refresh missing/stale demo areas at server start; needs BRIGHTDATA_API_KEY),
+  WEB_ORIGINS (comma-separated browser origins allowed by CORS, default http://localhost:3000, never `*`),
+  PREWARM_DEMO (1 = run the demo trip once at startup to warm the OSM cache; uses a few Mapbox calls),
+  ANTHROPIC_MODEL (optional, default claude-haiku-5-5)

@@ -363,5 +363,32 @@ class InputValidationTests(unittest.TestCase):
         self.assertIsInstance(parse_directions(fixture())[0], RouteCandidate)
 
 
+class WaypointTests(unittest.TestCase):
+    VIA = (-122.4400, 37.8000)
+
+    def test_waypoint_is_placed_between_origin_and_destination(self):
+        p, transport = provider(ok(fixture()))
+        p.get_walking_routes(ORIGIN, DEST, waypoints=[self.VIA])
+        self.assertTrue(str(transport.requests[0].url.path).endswith(
+            "/walking/-122.448400,37.802900;-122.440000,37.800000;-122.401300,37.789400"))
+
+    def test_alternatives_are_turned_off_when_a_waypoint_is_forced(self):
+        p, transport = provider(ok(fixture()))
+        p.get_walking_routes(ORIGIN, DEST, waypoints=[self.VIA])
+        self.assertEqual(transport.requests[0].url.params["alternatives"], "false")
+
+    def test_no_waypoints_keeps_alternatives_on(self):
+        p, transport = provider(ok(fixture()))
+        p.get_walking_routes(ORIGIN, DEST, waypoints=[])
+        self.assertEqual(transport.requests[0].url.params["alternatives"], "true")
+
+    def test_bad_waypoint_raises_before_any_request(self):
+        p, transport = provider(ok(fixture()))
+        for bad in ((37.8, -122.44), None, (1.0,)):
+            with self.subTest(bad), self.assertRaises(ValueError):
+                p.get_walking_routes(ORIGIN, DEST, waypoints=[bad])
+        self.assertEqual(transport.requests, [])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -7,11 +7,11 @@ Last full review by a human: (date/time)
 
 ## Person A: Bhavpreet (frontend / map)
 - Owns (do not edit without asking): `web/`, `docs/agent-context/` entries by A
-- Status: Mapbox walking-route provider done on branch `bhav/mapbox-routes` (cut from amey/backend fc503b7): server/data/mapbox.py, 41 mocked tests, one live call OK. Full suite 270 passed. Frontend and the rest of the backend built earlier live on branch `ui` (not yet on the backend branch).
-- Doing now: porting the `ui` backend (routes API, planner, continuity, selector) onto `bhav/mapbox-routes` as a second commit
-- Files in progress: `server/` and `tests/` on branch bhav/mapbox-routes only (a separate worktree)
-- Next: finish the port, run the full suite, push `bhav/mapbox-routes`, then Amey reviews/merges
-- Blocked on: nothing
+- Status: Branch `bhav/mapbox-routes` (cut from amey/backend fc503b7) has 2 commits: (1) Mapbox walking-route provider from the handoff doc, (2) the `ui` backend rebuilt on Amey's modules: POST /v1/routes, planner, candidates (detours), continuity, selector, explain, wording, prewarm, SF open data + transit providers (unwired). Full suite green (see the newest log for the count). Frontend (`web/`) still lives only on branch `ui`.
+- Doing now: nothing running; waiting for Amey's review
+- Files in progress: none
+- Next: Amey reviews `bhav/mapbox-routes`; then push/PR as agreed; re-point `web/` at the new response (segment ids are `seg-<n>`, `via` is empty, extra fields `unknown_factors`, `known_weight_fraction`); live check `python -m pytest -m live`
+- Blocked on: Amey's review; STATE "Last full review by a human" still blank
 
 ## Person B: Amey (backend / data)
 - Owns (do not edit without asking): `server/`, `scoring/`

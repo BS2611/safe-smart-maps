@@ -31,5 +31,9 @@
     "avg_weight": 0.5,
     "worst_window_weight": 0.5,
     "gap_penalty_per_m": 0.1
-  }
+  },
+  "selection": {"balanced_points_per_extra_min": 1.5},
+  "confidence": {"high_min_known_weight": 0.8, "low_min_known_weight": 0.5},
+  "priorities": {"boost": 1.5},
+  "candidates": {"detour_offset_m": 250, "dedupe_tolerance_m": 20, "dedupe_share": 0.9, "max_route_diagonal_m": 7000}
 }

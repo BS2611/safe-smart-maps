@@ -10,3 +10,7 @@ __pycache__/
 *.mp4
 .claude/settings.local.json
 .cache/
+.coverage
+htmlcov/
+.pytest_cache/
+.ruff_cache/

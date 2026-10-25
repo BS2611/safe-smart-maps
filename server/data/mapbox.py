@@ -10,6 +10,7 @@ GeoJSON use. The rest of the backend (geo.py, segmenter) uses (lat, lng): call
 import math
 import os
 import re
+from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Any
 
@@ -136,17 +137,21 @@ class MapboxWalkingProvider:
             raise MapboxError("MAPBOX_TOKEN is not set", kind="not_configured")
         return token
 
-    def get_walking_routes(self, origin: LngLat, dest: LngLat) -> list[RouteCandidate]:
+    def get_walking_routes(self, origin: LngLat, dest: LngLat,
+                           waypoints: Sequence[LngLat] = ()) -> list[RouteCandidate]:
         """Walking routes from `origin` to `dest`, both (longitude, latitude).
 
-        Asks Mapbox for alternatives; returns what it sent, in its order. Raises ValueError for
-        invalid points and MapboxError (see `kind`) for everything else.
+        Without `waypoints`: asks Mapbox for alternatives and returns what it sent, in its order.
+        With `waypoints` (via points the route must pass, in order): one forced route; Mapbox does
+        not combine alternatives with waypoints. The service layer uses this to build detours.
+        Raises ValueError for invalid points and MapboxError (see `kind`) for everything else.
         """
         start, end = check_point(origin, "origin"), check_point(dest, "dest")
+        vias = [check_point(w, "waypoint") for w in waypoints]
         token = self.token  # checked before any network call
-        path = ";".join(f"{lng:.6f},{lat:.6f}" for lng, lat in (start, end))
-        params = {"alternatives": "true", "geometries": "geojson", "overview": "full",
-                  "steps": "false", "access_token": token}
+        path = ";".join(f"{lng:.6f},{lat:.6f}" for lng, lat in (start, *vias, end))
+        params = {"alternatives": "false" if vias else "true", "geometries": "geojson",
+                  "overview": "full", "steps": "false", "access_token": token}
         try:
             resp = (self._client or httpx).get(f"{DIRECTIONS_URL}/{path}", params=params,
                                                timeout=self.timeout_s)
