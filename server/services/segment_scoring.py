@@ -37,6 +37,7 @@ class SegmentScore:
     reasons: list[str]
     known_weight_fraction: float        # share of total weight backed by known factors
     data_fetched_at: datetime | None    # oldest source timestamp used
+    covered: bool | None = None         # open place / help point within radii_m.coverage; None = not sure
 
     def to_dict(self) -> dict:
         """CONTRACTS.md "Segment score" shape. Coordinates are [lng, lat]."""
@@ -61,7 +62,7 @@ def check_scoring_params(config: dict) -> None:
     missing = [k for k in _REQUIRED if k not in config]
     if missing:
         raise ScoringConfigError(f"{config.get('version')}: missing config keys {missing}")
-    for key in ("open_place", "help_point", "road_match"):
+    for key in ("open_place", "help_point", "road_match", "coverage"):
         if config["radii_m"].get(key, 0) <= 0:
             raise ScoringConfigError(f"{config.get('version')}: radii_m.{key} must be > 0")
     if config["walking_speed_mps"] <= 0:
@@ -165,6 +166,27 @@ class SegmentScorer:
                             f"nearest help point: {best.type.replace('_', ' ')} ({label}), {best_d:.0f} m",
                             {"type": best.type, "name": best.name, "distance_m": round(best_d, 1)})
 
+    def _covered(self, seg: Segment, arrival: datetime) -> bool | None:
+        """Continuity coverage (TECHNICAL_SPEC s5): an OPEN place or a help point within
+        radii_m.coverage of the segment. True as soon as one is found. False only when both
+        datasets are available and nothing could count (no place with unknown hours nearby either);
+        otherwise None = not sure. Transit is not available yet."""
+        radius = self.config["radii_m"]["coverage"]
+        if self.area_context is not None and any(
+                point_to_polyline_m((h.lat, h.lng), seg.coordinates) <= radius
+                for h in self.area_context.help_points):
+            return True
+        maybe = False
+        for p in self.places or []:
+            if point_to_polyline_m((p.lat, p.lng), seg.coordinates) <= radius:
+                status = evaluate_open_status(p, arrival)
+                if status is OpenStatus.OPEN:
+                    return True
+                maybe = maybe or status is not OpenStatus.CLOSED
+        if self.places is None or self.area_context is None or maybe:
+            return None
+        return False
+
     # ---- score -------------------------------------------------------------------
     def score_segment(self, seg: Segment, arrival: datetime) -> SegmentScore:
         if arrival.tzinfo is None:
@@ -188,7 +210,8 @@ class SegmentScorer:
             segment=seg, arrival_time=arrival, score=score, band=band, factors=factors,
             unknown_factors=[n for n, f in factors.items() if f.value is None],
             reasons=[f.reason for f in known.values()], known_weight_fraction=known_w,
-            data_fetched_at=min(stamps) if stamps else None)
+            data_fetched_at=min(stamps) if stamps else None,
+            covered=self._covered(seg, arrival))
 
     def score_route(self, segments: list[Segment], depart_at: datetime) -> list[SegmentScore]:
         """Arrival at each segment's start = depart_at + offset / walking speed."""

@@ -28,11 +28,13 @@ ignore = ["E501"]
 # Amey's files: found when ruff was added. Not edited by Bhavpreet (owner rule). Remove these
 # lines once he fixes them (`ruff check . --fix` handles the import order).
 "scripts/brightdata_smoke.py" = ["B904"]
+"server/services/continuity.py" = ["E731"]
 "scripts/demo_segment_scoring.py" = ["I001"]
 "server/services/prefetch.py" = ["I001"]
 "server/services/segmenter.py" = ["B905"]
 "tests/test_brightdata_normalization.py" = ["I001"]
 "tests/test_cache.py" = ["I001", "F401"]
+"tests/test_continuity.py" = ["F401", "B905"]
 "tests/test_osm.py" = ["I001"]
 "tests/test_places.py" = ["I001"]
 "tests/test_provider_failures.py" = ["I001"]

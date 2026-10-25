@@ -18,7 +18,7 @@ from server.data.opening_hours import OpenStatus, evaluate_open_status
 from server.data.osm import OsmError
 from server.data.ttl_cache import TTLCache
 from server.services.candidates import generate_candidates
-from server.services.continuity import SegmentInfo, is_covered, route_continuity
+from server.services.continuity import compute_continuity
 from server.services.geo import haversine_m, point_to_polyline_m
 from server.services.places_lookup import places_for_area
 from server.services.schemas import (
@@ -131,15 +131,12 @@ class RoutePlanner:
         return {"open_count": len(open_names), "unknown_hours": len(unknown_hours - set(open_names)),
                 "nearest_help": nearest}
 
-    def _score_candidate(self, cand: RouteCandidate, req: RoutesRequest, scorer: SegmentScorer,
-                         places: list[Place] | None):
+    def _score_candidate(self, cand: RouteCandidate, req: RoutesRequest, scorer: SegmentScorer):
         segments = segment_route(cand.as_lat_lng(), self.cfg["segment_length_m"])
         if not segments:
             return None
         scored = scorer.score_route(segments, req.depart_time)
-        infos = [SegmentInfo(s.segment.length_m, s.score,
-                             is_covered(s.segment, s.arrival_time, places, self.cfg)) for s in scored]
-        return scored, route_continuity(infos, self.cfg)
+        return scored, compute_continuity(self.cfg, scored)
 
     def _segment_out(self, s: SegmentScore) -> SegmentOut:
         data = s.to_dict()
@@ -177,7 +174,7 @@ class RoutePlanner:
 
         results = {}
         for cand in candidates:
-            outcome = self._score_candidate(cand, req, scorer, found.places)
+            outcome = self._score_candidate(cand, req, scorer)
             if outcome is not None:
                 results[cand.id] = (cand, *outcome)
         if not results:
@@ -192,7 +189,9 @@ class RoutePlanner:
         routes: list[RouteOut] = []
         unknown_hours_seen = 0
         for sel in selection:
-            cand, scored, cont = results[sel.route_id]
+            cand, scored, result = results[sel.route_id]
+            cont = ContinuityOut.model_validate(result.to_dict()["continuity"])
+            route_score = result.to_dict()["route_score"]
             facts = self._route_facts(cand, scored, found.places, context)
             unknown_hours_seen = max(unknown_hours_seen, facts["unknown_hours"])
             nearest = (HelpPointOut(name=facts["nearest_help"][0], distance_m=round(facts["nearest_help"][1]))
@@ -202,17 +201,15 @@ class RoutePlanner:
             text, source = self.p.explainer.explain({
                 "label": sel.labels[0], "duration_min": round(cand.duration_s / 60),
                 "extra_min": extra, "coverage_pct": cont.coverage_pct,
-                "longest_gap_m": cont.longest_gap_m, "longest_gap_note": None,
-                "worst_window_score": cont.worst_window_score, "route_score": cont.route_score,
+                "longest_gap_m": cont.longest_gap_m, "longest_gap_note": cont.longest_gap_note,
+                "worst_window_score": cont.worst_window_score, "route_score": route_score,
                 "open_places_count": open_count,
                 "nearest_help_point": nearest.model_dump() if nearest else None,
             })
             routes.append(RouteOut(
                 label=sel.labels[0], also_labels=sel.labels[1:], route_id=cand.id, via=[],
                 duration_min=round(cand.duration_s / 60, 1), extra_min=max(0.0, extra),
-                distance_m=round(cand.distance_m), route_score=cont.route_score,
-                continuity=ContinuityOut(coverage_pct=cont.coverage_pct, longest_gap_m=cont.longest_gap_m,
-                                         longest_gap_note=None, worst_window_score=cont.worst_window_score),
+                distance_m=round(cand.distance_m), route_score=route_score, continuity=cont,
                 open_places_count=open_count, nearest_help_point=nearest,
                 geometry=LineString(coordinates=list(cand.coordinates)),
                 segments=[self._segment_out(s) for s in scored],

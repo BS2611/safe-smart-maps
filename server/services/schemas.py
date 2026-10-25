@@ -51,6 +51,18 @@ class ContinuityOut(BaseModel):
     longest_gap_m: float
     longest_gap_note: str | None
     worst_window_score: float | None
+    # Extra detail from compute_continuity().to_dict() (additive): where the worst window is, why a
+    # penalty applied, how much of the route is "not sure", and plain-language notes.
+    worst_window_start_m: float | None = None
+    worst_window_end_m: float | None = None
+    average_score: float | None = None
+    gap_penalty: float | None = None
+    gap_penalty_applied: float | None = None
+    meets_coverage_target: bool | None = None
+    route_length_m: float | None = None
+    unknown_length_m: float | None = None
+    insufficient_data: bool = False
+    notes: list[str] = Field(default_factory=list)
 
 
 class HelpPointOut(BaseModel):

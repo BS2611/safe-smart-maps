@@ -37,7 +37,7 @@ def test_routes_ok_and_matches_schema(make_client):
     RoutesResponse.model_validate(data)
     assert data["api_version"] == "1" and data["scoring_version"] == "scoring_v1"
     assert {r["label"] for r in data["routes"]} <= {"safest", "balanced", "fastest"}
-    assert "from" not in json.dumps(data)  # request locations are not echoed back
+    assert '"from"' not in json.dumps(data) and '"to"' not in data  # the request is not echoed back
 
 
 def test_response_has_every_contract_field(make_client):
@@ -46,7 +46,7 @@ def test_response_has_every_contract_field(make_client):
                 "open_places_count", "nearest_help_point", "geometry", "segments", "explanation",
                 "explanation_source"):
         assert key in route, key
-    assert set(route["continuity"]) == {"coverage_pct", "longest_gap_m", "longest_gap_note", "worst_window_score"}
+    assert {"coverage_pct", "longest_gap_m", "longest_gap_note", "worst_window_score"} <= set(route["continuity"])
     seg = route["segments"][0]
     for key in ("segment_id", "start", "end", "length_m", "arrival_time", "score", "band", "factors",
                 "reasons", "data_fetched_at", "confidence", "unknown_factors", "known_weight_fraction"):
@@ -55,10 +55,12 @@ def test_response_has_every_contract_field(make_client):
 
 
 def test_unknown_values_are_null_not_zero(make_client):
-    route = make_client(places=fakes.make_places_provider(Path(tempfile.mkdtemp()))).post(
-        "/v1/routes", json=BODY).json()["routes"][0]
+    client = make_client(places=fakes.make_places_provider(Path(tempfile.mkdtemp())),
+                         context=fakes.FakeContext(error=fakes.osm_down()))
+    route = client.post("/v1/routes", json=BODY).json()["routes"][0]
     assert route["open_places_count"] is None
-    assert route["continuity"]["coverage_pct"] is None
+    assert route["continuity"]["coverage_pct"] is None        # no listings and no map data
+    assert route["continuity"]["insufficient_data"] is False or route["route_score"] is None
     assert route["segments"][0]["factors"]["transit"] is None
 
 

@@ -278,5 +278,28 @@ class ConfigTests(unittest.TestCase):
                 load_scoring_config(p)
 
 
+class CoverageFlagTests(unittest.TestCase):
+    """SegmentScore.covered: open place or help point within radii_m.coverage (75 m)."""
+
+    def test_open_place_within_75m_covers(self):
+        self.assertTrue(score([place(m_north=25, east_m=70)]).covered)
+
+    def test_open_place_beyond_75m_not_covered(self):
+        self.assertIs(score([place(m_north=25, east_m=90)]).covered, False)
+
+    def test_closed_place_does_not_cover(self):
+        self.assertIs(score([place(hours="morning")]).covered, False)
+
+    def test_unknown_hours_place_is_not_sure(self):
+        self.assertIsNone(score([place(hours=None)]).covered)
+
+    def test_help_point_covers(self):
+        self.assertTrue(score([], area(helps=[help_point(east_m=70)])).covered)
+
+    def test_unavailable_dataset_is_not_sure(self):
+        self.assertIsNone(score(None, area()).covered)
+        self.assertIsNone(SegmentScorer(CFG, [], None).score_segment(SEG, EVENING).covered)
+
+
 if __name__ == "__main__":
     unittest.main()

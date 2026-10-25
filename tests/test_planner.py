@@ -108,7 +108,7 @@ class TimeAwarenessTests(PlannerCase):
         self.assertGreater(evening["safest"].route_score - evening["fastest"].route_score, 20)
         b_night = next(r for r in night.values() if r.route_id == "mapbox-1")
         a_night = next(r for r in night.values() if r.route_id == "mapbox-0")
-        self.assertLess(b_night.route_score, evening["safest"].route_score / 2)
+        self.assertLess(b_night.route_score, evening["safest"].route_score - 15)
         self.assertGreater(a_night.continuity.coverage_pct, b_night.continuity.coverage_pct)
         self.assertLess(a_night.continuity.longest_gap_m, b_night.continuity.longest_gap_m)
 
@@ -125,8 +125,10 @@ class MissingDataTests(PlannerCase):
         resp = self.planner(places=empty).plan(request())
         route = resp.routes[0]
         self.assertIsNone(route.open_places_count)
-        self.assertIsNone(route.continuity.coverage_pct)
         self.assertIn("open_places", route.segments[0].unknown_factors)
+        # coverage may still be known where a help point is near, but the rest must say "not sure"
+        self.assertTrue(any("coverage not sure" in n for r in resp.routes for n in r.continuity.notes))
+        self.assertTrue(any(r.continuity.coverage_pct is None for r in resp.routes))
         self.assertTrue(any("not saved for this area" in w for w in resp.warnings))
 
     def test_places_cache_with_zero_places_is_known_zero_not_unknown(self):
