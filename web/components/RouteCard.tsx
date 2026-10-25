@@ -5,21 +5,19 @@ import {
 } from "@/lib/format";
 import type { Route } from "@/lib/types";
 
-type Props = { route: Route; selected: boolean; onSelect: () => void };
+import { ScoreRibbon, ScoreRing } from "./ScoreVisuals";
 
+type Props = { route: Route; selected: boolean; onSelect: () => void };
 
 export function RouteCard({ route, selected, onSelect }: Props) {
   const c = route.continuity;
   const merged = route.also_labels.map((l) => LABEL_NAMES[l]);
   return (
     <div className={`route-card ${LABEL_CLASS[route.label]}`} aria-current={selected ? "true" : undefined} data-selected={selected}>
-      <button
-        type="button" className="route-select"
-        aria-pressed={selected} onClick={onSelect}
-      >
-        <span className="row" style={{ alignItems: "stretch" }}>
+      <button type="button" className="route-select" aria-pressed={selected} onClick={onSelect}>
+        <span className="route-head">
           <span className="accent-bar" />
-          <span className="grow" style={{ display: "block" }}>
+          <span className="grow">
             <span className="row between">
               <span className="name">
                 {LABEL_NAMES[route.label]}
@@ -31,10 +29,13 @@ export function RouteCard({ route, selected, onSelect }: Props) {
               <span>{viaText(route.via) || formatMeters(route.distance_m)}</span>
               <span>{formatExtra(route.extra_min)}</span>
             </span>
-            <span className="small" style={{ display: "block", marginTop: 4 }}>{scoreWord(route.route_score)}</span>
+            <span className="small score-word">{scoreWord(route.route_score)}</span>
           </span>
+          <ScoreRing score={route.route_score} />
         </span>
+        <ScoreRibbon segments={route.segments} />
       </button>
+      {selected ? <p className="caption on-map">Showing on the map</p> : null}
       {merged.length ? (
         <p className="small muted" style={{ marginTop: 8 }}>
           {[LABEL_NAMES[route.label], ...merged].join(" and ")} are the same route.

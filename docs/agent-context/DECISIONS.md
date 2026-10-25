@@ -2,6 +2,8 @@
 
 Format: `YYYY-MM-DD HH:MM | who | decision | reason`
 
+2026-10-25 00:50 | owner via cursor | No login, sign-in, or sign-up screen exists under web/app, so none was added. The bolder color, type, and motion pass stays in web/app/polish.css and the landing illustration. | Owner asked to polish every existing screen, and to include login only if it was already there
+2026-10-25 00:40 | owner via cursor | The web UI revamp stays on the existing Next.js screens: night palette in web/app/polish.css, score rings on the route cards, and a landing hero that draws three walks color-coded by score band (mint, amber, coral). No API or scoring changes. Copy still must not call a route safe. | Owner asked for a full visual revamp that keeps the demo flow working
 2026-10-24 | team | Bright Data is the core live feed; Apify only for supporting data | Bright Data prize needs it essential
 2026-10-24 | team | Mapbox for map and routing; we generate candidates and re-rank ourselves | Directions API takes no custom segment costs
 2026-10-24 | team | Never label a route "safe" | We describe conditions, we cannot guarantee safety

@@ -27,7 +27,7 @@ export const HourglassIcon = () => (<Svg><path d="M6 3h12M6 21h12M7 3c0 5 5 5 5 
 
 export function BrandMark() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#89d5bc" strokeWidth="2"
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
       strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
       <circle cx="5" cy="19" r="2" /><circle cx="19" cy="5" r="2" /><path d="M7 19h6a4 4 0 0 0 4-4V9" />
     </svg>

@@ -22,7 +22,7 @@ export function PreferencesScreen({ next = "/plan" }: { next?: string }) {
   const full = settings.priorities.length >= MAX_PRIORITIES;
 
   return (
-    <div className="screen stack">
+    <div className="screen stack prefs-page">
       <AppHeader title="Route preferences" backHref={next} />
 
       <section className="card stack-sm" aria-labelledby="detour-h">
@@ -30,7 +30,7 @@ export function PreferencesScreen({ next = "/plan" }: { next?: string }) {
           <h2 id="detour-h">Detour tolerance</h2>
           <span className="caption">Max added time</span>
         </div>
-        <p style={{ fontSize: 28, fontWeight: 600, color: "var(--mint)" }} aria-live="polite">
+        <p className="stat-xl" style={{ color: "var(--mint)" }} aria-live="polite">
           {settings.maxExtraMinutes === 0 ? "No extra time" : `Up to ${settings.maxExtraMinutes} extra min`}
         </p>
         <p className="small muted">Compared with the fastest route.</p>

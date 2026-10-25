@@ -5,10 +5,10 @@ import Link from "next/link";
 
 export function HowScoresScreen({ backHref = "/" }: { backHref?: string }) {
   return (
-    <div className="screen stack">
+    <div className="screen stack guide-page">
       <AppHeader title="How scores work" subtitle="What we check and what we cannot know" backHref={backHref} />
 
-      <section className="card stack-sm" aria-labelledby="intro-h">
+      <section className="card stack-sm guide-intro" aria-labelledby="intro-h">
         <h2 id="intro-h">Street conditions along your walk</h2>
         <p className="muted">
           We look at each stretch of about 50 m, at the time you will reach it, and combine eight checks.
@@ -16,10 +16,14 @@ export function HowScoresScreen({ backHref = "/" }: { backHref?: string }) {
         </p>
       </section>
 
+      <div className="guide-grid">
       <section className="card stack-sm" aria-labelledby="checks-h">
         <div className="row between">
           <h2 id="checks-h">1. What we check</h2>
           <span className="tag">100% total</span>
+        </div>
+        <div className="weight-bar" aria-hidden="true">
+          {FACTORS.map((f) => <span key={f.id} style={{ width: `${f.weight}%` }} />)}
         </div>
         <ul className="stack" style={{ listStyle: "none", padding: 0, margin: 0 }}>
           {FACTORS.map((f) => (
@@ -77,6 +81,7 @@ export function HowScoresScreen({ backHref = "/" }: { backHref?: string }) {
         </ul>
       </section>
 
+      </div>
       <DisclaimerBanner />
       <a href="tel:911" className="btn secondary">Call 911</a>
       <Link href={backHref} className="btn primary">Return</Link>
