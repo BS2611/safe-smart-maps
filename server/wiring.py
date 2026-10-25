@@ -5,9 +5,11 @@ from pathlib import Path
 from server.data.cache import CachedPlacesProvider
 from server.data.gtfs import CombinedSchedule, TransitFeedError, TransitUnavailable, load_gtfs
 from server.data.mapbox import MapboxWalkingProvider
+from server.data.mapillary import MapillaryPhotoSource
 from server.data.osm import OverpassContextProvider
 from server.data.sf_open_data import SocrataClient
-from server.services.explain import ClaudeExplainer
+from server.services.audit import StreetAuditor
+from server.services.explain import build_explainer
 from server.services.planner import Providers, RoutePlanner
 
 
@@ -40,9 +42,11 @@ def build_planner(cfg: dict, places: CachedPlacesProvider) -> RoutePlanner:
         routing=MapboxWalkingProvider(),     # reads MAPBOX_TOKEN when a request is made
         places=places,
         context=OverpassContextProvider(),
-        explainer=ClaudeExplainer(),         # reads ANTHROPIC_API_KEY; template text without it
+        explainer=build_explainer(),         # Claude by default (ANTHROPIC_API_KEY); template text without a key
         incidents=city,
         outages=city,
         transit=_transit_schedule(),         # GTFS_DIR; empty means transit stays not sure
+        auditor=StreetAuditor(),             # reads ANTHROPIC_API_KEY; no key = no audits
+        photos=MapillaryPhotoSource(),       # reads MAPILLARY_TOKEN; no token = no photos
     )
     return RoutePlanner(providers, cfg)

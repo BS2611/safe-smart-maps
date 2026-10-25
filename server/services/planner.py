@@ -9,6 +9,8 @@ A data source that is missing or fails never fails the request: its factor stays
 (None) and a warning is returned (TECHNICAL_SPEC section 6).
 """
 import math
+import os
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from typing import Any
 
@@ -30,6 +32,7 @@ from server.services.schemas import (
     RoutesRequest,
     RoutesResponse,
     SegmentOut,
+    StretchAuditOut,
 )
 from server.services.segment_scoring import SegmentScore, SegmentScorer
 from server.services.segmenter import segment_route
@@ -37,6 +40,8 @@ from server.services.selector import Candidate, select_routes
 
 PAD_DEG = 0.001            # about 100 m of padding around the candidates
 LABEL_ORDER = ["safest", "balanced", "fastest"]
+AUDIT_PER_ROUTE = int(os.environ.get("AUDIT_MAX_CALLS_PER_REQUEST", "3") or 3)   # photos Claude reads per request
+AUDIT_MIN_SEPARATION_M = 100
 # The UI uses friendlier names for the "what matters most" chips.
 PRIORITY_ALIASES = {
     "lighting": "lighting", "open_places": "open_places", "main_road": "main_road",
@@ -60,6 +65,8 @@ class Providers:
     incidents: Any = None # get_recent_incidents(area) -> list, or None if not configured
     outages: Any = None   # get_open_outages(area) -> list, or None if not configured
     transit: Any = None   # TransitSchedule, or None when no GTFS feed is configured
+    auditor: Any = None   # StreetAuditor-like: audit(photo) -> StretchAudit | None; needs `photos` too
+    photos: Any = None    # PhotoSource-like: photo_near(lat, lng) -> Photo | None
 
 
 def apply_priorities(weights: dict[str, float], priorities: list[str], boost: float) -> dict[str, float]:
@@ -116,6 +123,41 @@ class RoutePlanner:
         except SfDataError:
             warnings.append(warning)
             return None
+
+    def _audit_stretches(self, scored: list[SegmentScore]) -> list[StretchAuditOut]:
+        """Ask Claude to look at street photos of the weakest or not-sure stretches (a few, spread apart).
+        Best effort: any problem just means fewer or no audits. Never changes scores."""
+        if self.p.auditor is None or self.p.photos is None:
+            return []
+        limit = AUDIT_PER_ROUTE
+        weak = sorted((s for s in scored if s.band != "green"),
+                      key=lambda s: (s.score is not None, s.score if s.score is not None else 0))
+        picked: list[SegmentScore] = []
+        for s in weak:
+            if all(haversine_m(s.segment.midpoint, q.segment.midpoint) >= AUDIT_MIN_SEPARATION_M for q in picked):
+                picked.append(s)
+            if len(picked) >= limit:
+                break
+
+        def one(s: SegmentScore):
+            try:
+                lat, lng = s.segment.midpoint
+                photo = self.p.photos.photo_near(lat, lng)
+                audit = self.p.auditor.audit(photo) if photo is not None else None
+            except Exception:  # noqa: BLE001 - audits are optional; never break a route request
+                return None
+            return None if audit is None else StretchAuditOut(
+                segment_id=s.segment.segment_id, photo_id=audit.photo_id,
+                photo_url=f"https://www.mapillary.com/app/?pKey={audit.photo_id}", captured_at=audit.captured_at,
+                attribution=audit.attribution, streetlights_visible=audit.streetlights_visible,
+                open_storefronts=audit.open_storefronts, sidewalk_visibility=audit.sidewalk_visibility,
+                construction=audit.construction, confidence=audit.confidence, evidence=audit.evidence,
+                label=audit.label)
+
+        if not picked:
+            return []
+        with ThreadPoolExecutor(max_workers=len(picked)) as pool:
+            return [a for a in pool.map(one, picked) if a is not None]
 
     # ---------- per-route work ----------
     def _route_facts(self, cand: RouteCandidate, scored: list[SegmentScore],
@@ -245,6 +287,7 @@ class RoutePlanner:
                 geometry=LineString(coordinates=list(cand.coordinates)),
                 segments=[self._segment_out(s) for s in scored],
                 explanation=text, explanation_source=source,
+                street_photo_audits=self._audit_stretches(scored) if not routes else [],
             ))
         if unknown_hours_seen:
             noun, verb = ("place", "it was") if unknown_hours_seen == 1 else ("places", "they were")

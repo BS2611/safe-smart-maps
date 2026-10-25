@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3000",
+    "dev:local": "node scripts/start-profile.mjs local",
+    "dev:demo": "node scripts/start-profile.mjs demo",
     "build": "next build",
     "start": "next start -p 3000",
     "lint": "next lint",

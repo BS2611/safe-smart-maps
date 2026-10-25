@@ -6,6 +6,7 @@ stale. Route requests never wait on it.
 import os
 from datetime import datetime, timezone
 
+from server.data.apify import ApifyPlacesProvider, FallbackPlacesProvider
 from server.data.brightdata import BrightDataPlacesProvider
 from server.data.cache import (DEFAULT_CACHE_DIR, DEFAULT_TTL_SECONDS, CachedPlacesProvider,
                                FilePlacesCache, area_key)
@@ -22,7 +23,10 @@ DEMO_AREAS: dict[str, BoundingBox] = {
 def build_places_provider() -> CachedPlacesProvider:
     ttl = float(os.environ.get("CACHE_TTL_SECONDS") or DEFAULT_TTL_SECONDS)
     cache = FilePlacesCache(os.environ.get("CACHE_DIR") or DEFAULT_CACHE_DIR)
-    return CachedPlacesProvider(BrightDataPlacesProvider(), cache, PROVIDER_NAME, ttl)
+    # Apify only runs when Bright Data fails (and APIFY_TOKEN is set); Place.source says which one answered.
+    upstream = FallbackPlacesProvider(BrightDataPlacesProvider(), ApifyPlacesProvider(),
+                                      ApifyPlacesProvider.configured)
+    return CachedPlacesProvider(upstream, cache, PROVIDER_NAME, ttl)
 
 
 def prefetch_enabled() -> bool:

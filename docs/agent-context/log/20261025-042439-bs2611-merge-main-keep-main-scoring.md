@@ -1,0 +1,15 @@
+# merge-main-keep-main-scoring
+
+- When: 2026-10-25 04:24 PT
+- Who: bs2611 / Bhavpreet (agent: claude-code)
+- Branch / commit: bhav/backend-data / merge commit of origin/main (59a72a5), see git log
+- Files touched: server/services/planner.py, server/wiring.py, scoring/scoring_v1.json, server/data/transit.py, server/services/segment_scoring.py, tests/test_segment_scoring.py, tests/fakes.py, server/services/geo.py, .env.example, docs/agent-context/CONTRACTS.md, DECISIONS.md; removed tests/test_transit.py and tests/test_extra_factors.py
+- What changed: Merged origin/main (PR #10, GTFS scoring) into this branch. 7 files conflicted because both sides had built turns, activity, incidents, outage lighting and transit differently. Decision (Bhavpreet): MAIN's scoring wins. Taken from main: scoring_v1.json, segment_scoring.py, data/transit.py + gtfs.py, planner scoring, geo.py, test_segment_scoring.py, fakes.py. Dropped from this branch: its own factor scoring, the live 511 transit provider (Muni511Provider) and API_511_KEY, and the tests for them. Kept and re-applied on top of main: Mapillary photo source, Claude street-photo audits (`street_photo_audits`, first route only), explainer provider switch (`build_explainer`), Apify places fallback, local/demo env profiles. planner.py gained `Providers.auditor` / `Providers.photos`, `_audit_stretches` and the `street_photo_audits` field; wiring.py adds the auditor, photos and `build_explainer()`.
+- Why: Both implementations covered the same factors. Main's is already merged, has GTFS and demo-corridor tests and matches the web score page, so it is the base.
+- Decisions made in chat (also added to DECISIONS.md? yes/no): yes, one line in DECISIONS.md (supersedes the earlier lines about this branch's scoring and 511 transit).
+- Contracts affected: CONTRACTS.md: took main's scoring bullets; kept the Mapillary/audit/Apify paragraph and `street_photo_audits`; removed API_511_KEY. `.env.example` loses API_511_KEY.
+- How it was tested: `python -m pytest -q -m "not live"` with the repo .venv: 506 passed, 3 deselected. `ruff check server tests scripts`: one import-order error in tests/test_gtfs.py, which is main's file and was not changed here. Live APIs (Mapillary, Claude, Apify) were NOT re-run after the merge. Web tests were not run.
+- Unfinished / uncommitted: nothing uncommitted after the merge commit. Branch is not pushed yet.
+- Open issues / risks: Live 511 transit is gone (planning is GTFS only; GTFS_DIR must be set or transit is "not sure"). Amey should review planner.py (audit additions) and the dropped-scoring decision. Mapillary coverage is only 25-35% of sample points. The web UI still does not show `street_photo_audits`.
+- Next step for whoever continues: push bhav/backend-data (`git push`), open the PR to main (compare link: https://github.com/BS2611/safe-smart-maps/compare/main...bhav/backend-data), then show `street_photo_audits` on Route detail in web/. Optional: re-add live 511 as a second transit provider.
+- Needs from teammate: Amey review before merge to main.

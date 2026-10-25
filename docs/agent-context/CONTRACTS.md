@@ -80,6 +80,7 @@ Wires existing modules; it adds no scoring rules.
 6. Explanation (`explain.py`): Claude when `ANTHROPIC_API_KEY` is set, a fixed template otherwise or when the text breaks the wording rules (`wording.py`); `explanation_source` = `ai | template`.
 Known limits: `via` is always `[]` (the Mapbox provider asks for `steps=false`, so there are no street names; `longest_gap_note` is Amey's "from X m to Y m along the route"); `segment_id` is `seg-<n>`; `open_places_count` counts distinct places open within 50 m of any segment at that segment's arrival time.
 `SfDataError`-based providers in `data/sf_open_data.py` (311 streetlight outages, incidents) are wired through the planner and cached per area. A failure leaves that factor "not sure" and adds a warning. Transit is `GTFS_DIR` (`server/data/gtfs.py`); with no folder, transit stays "not sure".
+`data/mapillary.py` (`MapillaryPhotoSource`, `MAPILLARY_TOKEN`) + `services/audit.py` (`StreetAuditor`, Claude vision) feed `Providers.photos` / `Providers.auditor`: for the FIRST route only, up to `AUDIT_MAX_CALLS_PER_REQUEST` (default 3) weak or not-sure stretches (100 m apart) get a labeled daytime-photo reading in `street_photo_audits`. It never changes a score; any failure gives an empty list. `data/apify.py` is the places fallback: it runs only if Bright Data fails and `APIFY_TOKEN` is set (`Place.source` = `apify`).
 
 ## Route result
 ```json
@@ -97,7 +98,12 @@ Known limits: `via` is always `[]` (the Mapbox provider asks for `steps=false`, 
   "geometry": "GeoJSON LineString",
   "segments": ["Segment score"],
   "explanation": "plain-language text from the Claude API",
-  "explanation_source": "ai | template"
+  "explanation_source": "ai | template",
+  "street_photo_audits": [ { "segment_id": "seg-3", "photo_id": "string", "photo_url": "mapillary link",
+      "captured_at": "2025-08-30 | null", "attribution": "Photo: Mapillary contributors, CC BY-SA 4.0",
+      "streetlights_visible": "yes | no | unclear", "open_storefronts": "yes | no | unclear",
+      "sidewalk_visibility": "good | poor | unclear", "construction": "yes | no | unclear",
+      "confidence": "low | medium | high", "evidence": "one sentence", "label": "daytime photo, Claude reading" } ]
 }
 ```
 `also_labels` is filled when two labels pick the same route (show it once).
@@ -116,7 +122,7 @@ Known limits: `via` is always `[]` (the Mapbox provider asks for `steps=false`, 
 ## Data source interface (server/data/)
 - `get_places(area, time)` -> list of places with opening hours, `is_24h`, `category`, `source`, `fetched_at`.
   Implementations: `brightdata` (core), `apify` (supporting only), later `osm` / `overture`.
-- Same pattern for roads (OSM), lighting (SF 311), transit (511/GTFS), incidents (SF open data), routing (Mapbox).
+- Same pattern for roads (OSM), lighting (SF 311), transit (GTFS), incidents (SF open data), routing (Mapbox).
 - `ContextProvider.get_area_context(area: BoundingBox) -> AreaContext` (server/data/context.py; implementation `OverpassContextProvider` in server/data/osm.py, source "osm"). `AreaContext` = `roads`, `help_points`, `fetched_at`, plus `street_lamps`, `activity_points`, and `activity_known` (true only after a query that asked for shops and busy amenities). `RoadContext`: `coordinates` ((lat,lng) points), `road_class` (motorway|trunk|primary|secondary|tertiary|residential|service|pedestrian|other|unknown), `lit` (yes|no|unknown; missing tag = unknown, never no), `tunnel` (true only for an explicit `tunnel=yes` or `tunnel=building_passage`), `osm_id`, `name`, `raw_highway`, `source`, `fetched_at`. `HelpPoint`: `type` (police|hospital|fire_station), `lat`, `lng`, `name`, `osm_id`, `source`, `fetched_at`. OSM is cached in memory for 24 h. Raises `OsmError` on upstream failure. Scoring must treat `unknown` as "not sure". The segment JSON shape is unchanged: each factor is still 0-100 or null, with the same names.
 - Cache key: `(provider, area)`; `area` = the BoundingBox that was fetched (a request inside a cached box reuses it). No `hour_bucket`: listings are not hour-specific, open/closed is computed per request from cached hours. File cache in `CACHE_DIR` (default `.cache/places`, git-ignored). Route requests only READ the cache (never fetch); stale entries are served with their original `fetched_at` while a background refresh runs; a miss returns no places ("not sure").
 
@@ -132,4 +138,6 @@ Known limits: `via` is always `[]` (the Mapbox provider asks for `steps=false`, 
   PREFETCH_ON_STARTUP (1 = background-refresh missing/stale demo areas at server start; needs BRIGHTDATA_API_KEY),
   WEB_ORIGINS (comma-separated browser origins allowed by CORS, default http://localhost:3000, never `*`),
   PREWARM_DEMO (1 = run the demo trip once at startup to warm the OSM cache; uses a few Mapbox calls),
-  ANTHROPIC_MODEL (optional, default claude-haiku-5-5)
+  ANTHROPIC_MODEL (optional, default claude-haiku-5-5),
+  MAPILLARY_TOKEN (street photos), AUDIT_MAX_CALLS_PER_REQUEST (default 3), AUDIT_MAX_CALLS_TOTAL (default 200),
+  EXPLAINER_PROVIDER (claude | openai_compat) with EXPLAINER_BASE_URL / EXPLAINER_API_KEY / EXPLAINER_MODEL
