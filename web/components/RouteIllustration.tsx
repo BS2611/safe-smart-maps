@@ -25,9 +25,9 @@ const BLOCKS: Array<[number, number, number, number]> = [
 ];
 
 const TONE = {
-  high: "#9cf0d2",
-  mid: "#f0b429",
-  low: "#ff9b7a",
+  high: "#b6ffe4",
+  mid: "#ffc14d",
+  low: "#ffb09a",
 } as const;
 
 function ScoreBadge({
