@@ -3,7 +3,7 @@ from server.data.cache import CachedPlacesProvider
 from server.data.mapbox import MapboxWalkingProvider
 from server.data.osm import OverpassContextProvider
 from server.data.sf_open_data import SocrataClient
-from server.services.explain import ClaudeExplainer
+from server.services.explain import build_explainer
 from server.services.planner import Providers, RoutePlanner
 
 
@@ -13,7 +13,7 @@ def build_planner(cfg: dict, places: CachedPlacesProvider) -> RoutePlanner:
         routing=MapboxWalkingProvider(),     # reads MAPBOX_TOKEN when a request is made
         places=places,
         context=OverpassContextProvider(),
-        explainer=ClaudeExplainer(),         # reads ANTHROPIC_API_KEY; template text without it
+        explainer=build_explainer(),          # Claude by default (ANTHROPIC_API_KEY); template text without a key
         sf=SocrataClient(),                  # public SF open data, no key: incidents + streetlight reports
     )
     return RoutePlanner(providers, cfg)

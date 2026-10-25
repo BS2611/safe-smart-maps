@@ -81,3 +81,48 @@ class ClaudeExplainer:
         if not text or find_banned_wording(text):
             return fallback
         return text, "ai"
+
+
+class OpenAICompatExplainer:
+    """Optional alternative model (Qwen via an OpenAI-style endpoint, a local Ollama, ...).
+
+    Same job and same guardrails as ClaudeExplainer: facts in, 2-3 sentences out, wording filter,
+    template fallback, never raises. Needs EXPLAINER_BASE_URL (ending before /chat/completions).
+    """
+
+    def __init__(self, base_url: str | None = None, api_key: str | None = None, model: str | None = None,
+                 timeout_s: float = 15.0, client: httpx.Client | None = None):
+        self.base_url = (base_url or os.environ.get("EXPLAINER_BASE_URL") or "").rstrip("/")
+        self._api_key = api_key or os.environ.get("EXPLAINER_API_KEY")
+        self.model = model or os.environ.get("EXPLAINER_MODEL") or ""
+        self.timeout_s = timeout_s
+        self._client = client
+
+    def explain(self, facts: dict) -> tuple[str, str]:
+        fallback = (template_explanation(facts), "template")
+        if not self.base_url or not self.model:
+            return fallback
+        headers = {"content-type": "application/json"}
+        if self._api_key:
+            headers["authorization"] = f"Bearer {self._api_key}"
+        body = {"model": self.model, "max_tokens": 220, "messages": [
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": json.dumps(facts, default=str)}]}
+        try:
+            resp = (self._client or httpx).post(f"{self.base_url}/chat/completions", json=body,
+                                                headers=headers, timeout=self.timeout_s)
+            if resp.status_code != 200:
+                return fallback
+            text = (resp.json()["choices"][0]["message"]["content"] or "").strip()
+        except (httpx.HTTPError, ValueError, KeyError, IndexError, TypeError):
+            return fallback
+        if not text or find_banned_wording(text):
+            return fallback
+        return text, "ai"
+
+
+def build_explainer():
+    """EXPLAINER_PROVIDER=claude (default) or openai_compat. Unknown values use Claude."""
+    if (os.environ.get("EXPLAINER_PROVIDER") or "claude").strip().lower() == "openai_compat":
+        return OpenAICompatExplainer()
+    return ClaudeExplainer()
