@@ -70,6 +70,7 @@ Add fields freely; never remove or rename a field within a version.
 - `get_places(area, time)` -> list of places with opening hours, `is_24h`, `category`, `source`, `fetched_at`.
   Implementations: `brightdata` (core), `apify` (supporting only), later `osm` / `overture`.
 - Same pattern for roads (OSM), lighting (SF 311), transit (511/GTFS), incidents (SF open data), routing (Mapbox).
+- `ContextProvider.get_area_context(area: BoundingBox) -> AreaContext` (server/data/context.py; implementation `OverpassContextProvider` in server/data/osm.py, source "osm"). `AreaContext` = `roads: list[RoadContext]`, `help_points: list[HelpPoint]`, `fetched_at`. `RoadContext`: `coordinates` ((lat,lng) points), `road_class` (motorway|trunk|primary|secondary|tertiary|residential|service|pedestrian|other|unknown), `lit` (yes|no|unknown; missing tag = unknown, never no), `osm_id`, `name`, `raw_highway`, `source`, `fetched_at`. `HelpPoint`: `type` (police|hospital|fire_station), `lat`, `lng`, `name`, `osm_id`, `source`, `fetched_at`. Not cached yet. Raises `OsmError` on upstream failure. Scoring must treat `unknown` as "not sure".
 - Cache key: `(provider, area)`; `area` = the BoundingBox that was fetched (a request inside a cached box reuses it). No `hour_bucket`: listings are not hour-specific, open/closed is computed per request from cached hours. File cache in `CACHE_DIR` (default `.cache/places`, git-ignored). Route requests only READ the cache (never fetch); stale entries are served with their original `fetched_at` while a background refresh runs; a miss returns no places ("not sure").
 
 ## Config and env
@@ -78,4 +79,5 @@ Add fields freely; never remove or rename a field within a version.
   MAPBOX_TOKEN (server), NEXT_PUBLIC_MAPBOX_TOKEN (browser, URL-restricted),
   ANTHROPIC_API_KEY, NEXT_PUBLIC_API_BASE_URL,
   CACHE_TTL_SECONDS (default 86400), CACHE_DIR (default .cache/places),
+  OVERPASS_URL (optional, default public overpass-api.de),
   PREFETCH_ON_STARTUP (1 = background-refresh missing/stale demo areas at server start; needs BRIGHTDATA_API_KEY)

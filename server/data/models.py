@@ -38,3 +38,35 @@ class Place:
     is_24h: bool | None                 # True only if the source says open 24 hours every day
     place_id: str | None = None
     raw_category: str | None = None     # original text, for debugging only
+
+
+@dataclass(frozen=True)
+class RoadContext:
+    """One street segment with the facts scoring needs. Scoring never sees raw OSM tags."""
+    coordinates: tuple[tuple[float, float], ...]  # (lat, lng) points along the way, at least 2
+    road_class: str                     # motorway|trunk|primary|secondary|tertiary|residential|
+                                        # service|pedestrian|other|unknown (see osm.classify_highway)
+    lit: str                            # "yes" | "no" | "unknown"; a missing tag is "unknown", never "no"
+    source: str                         # "osm"
+    fetched_at: datetime                # timezone-aware UTC
+    osm_id: int | None = None
+    name: str | None = None
+    raw_highway: str | None = None      # original tag value, for debugging only
+
+
+@dataclass(frozen=True)
+class HelpPoint:
+    type: str                           # "police" | "hospital" | "fire_station"
+    lat: float
+    lng: float
+    source: str                         # "osm"
+    fetched_at: datetime                # timezone-aware UTC
+    name: str | None = None
+    osm_id: int | None = None
+
+
+@dataclass(frozen=True)
+class AreaContext:
+    roads: list[RoadContext]
+    help_points: list[HelpPoint]
+    fetched_at: datetime

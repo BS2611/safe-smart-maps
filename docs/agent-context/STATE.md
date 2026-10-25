@@ -15,10 +15,10 @@ Last full review by a human: (date/time)
 
 ## Person B: Amey (backend / data)
 - Owns (do not edit without asking): `server/`, `scoring/`
-- Status: Bright Data places provider LIVE-VERIFIED 2026-10-24 (repo smoke test passed end to end, 19 places in the Palace box; earlier raw call, 60 records, all normalized, 59 with parsed hours). Cache + prefetch layer built (file cache, serve-stale, background refresh, GET /v1/cache/status); 162 unit tests pass on amey/backend (local commits, not pushed). Live prefetch not yet run. See log *places-cache-prefetch.
+- Status: Bright Data places LIVE and cache VERIFIED 2026-10-24 (prefetch ran: 18 places, status fresh). OSM context provider (road class, lit, help points) built and unit-tested (181 tests pass); live Overpass check not done because the network refused the connection. Local commits on amey/backend; the OSM commit is not pushed.
 - Doing now: nothing
 - Files in progress: none
-- Next: run `.venv/bin/python -m scripts.prefetch_places` once to warm the cache; decide the 8 open behaviors in the 20261024-174045 log; then OSM/Mapbox or segment scoring
+- Next: retry live Overpass check from a working network; then segment scoring, then continuity
 - Blocked on: approval to add Place model to CONTRACTS.md
 
 ## Guide (third person, advice and submission content, little code)
