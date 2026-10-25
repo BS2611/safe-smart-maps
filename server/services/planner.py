@@ -16,6 +16,7 @@ from server.data.mapbox import MapboxError, RouteCandidate
 from server.data.models import AreaContext, BoundingBox, Place
 from server.data.opening_hours import OpenStatus, evaluate_open_status
 from server.data.osm import OsmError
+from server.data.sf_open_data import SfDataError
 from server.data.ttl_cache import TTLCache
 from server.services.candidates import generate_candidates
 from server.services.continuity import compute_continuity
@@ -56,6 +57,7 @@ class Providers:
     places: Any           # CachedPlacesProvider (reads saved listings only; never fetches)
     context: Any          # ContextProvider: get_area_context(BoundingBox) -> AreaContext
     explainer: Any        # explain(facts) -> (text, source)
+    sf: Any = None        # SocrataClient-like: get_recent_incidents(area), get_open_outages(area); None = not connected
 
 
 def apply_priorities(weights: dict[str, float], priorities: list[str], boost: float) -> dict[str, float]:
@@ -91,6 +93,8 @@ class RoutePlanner:
         self.cfg = cfg
         # OpenStreetMap (Overpass) is slow (20-40 s) and changes rarely: keep it for a day.
         self.context_cache = context_cache or TTLCache(24 * 3600)
+        # City open data (incidents, streetlight reports) is fast but changes daily: keep it 6 hours.
+        self.sf_cache = TTLCache(6 * 3600)
 
     # ---------- data gathering ----------
     def _context(self, area: BoundingBox, warnings: list[str]) -> AreaContext | None:
@@ -102,6 +106,23 @@ class RoutePlanner:
             warnings.append("Street and lighting map data (OpenStreetMap): not available right now, "
                             "so lighting, road type and help points show as not sure.")
             return None
+
+    def _sf_data(self, area: BoundingBox, warnings: list[str]) -> tuple[list | None, list | None]:
+        """(incidents, outages) from SF open data. None = not available (that factor stays "not sure")."""
+        if self.p.sf is None:
+            return None, None
+        rounded = _round_area(area)
+        out = []
+        for key, label, loader in (
+            ("incidents", "Past incident reports (SF open data)", lambda: self.p.sf.get_recent_incidents(rounded)),
+            ("outages", "Streetlight outage reports (SF 311)", lambda: self.p.sf.get_open_outages(rounded)),
+        ):
+            try:
+                out.append(self.sf_cache.get_or_load((key, rounded), loader))
+            except SfDataError:
+                warnings.append(f"{label}: not available right now, so it shows as not sure.")
+                out.append(None)
+        return out[0], out[1]
 
     # ---------- per-route work ----------
     def _route_facts(self, cand: RouteCandidate, scored: list[SegmentScore],
@@ -170,7 +191,8 @@ class RoutePlanner:
         context = self._context(area, warnings)
         weights = apply_priorities(self.cfg["weights"], req.settings.priorities,
                                    self.cfg["priorities"]["boost"])
-        scorer = SegmentScorer(self.cfg, found.places, context, weights)
+        incidents, outages = self._sf_data(area, warnings)
+        scorer = SegmentScorer(self.cfg, found.places, context, weights, incidents=incidents, outages=outages)
 
         results = {}
         for cand in candidates:

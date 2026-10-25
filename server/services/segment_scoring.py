@@ -10,8 +10,8 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 
 from server.data.models import AreaContext, Place
-from server.data.opening_hours import OpenStatus, evaluate_open_status
-from server.services.geo import point_to_polyline_m
+from server.data.opening_hours import PLACE_TZ, OpenStatus, evaluate_open_status
+from server.services.geo import bearing_deg, point_to_polyline_m, turn_angle_deg
 from server.services.scoring_config import ScoringConfigError
 from server.services.segmenter import Segment
 
@@ -77,11 +77,14 @@ class SegmentScorer:
     An empty list / empty AreaContext means "available, nothing found"."""
 
     def __init__(self, config: dict, places: list[Place] | None,
-                 area_context: AreaContext | None, weights: dict[str, float] | None = None):
+                 area_context: AreaContext | None, weights: dict[str, float] | None = None,
+                 incidents: list | None = None, outages: list | None = None):
         check_scoring_params(config)
         self.config = config
         self.places = places
         self.area_context = area_context
+        self.incidents = incidents      # Incident(lat, lng) list; None = source unavailable
+        self.outages = outages          # Outage(lat, lng) list of OPEN streetlight reports; None = unavailable
         self.weights = dict(weights or config["weights"])
         if set(self.weights) != set(config["weights"]):
             raise ScoringConfigError("weights override must use the same factor names as the config")
@@ -166,6 +169,64 @@ class SegmentScorer:
                             f"nearest help point: {best.type.replace('_', ' ')} ({label}), {best_d:.0f} m",
                             {"type": best.type, "name": best.name, "distance_m": round(best_d, 1)})
 
+    def _turns(self, seg: Segment, prev: Segment | None) -> FactorResult:
+        """Fewer sharp turns is easier to follow. Pure geometry, always known."""
+        params = self.config["factor_params"]["turns_by_angle"]
+        if prev is None:
+            return FactorResult("turns", float(params["gentle"]), "start of the route (no turn)")
+        angle = turn_angle_deg(bearing_deg(prev.start, prev.end), bearing_deg(seg.start, seg.end))
+        if angle < params["gentle_max_deg"]:
+            value, word = params["gentle"], "gentle"
+        elif angle < params["moderate_max_deg"]:
+            value, word = params["moderate"], "moderate"
+        else:
+            value, word = params["sharp"], "sharp"
+        return FactorResult("turns", float(value), f"{word} turn ({angle:.0f} degrees)", {"angle_deg": round(angle, 1)})
+
+    def _activity(self, seg: Segment, arrival: datetime) -> FactorResult:
+        """ESTIMATE of how busy the street is: open places nearby x time of day. Not a count of people."""
+        if self.places is None:
+            return FactorResult("activity", None, "activity estimate: no place data (not sure)")
+        radius = self.config["radii_m"]["activity"]
+        open_n = sum(
+            1 for p in self.places
+            if point_to_polyline_m((p.lat, p.lng), seg.coordinates) <= radius
+            and evaluate_open_status(p, arrival) is OpenStatus.OPEN)
+        params = self.config["factor_params"]["activity"]
+        hour = arrival.astimezone(PLACE_TZ).hour
+        starts = sorted(int(k) for k in params["time_of_day"])
+        key = str(max([s for s in starts if s <= hour], default=starts[0]))
+        weight = params["time_of_day"][key]
+        value = min(100.0, open_n * params["points_per_open_place"]) * weight
+        return FactorResult(
+            "activity", value,
+            f"activity estimate: {open_n} open place{'s' if open_n != 1 else ''} within {radius:g} m at this hour "
+            "(an estimate, not a count of people)", {"open": open_n, "time_weight": weight})
+
+    def _incidents(self, seg: Segment) -> FactorResult:
+        """Past police incident reports nearby. Low weight on purpose: it reflects policing as much as danger."""
+        if self.incidents is None:
+            return FactorResult("incidents", None, "past incidents: no data (not sure)")
+        radius = self.config["radii_m"]["incident"]
+        n = sum(1 for i in self.incidents if point_to_polyline_m((i.lat, i.lng), seg.coordinates) <= radius)
+        value = max(0.0, 100.0 - n * self.config["factor_params"]["incident_points_each"])
+        return FactorResult("incidents", value,
+                            f"{n} past incident report{'s' if n != 1 else ''} within {radius:g} m (low weight)",
+                            {"count": n})
+
+    def _outage_penalty(self, lighting: FactorResult, seg: Segment) -> FactorResult:
+        """Open streetlight-outage reports near the segment lower a KNOWN lighting value. They never
+        turn "not sure" into a number: an outage report alone does not say the street is unlit."""
+        if self.outages is None or lighting.value is None:
+            return lighting
+        radius = self.config["radii_m"]["outage"]
+        n = sum(1 for o in self.outages if point_to_polyline_m((o.lat, o.lng), seg.coordinates) <= radius)
+        if not n:
+            return lighting
+        value = max(0.0, lighting.value - n * self.config["factor_params"]["outage_penalty_each"])
+        return FactorResult("lighting", value, f"{lighting.reason}; {n} open streetlight outage report"
+                            f"{'s' if n != 1 else ''} nearby", {**lighting.evidence, "outages": n})
+
     def _covered(self, seg: Segment, arrival: datetime) -> bool | None:
         """Continuity coverage (TECHNICAL_SPEC s5): an OPEN place or a help point within
         radii_m.coverage of the segment. True as soon as one is found. False only when both
@@ -188,18 +249,24 @@ class SegmentScorer:
         return False
 
     # ---- score -------------------------------------------------------------------
-    def score_segment(self, seg: Segment, arrival: datetime) -> SegmentScore:
+    def score_segment(self, seg: Segment, arrival: datetime, prev: Segment | None = None) -> SegmentScore:
         if arrival.tzinfo is None:
             raise ValueError("arrival must be timezone-aware")
         lighting, main_road = self._road_factors(seg)
+        lighting = self._outage_penalty(lighting, seg)
         found = {f.name: f for f in (self._open_places(seg, arrival), lighting, main_road,
-                                     self._help_points(seg))}
+                                     self._help_points(seg), self._turns(seg, prev),
+                                     self._activity(seg, arrival), self._incidents(seg))}
         for name in self.config["factor_params"]["not_yet_implemented"]:
             found[name] = FactorResult(name, None, f"{name.replace('_', ' ')}: not available yet (not sure)")
         factors = {name: found[name] for name in self.weights}   # config order
         known = {n: f for n, f in factors.items() if f.value is not None}
         known_w = sum(self.weights[n] for n in known)
-        score = sum(self.weights[n] * f.value for n, f in known.items()) / known_w if known else None
+        # "turns" is route geometry, not a condition of the street: with nothing else known there is
+        # nothing to score, so the segment stays "not sure" instead of looking perfect.
+        has_evidence = any(n != "turns" for n in known)
+        score = (sum(self.weights[n] * f.value for n, f in known.items()) / known_w
+                 if known and known_w > 0 and has_evidence else None)
         bands = self.config["bands"]
         band = ("unknown" if score is None else "green" if score >= bands["green_min"]
                 else "yellow" if score >= bands["yellow_min"] else "red")
@@ -216,5 +283,6 @@ class SegmentScorer:
     def score_route(self, segments: list[Segment], depart_at: datetime) -> list[SegmentScore]:
         """Arrival at each segment's start = depart_at + offset / walking speed."""
         speed = self.config["walking_speed_mps"]
-        return [self.score_segment(s, depart_at + timedelta(seconds=s.offset_m / speed))
-                for s in segments]
+        return [self.score_segment(s, depart_at + timedelta(seconds=s.offset_m / speed),
+                                   segments[i - 1] if i else None)
+                for i, s in enumerate(segments)]

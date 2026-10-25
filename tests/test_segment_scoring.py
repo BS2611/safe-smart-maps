@@ -179,7 +179,7 @@ class ScoreTests(unittest.TestCase):
     def test_formula_matches_renormalized_sum(self):
         r = self.weak()
         w = CFG["weights"]
-        known = {"open_places": 0, "lighting": 0, "main_road": 40, "help_points": 0}
+        known = {"open_places": 0, "lighting": 0, "main_road": 40, "help_points": 0, "turns": 100, "activity": 0}
         want = sum(w[k] * v for k, v in known.items()) / sum(w[k] for k in known)
         self.assertAlmostEqual(r.score, want)
 
@@ -193,7 +193,7 @@ class ScoreTests(unittest.TestCase):
         r = self.best()
         self.assertGreaterEqual(r.score, 90)
         self.assertEqual(r.band, "green")
-        self.assertEqual(sorted(r.unknown_factors), ["activity", "incidents", "transit", "turns"])
+        self.assertEqual(sorted(r.unknown_factors), ["incidents", "transit"])   # no incident data, no feed
 
     def test_weak_context(self):
         r = self.weak()
@@ -204,8 +204,8 @@ class ScoreTests(unittest.TestCase):
         r = SegmentScorer(CFG, None, None).score_segment(SEG, EVENING)
         self.assertIsNone(r.score)
         self.assertEqual(r.band, "unknown")
-        self.assertEqual(len(r.unknown_factors), 8)
-        self.assertEqual(r.known_weight_fraction, 0)
+        self.assertEqual(len(r.unknown_factors), 7)        # only the route-shape factor (turns) is known
+        self.assertAlmostEqual(r.known_weight_fraction, CFG["weights"]["turns"])
         self.assertIsNone(r.to_dict()["score"])
 
     def test_unknown_not_treated_as_zero(self):

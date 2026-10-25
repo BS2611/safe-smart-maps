@@ -11,7 +11,8 @@
     "turns": 0.05
   },
   "segment_length_m": 50,
-  "radii_m": {"open_place": 50, "help_point": 150, "coverage": 75, "road_match": 25},
+  "radii_m": {"open_place": 50, "help_point": 150, "coverage": 75, "road_match": 25,
+             "activity": 100, "incident": 100, "outage": 50},
   "walking_speed_mps": 1.4,
   "bands": {"green_min": 70, "yellow_min": 40},
   "factor_params": {
@@ -22,7 +23,12 @@
       "residential": 60, "service": 40, "pedestrian": 40
     },
     "help_point_max_value": 100,
-    "not_yet_implemented": ["transit", "incidents", "activity", "turns"]
+    "turns_by_angle": {"gentle_max_deg": 30, "moderate_max_deg": 75, "gentle": 100, "moderate": 70, "sharp": 40},
+    "activity": {"points_per_open_place": 25,
+                 "time_of_day": {"0": 0.35, "5": 0.45, "7": 0.8, "11": 1.0, "17": 1.0, "22": 0.8, "23": 0.6}},
+    "incident_points_each": 10,
+    "outage_penalty_each": 30,
+    "not_yet_implemented": ["transit"]
   },
   "continuity": {
     "coverage_target": 0.80,

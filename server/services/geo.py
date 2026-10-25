@@ -35,3 +35,18 @@ def point_to_polyline_m(p: Point, line: Sequence[Point]) -> float:
     if len(line) == 1:
         return haversine_m(p, line[0])
     return min(point_to_segment_m(p, line[i], line[i + 1]) for i in range(len(line) - 1))
+
+
+def bearing_deg(a: Point, b: Point) -> float:
+    """Compass bearing from a to b in degrees (0 = north). Points are (lat, lng)."""
+    lat1, lat2 = math.radians(a[0]), math.radians(b[0])
+    dlng = math.radians(b[1] - a[1])
+    y = math.sin(dlng) * math.cos(lat2)
+    x = math.cos(lat1) * math.sin(lat2) - math.sin(lat1) * math.cos(lat2) * math.cos(dlng)
+    return (math.degrees(math.atan2(y, x)) + 360) % 360
+
+
+def turn_angle_deg(b1: float, b2: float) -> float:
+    """Smallest angle between two bearings, 0..180."""
+    diff = abs(b1 - b2) % 360
+    return 360 - diff if diff > 180 else diff
