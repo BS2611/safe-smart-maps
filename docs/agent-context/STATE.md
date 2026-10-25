@@ -33,5 +33,12 @@ Last full review by a human: (date/time)
 - Next: none
 - Blocked on: STATE "Last full review by a human" is still blank. Bhavpreet owns `web/`; this edit was an explicit owner task.
 
+## Owner tasks (cursor agent; do not edit Bhavpreet or Amey)
+- Status: Phone layout and night-route launcher icons on `cursor/mobile-fixes-01d5`, merged with main after street view landed.
+- Doing now: Nothing. The phone grid, the plan hint, and the mipmap icons stay on this branch.
+- Files in progress: none
+- Next: Review the updated pull request.
+- Blocked on: STATE "Last full review by a human" is still blank
+
 ## Shared areas (ask first, log every change)
 - `CONTRACTS.md`, `DECISIONS.md`, `OPEN_QUESTIONS.md`, `docs/specs/`, `README.md`, `.env.example`, `package.json`
