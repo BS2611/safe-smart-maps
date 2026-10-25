@@ -26,12 +26,19 @@ Last full review by a human: (date/time)
 - Status:
 - Next:
 
+## Owner tasks (cursor, on the owner's request)
+- Status: Street-level photos on the route detail map, branch `cursor/street-view-01d5`
+- Doing now: nothing
+- Files in progress: none
+- Next: none
+- Blocked on: STATE "Last full review by a human" is still blank. Bhavpreet owns `web/`; this edit was an explicit owner task.
+
 ## Shared areas (ask first, log every change)
 - `CONTRACTS.md`, `DECISIONS.md`, `OPEN_QUESTIONS.md`, `docs/specs/`, `README.md`, `.env.example`, `package.json`
 
 ## Owner tasks (cursor, web)
-- Status: Walking navigation and compass on `cursor/walk-nav-01d5`, from main `13ccee7`. Street view and the phone-layout fixes stay on their own PRs.
-- Doing now: Opening the navigation pull request.
+- Status: Walking navigation and compass on `cursor/walk-nav-01d5`, merged with main after street view landed. Phone-layout fixes stay on their own PR.
+- Doing now: Opening the navigation pull request, then updating the phone-layout branch onto main.
 - Files in progress: none
 - Next: Review the pull request. A phone build needs the same `BUILD_TARGET=android` and `NEXT_DIST_DIR=.next-android` on both `next build` and `cap sync`, because Next writes that export into `.next-android` rather than `out`.
 - Blocked on: STATE "Last full review by a human" is still blank. No Android SDK on the last check, so `gradlew assembleDebug` was not run. WebKit was not launched.

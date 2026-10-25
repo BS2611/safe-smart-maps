@@ -9,6 +9,7 @@ import {
 } from "@/lib/format";
 import { averageFactors } from "@/lib/routeStats";
 import { CONTINUITY_RULES, FACTORS } from "@/lib/scoring-info";
+import { darkestSegmentIndex, nearestSegmentIndex, segmentMidpoint } from "@/lib/streetview/geo";
 import { isReady } from "@/lib/trip";
 import type { Route } from "@/lib/types";
 import { useRoutes } from "@/lib/useRoutes";
@@ -19,6 +20,7 @@ import { Banner } from "./Banner";
 import { DisclaimerBanner } from "./DisclaimerBanner";
 import { RouteMap } from "./RouteMap";
 import { ScoreRing } from "./ScoreVisuals";
+import { StreetView } from "./StreetView";
 import { useTrip } from "./TripProvider";
 
 export function RouteDetailScreen({ routeId }: { routeId: string }) {
@@ -27,6 +29,8 @@ export function RouteDetailScreen({ routeId }: { routeId: string }) {
   const [index, setIndex] = useState<number | null>(null);
   const [navigating, setNavigating] = useState(false);
   const shown = useRef<Route | null>(null);
+  const [pegman, setPegman] = useState<{ lng: number; lat: number } | null>(null);
+  const [street, setStreet] = useState<{ lng: number; lat: number; darkest: boolean } | null>(null);
 
   function openNav(active: Route) {
     shown.current = active;
@@ -89,6 +93,14 @@ export function RouteDetailScreen({ routeId }: { routeId: string }) {
   const seg = index !== null ? route.segments[index] : null;
   const avg = averageFactors(route);
   const target = CONTINUITY_RULES.coverageTarget;
+  const darkest = darkestSegmentIndex(route.segments);
+  const segments = route.segments;
+
+  function openStreet(lng: number, lat: number, fromDarkest = false) {
+    setPegman({ lng, lat });
+    setIndex(nearestSegmentIndex(segments, lng, lat));
+    setStreet({ lng, lat, darkest: fromDarkest });
+  }
 
   return (
     <div className="screen stack detail-page">
@@ -108,7 +120,8 @@ export function RouteDetailScreen({ routeId }: { routeId: string }) {
 
       <div className="detail-layout">
       <div className="map-col stack-sm">
-      <RouteMap routes={state.data.routes} selectedId={route.route_id} highlightSegment={index} />
+      <RouteMap routes={state.data.routes} selectedId={route.route_id} highlightSegment={index}
+        pegman={pegman} onPickPoint={(lng, lat) => openStreet(lng, lat)} />
 
       <section className="card stack-sm" aria-labelledby="cont-h">
         <h2 id="cont-h">Along the whole walk</h2>
@@ -136,7 +149,16 @@ export function RouteDetailScreen({ routeId }: { routeId: string }) {
 
       <section className="card stack-sm" aria-labelledby="strip-h">
         <h2 id="strip-h">Every stretch of the route</h2>
-        <p className="small muted">Tap a stretch to see why.</p>
+        <p className="small muted">Tap a stretch to see why. Tap the map, or drag the peg, for a street-level photo.</p>
+        <button type="button" className="btn secondary" disabled={darkest === null}
+          onClick={() => {
+            if (darkest === null) return;
+            const [lng, lat] = segmentMidpoint(route.segments[darkest]);
+            openStreet(lng, lat, true);
+          }}>
+          Preview the darkest stretch
+        </button>
+        {darkest === null ? <p className="caption">Not sure which stretch is darkest.</p> : null}
         <div className="strip" role="group" aria-label="Route segments">
           {route.segments.map((s, i) => (
             <button key={s.segment_id} type="button" className={`band-${s.band}`}
@@ -203,6 +225,10 @@ export function RouteDetailScreen({ routeId }: { routeId: string }) {
       ) : null}
       </div>
       </div>
+      {street ? (
+        <StreetView route={route} entry={street} onClose={() => setStreet(null)}
+          onPosition={(lng, lat, segmentIndex) => { setPegman({ lng, lat }); setIndex(segmentIndex); }} />
+      ) : null}
     </div>
   );
 }
