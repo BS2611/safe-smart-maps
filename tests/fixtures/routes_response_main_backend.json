@@ -1,0 +1,1683 @@
+{
+  "api_version": "1",
+  "scoring_version": "scoring_v1",
+  "data_fetched_at": "2026-10-24T22:31:00Z",
+  "routes": [
+    {
+      "label": "safest",
+      "also_labels": [
+        "balanced"
+      ],
+      "route_id": "mapbox-1",
+      "via": [],
+      "duration_min": 13.0,
+      "extra_min": 4.0,
+      "distance_m": 1050.0,
+      "route_score": 52.8,
+      "continuity": {
+        "coverage_pct": 58.3,
+        "longest_gap_m": 253.8,
+        "longest_gap_note": "from 0 m to 254 m along the route",
+        "worst_window_score": 56.2,
+        "worst_window_start_m": 0.0,
+        "worst_window_end_m": 200.0,
+        "average_score": 70.0,
+        "gap_penalty": 10.4,
+        "gap_penalty_applied": 10.4,
+        "meets_coverage_target": false,
+        "route_length_m": 1218.2,
+        "unknown_length_m": 0.0,
+        "insufficient_data": false,
+        "notes": [
+          "gap of 254 m exceeds the 150 m limit (penalty 10.4)",
+          "coverage 58% is below the 80% target"
+        ]
+      },
+      "open_places_count": 9,
+      "nearest_help_point": {
+        "name": "Fixture Police Station",
+        "distance_m": 22.0
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -122.4484,
+            37.8029
+          ],
+          [
+            -122.447,
+            37.806
+          ],
+          [
+            -122.4415,
+            37.806
+          ],
+          [
+            -122.44,
+            37.8029
+          ]
+        ]
+      },
+      "segments": [
+        {
+          "segment_id": "seg-0",
+          "start": [
+            -122.4484,
+            37.8029
+          ],
+          "end": [
+            -122.44820583376627,
+            37.80332993951755
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-24T20:00:00-07:00",
+          "score": 56.3,
+          "band": "yellow",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.727,
+          "reasons": [
+            "0 open places within 50 m",
+            "lit road",
+            "primary road",
+            "nearest help point: police (Fixture Police Station), 336 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "seg-1",
+          "start": [
+            -122.44820583376627,
+            37.80332993951755
+          ],
+          "end": [
+            -122.44801166753254,
+            37.803759879035105
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-24T20:00:36.256759-07:00",
+          "score": 56.3,
+          "band": "yellow",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.727,
+          "reasons": [
+            "0 open places within 50 m",
+            "lit road",
+            "primary road",
+            "nearest help point: police (Fixture Police Station), 286 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "seg-2",
+          "start": [
+            -122.44801166753254,
+            37.803759879035105
+          ],
+          "end": [
+            -122.4478175012988,
+            37.80418981855266
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-24T20:01:12.513518-07:00",
+          "score": 56.3,
+          "band": "yellow",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.727,
+          "reasons": [
+            "0 open places within 50 m",
+            "lit road",
+            "primary road",
+            "nearest help point: police (Fixture Police Station), 235 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "seg-3",
+          "start": [
+            -122.4478175012988,
+            37.80418981855266
+          ],
+          "end": [
+            -122.44762333506507,
+            37.80461975807022
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-24T20:01:48.770276-07:00",
+          "score": 56.3,
+          "band": "yellow",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.727,
+          "reasons": [
+            "0 open places within 50 m",
+            "lit road",
+            "primary road",
+            "nearest help point: police (Fixture Police Station), 184 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "seg-4",
+          "start": [
+            -122.44762333506507,
+            37.80461975807022
+          ],
+          "end": [
+            -122.44742916883133,
+            37.80504969758777
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-24T20:02:25.027035-07:00",
+          "score": 57.6,
+          "band": "yellow",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 11.10042043519388,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.727,
+          "reasons": [
+            "0 open places within 50 m",
+            "lit road",
+            "primary road",
+            "nearest help point: police (Fixture Police Station), 133 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "seg-5",
+          "start": [
+            -122.44742916883133,
+            37.80504969758777
+          ],
+          "end": [
+            -122.4472350025976,
+            37.80547963710532
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-24T20:03:01.283794-07:00",
+          "score": 61.9,
+          "band": "yellow",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 44.85415927790943,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.727,
+          "reasons": [
+            "0 open places within 50 m",
+            "lit road",
+            "primary road",
+            "nearest help point: police (Fixture Police Station), 83 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "seg-6",
+          "start": [
+            -122.4472350025976,
+            37.80547963710532
+          ],
+          "end": [
+            -122.44704083636387,
+            37.805909576622874
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-24T20:03:37.540553-07:00",
+          "score": 81.7,
+          "band": "green",
+          "factors": {
+            "open_places": 50.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 78.3384517301879,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.727,
+          "reasons": [
+            "1 open place within 50 m",
+            "lit road",
+            "primary road",
+            "nearest help point: police (Fixture Police Station), 32 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "seg-7",
+          "start": [
+            -122.44704083636387,
+            37.805909576622874
+          ],
+          "end": [
+            -122.44654374516179,
+            37.806
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-24T20:04:13.797312-07:00",
+          "score": 90.3,
+          "band": "green",
+          "factors": {
+            "open_places": 75.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 85.17398930223017,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.727,
+          "reasons": [
+            "2 open places within 50 m",
+            "lit road",
+            "primary road",
+            "nearest help point: police (Fixture Police Station), 22 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "seg-8",
+          "start": [
+            -122.44654374516179,
+            37.806
+          ],
+          "end": [
+            -122.44596597591412,
+            37.806
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-24T20:04:50.054070-07:00",
+          "score": 88.4,
+          "band": "green",
+          "factors": {
+            "open_places": 75.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 69.44015024468872,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.727,
+          "reasons": [
+            "2 open places within 50 m",
+            "lit road",
+            "primary road",
+            "nearest help point: police (Fixture Police Station), 46 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "seg-9",
+          "start": [
+            -122.44596597591412,
+            37.806
+          ],
+          "end": [
+            -122.44538820666646,
+            37.806
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-24T20:05:26.310829-07:00",
+          "score": 84.4,
+          "band": "green",
+          "factors": {
+            "open_places": 75.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 37.64956614411024,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.727,
+          "reasons": [
+            "2 open places within 50 m",
+            "lit road",
+            "primary road",
+            "nearest help point: police (Fixture Police Station), 94 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "seg-10",
+          "start": [
+            -122.44538820666646,
+            37.806
+          ],
+          "end": [
+            -122.4448104374188,
+            37.806
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-24T20:06:02.567588-07:00",
+          "score": 80.2,
+          "band": "green",
+          "factors": {
+            "open_places": 75.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 4.441227177900697,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.727,
+          "reasons": [
+            "2 open places within 50 m",
+            "lit road",
+            "primary road",
+            "nearest help point: police (Fixture Police Station), 143 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "seg-11",
+          "start": [
+            -122.4448104374188,
+            37.806
+          ],
+          "end": [
+            -122.44423266817114,
+            37.806
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-24T20:06:38.824347-07:00",
+          "score": 79.7,
+          "band": "green",
+          "factors": {
+            "open_places": 75.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.727,
+          "reasons": [
+            "2 open places within 50 m",
+            "lit road",
+            "primary road",
+            "nearest help point: police (Fixture Police Station), 194 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "seg-12",
+          "start": [
+            -122.44423266817114,
+            37.806
+          ],
+          "end": [
+            -122.44365489892347,
+            37.806
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-24T20:07:15.081106-07:00",
+          "score": 79.7,
+          "band": "green",
+          "factors": {
+            "open_places": 75.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.727,
+          "reasons": [
+            "2 open places within 50 m",
+            "lit road",
+            "primary road",
+            "nearest help point: police (Fixture Police Station), 244 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "seg-13",
+          "start": [
+            -122.44365489892347,
+            37.806
+          ],
+          "end": [
+            -122.44307712967581,
+            37.806
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-24T20:07:51.337864-07:00",
+          "score": 87.5,
+          "band": "green",
+          "factors": {
+            "open_places": 100.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.727,
+          "reasons": [
+            "3 open places within 50 m",
+            "lit road",
+            "primary road",
+            "nearest help point: police (Fixture Police Station), 295 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "seg-14",
+          "start": [
+            -122.44307712967581,
+            37.806
+          ],
+          "end": [
+            -122.44249936042816,
+            37.806
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-24T20:08:27.594623-07:00",
+          "score": 87.5,
+          "band": "green",
+          "factors": {
+            "open_places": 100.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.727,
+          "reasons": [
+            "4 open places within 50 m",
+            "lit road",
+            "primary road",
+            "nearest help point: police (Fixture Police Station), 345 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "seg-15",
+          "start": [
+            -122.44249936042816,
+            37.806
+          ],
+          "end": [
+            -122.44192159118049,
+            37.806
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-24T20:09:03.851382-07:00",
+          "score": 87.5,
+          "band": "green",
+          "factors": {
+            "open_places": 100.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.727,
+          "reasons": [
+            "3 open places within 50 m",
+            "lit road",
+            "primary road",
+            "nearest help point: police (Fixture Police Station), 396 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "seg-16",
+          "start": [
+            -122.44192159118049,
+            37.806
+          ],
+          "end": [
+            -122.44144422959212,
+            37.80588474115703
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-24T20:09:40.108141-07:00",
+          "score": 79.7,
+          "band": "green",
+          "factors": {
+            "open_places": 75.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.727,
+          "reasons": [
+            "2 open places within 50 m",
+            "lit road",
+            "primary road",
+            "nearest help point: police (Fixture Police Station), 447 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "seg-17",
+          "start": [
+            -122.44144422959212,
+            37.80588474115703
+          ],
+          "end": [
+            -122.44123791107896,
+            37.80545834956317
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-24T20:10:16.364900-07:00",
+          "score": 71.9,
+          "band": "green",
+          "factors": {
+            "open_places": 50.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.727,
+          "reasons": [
+            "1 open place within 50 m",
+            "lit road",
+            "primary road",
+            "nearest help point: police (Fixture Police Station), 489 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "seg-18",
+          "start": [
+            -122.44123791107896,
+            37.80545834956317
+          ],
+          "end": [
+            -122.44103159256579,
+            37.805031957969305
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-24T20:10:52.621658-07:00",
+          "score": 56.3,
+          "band": "yellow",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.727,
+          "reasons": [
+            "0 open places within 50 m",
+            "lit road",
+            "primary road",
+            "nearest help point: police (Fixture Police Station), 513 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "seg-19",
+          "start": [
+            -122.44103159256579,
+            37.805031957969305
+          ],
+          "end": [
+            -122.44082527405264,
+            37.80460556637544
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-24T20:11:28.878417-07:00",
+          "score": 56.3,
+          "band": "yellow",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.727,
+          "reasons": [
+            "0 open places within 50 m",
+            "lit road",
+            "primary road",
+            "nearest help point: police (Fixture Police Station), 540 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "seg-20",
+          "start": [
+            -122.44082527405264,
+            37.80460556637544
+          ],
+          "end": [
+            -122.44061895553948,
+            37.80417917478158
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-24T20:12:05.135176-07:00",
+          "score": 56.3,
+          "band": "yellow",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.727,
+          "reasons": [
+            "0 open places within 50 m",
+            "lit road",
+            "primary road",
+            "nearest help point: police (Fixture Police Station), 571 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "seg-21",
+          "start": [
+            -122.44061895553948,
+            37.80417917478158
+          ],
+          "end": [
+            -122.44041263702631,
+            37.803752783187726
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-24T20:12:41.391935-07:00",
+          "score": 56.3,
+          "band": "yellow",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.727,
+          "reasons": [
+            "0 open places within 50 m",
+            "lit road",
+            "primary road",
+            "nearest help point: police (Fixture Police Station), 604 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "seg-22",
+          "start": [
+            -122.44041263702631,
+            37.803752783187726
+          ],
+          "end": [
+            -122.44020631851316,
+            37.80332639159386
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-24T20:13:17.648694-07:00",
+          "score": 56.3,
+          "band": "yellow",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.727,
+          "reasons": [
+            "0 open places within 50 m",
+            "lit road",
+            "primary road",
+            "nearest help point: police (Fixture Police Station), 640 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        },
+        {
+          "segment_id": "seg-23",
+          "start": [
+            -122.44020631851316,
+            37.80332639159386
+          ],
+          "end": [
+            -122.44,
+            37.8029
+          ],
+          "length_m": 50.8,
+          "arrival_time": "2026-10-24T20:13:53.905453-07:00",
+          "score": 56.3,
+          "band": "yellow",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": 100.0,
+            "main_road": 100.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.727,
+          "reasons": [
+            "0 open places within 50 m",
+            "lit road",
+            "primary road",
+            "nearest help point: police (Fixture Police Station), 677 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "low"
+        }
+      ],
+      "explanation": "58% of this walk stays near an open place. The longest quiet stretch is about 254 m from 0 m to 254 m along the route. 9 open places along the way. Nearest help point: Fixture Police Station, 22 m away. It adds about 4 min compared with the fastest route.",
+      "explanation_source": "template"
+    },
+    {
+      "label": "fastest",
+      "also_labels": [],
+      "route_id": "mapbox-0",
+      "via": [],
+      "duration_min": 9.0,
+      "extra_min": 0.0,
+      "distance_m": 740.0,
+      "route_score": 17.1,
+      "continuity": {
+        "coverage_pct": 66.7,
+        "longest_gap_m": 246.0,
+        "longest_gap_note": "from 492 m to 738 m along the route",
+        "worst_window_score": 18.0,
+        "worst_window_start_m": 442.8,
+        "worst_window_end_m": 642.8,
+        "average_score": 35.5,
+        "gap_penalty": 9.6,
+        "gap_penalty_applied": 9.6,
+        "meets_coverage_target": false,
+        "route_length_m": 738.0,
+        "unknown_length_m": 0.0,
+        "insufficient_data": false,
+        "notes": [
+          "gap of 246 m exceeds the 150 m limit (penalty 9.6)",
+          "coverage 67% is below the 80% target"
+        ]
+      },
+      "open_places_count": 4,
+      "nearest_help_point": null,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -122.4484,
+            37.8029
+          ],
+          [
+            -122.4442,
+            37.8029
+          ],
+          [
+            -122.44,
+            37.8029
+          ]
+        ]
+      },
+      "segments": [
+        {
+          "segment_id": "seg-0",
+          "start": [
+            -122.4484,
+            37.8029
+          ],
+          "end": [
+            -122.44784,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-24T20:00:00-07:00",
+          "score": 43.0,
+          "band": "yellow",
+          "factors": {
+            "open_places": 50.0,
+            "lighting": null,
+            "main_road": 60.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "lighting",
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.455,
+          "reasons": [
+            "1 open place within 50 m",
+            "residential road",
+            "nearest help point: police (Fixture Police Station), 374 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "unknown"
+        },
+        {
+          "segment_id": "seg-1",
+          "start": [
+            -122.44784,
+            37.8029
+          ],
+          "end": [
+            -122.44728,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-24T20:00:35.143160-07:00",
+          "score": 43.0,
+          "band": "yellow",
+          "factors": {
+            "open_places": 50.0,
+            "lighting": null,
+            "main_road": 60.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "lighting",
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.455,
+          "reasons": [
+            "1 open place within 50 m",
+            "residential road",
+            "nearest help point: police (Fixture Police Station), 368 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "unknown"
+        },
+        {
+          "segment_id": "seg-2",
+          "start": [
+            -122.44728,
+            37.8029
+          ],
+          "end": [
+            -122.44672,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-24T20:01:10.286320-07:00",
+          "score": 55.5,
+          "band": "yellow",
+          "factors": {
+            "open_places": 75.0,
+            "lighting": null,
+            "main_road": 60.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "lighting",
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.455,
+          "reasons": [
+            "2 open places within 50 m",
+            "residential road",
+            "nearest help point: police (Fixture Police Station), 367 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "unknown"
+        },
+        {
+          "segment_id": "seg-3",
+          "start": [
+            -122.44672,
+            37.8029
+          ],
+          "end": [
+            -122.44615999999999,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-24T20:01:45.429480-07:00",
+          "score": 43.0,
+          "band": "yellow",
+          "factors": {
+            "open_places": 50.0,
+            "lighting": null,
+            "main_road": 60.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "lighting",
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.455,
+          "reasons": [
+            "1 open place within 50 m",
+            "residential road",
+            "nearest help point: police (Fixture Police Station), 368 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "unknown"
+        },
+        {
+          "segment_id": "seg-4",
+          "start": [
+            -122.44615999999999,
+            37.8029
+          ],
+          "end": [
+            -122.44559999999998,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-24T20:02:20.572641-07:00",
+          "score": 43.0,
+          "band": "yellow",
+          "factors": {
+            "open_places": 50.0,
+            "lighting": null,
+            "main_road": 60.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "lighting",
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.455,
+          "reasons": [
+            "1 open place within 50 m",
+            "residential road",
+            "nearest help point: police (Fixture Police Station), 374 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "unknown"
+        },
+        {
+          "segment_id": "seg-5",
+          "start": [
+            -122.44559999999998,
+            37.8029
+          ],
+          "end": [
+            -122.44503999999999,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-24T20:02:55.715801-07:00",
+          "score": 43.0,
+          "band": "yellow",
+          "factors": {
+            "open_places": 50.0,
+            "lighting": null,
+            "main_road": 60.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "lighting",
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.455,
+          "reasons": [
+            "1 open place within 50 m (1 nearby with hours not sure)",
+            "residential road",
+            "nearest help point: police (Fixture Police Station), 387 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "unknown"
+        },
+        {
+          "segment_id": "seg-6",
+          "start": [
+            -122.44503999999999,
+            37.8029
+          ],
+          "end": [
+            -122.44447999999998,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-24T20:03:30.858961-07:00",
+          "score": 55.5,
+          "band": "yellow",
+          "factors": {
+            "open_places": 75.0,
+            "lighting": null,
+            "main_road": 60.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "lighting",
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.455,
+          "reasons": [
+            "2 open places within 50 m (1 nearby with hours not sure)",
+            "residential road",
+            "nearest help point: police (Fixture Police Station), 405 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "unknown"
+        },
+        {
+          "segment_id": "seg-7",
+          "start": [
+            -122.44447999999998,
+            37.8029
+          ],
+          "end": [
+            -122.44391999999998,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-24T20:04:06.002121-07:00",
+          "score": 55.5,
+          "band": "yellow",
+          "factors": {
+            "open_places": 75.0,
+            "lighting": null,
+            "main_road": 60.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "lighting",
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.455,
+          "reasons": [
+            "2 open places within 50 m (1 nearby with hours not sure)",
+            "residential road",
+            "nearest help point: police (Fixture Police Station), 429 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "unknown"
+        },
+        {
+          "segment_id": "seg-8",
+          "start": [
+            -122.44391999999998,
+            37.8029
+          ],
+          "end": [
+            -122.44335999999998,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-24T20:04:41.145281-07:00",
+          "score": 43.0,
+          "band": "yellow",
+          "factors": {
+            "open_places": 50.0,
+            "lighting": null,
+            "main_road": 60.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "lighting",
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.455,
+          "reasons": [
+            "1 open place within 50 m",
+            "residential road",
+            "nearest help point: police (Fixture Police Station), 456 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "unknown"
+        },
+        {
+          "segment_id": "seg-9",
+          "start": [
+            -122.44335999999998,
+            37.8029
+          ],
+          "end": [
+            -122.44279999999999,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-24T20:05:16.288441-07:00",
+          "score": 18.0,
+          "band": "red",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": null,
+            "main_road": 60.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "lighting",
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.455,
+          "reasons": [
+            "0 open places within 50 m",
+            "residential road",
+            "nearest help point: police (Fixture Police Station), 487 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "unknown"
+        },
+        {
+          "segment_id": "seg-10",
+          "start": [
+            -122.44279999999999,
+            37.8029
+          ],
+          "end": [
+            -122.44223999999998,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-24T20:05:51.431602-07:00",
+          "score": 18.0,
+          "band": "red",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": null,
+            "main_road": 60.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "lighting",
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.455,
+          "reasons": [
+            "0 open places within 50 m",
+            "residential road",
+            "nearest help point: police (Fixture Police Station), 520 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "unknown"
+        },
+        {
+          "segment_id": "seg-11",
+          "start": [
+            -122.44223999999998,
+            37.8029
+          ],
+          "end": [
+            -122.44167999999999,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-24T20:06:26.574762-07:00",
+          "score": 18.0,
+          "band": "red",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": null,
+            "main_road": 60.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "lighting",
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.455,
+          "reasons": [
+            "0 open places within 50 m",
+            "residential road",
+            "nearest help point: police (Fixture Police Station), 556 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "unknown"
+        },
+        {
+          "segment_id": "seg-12",
+          "start": [
+            -122.44167999999999,
+            37.8029
+          ],
+          "end": [
+            -122.44112,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-24T20:07:01.717922-07:00",
+          "score": 18.0,
+          "band": "red",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": null,
+            "main_road": 60.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "lighting",
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.455,
+          "reasons": [
+            "0 open places within 50 m",
+            "residential road",
+            "nearest help point: police (Fixture Police Station), 594 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "unknown"
+        },
+        {
+          "segment_id": "seg-13",
+          "start": [
+            -122.44112,
+            37.8029
+          ],
+          "end": [
+            -122.44055999999999,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-24T20:07:36.861082-07:00",
+          "score": 18.0,
+          "band": "red",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": null,
+            "main_road": 60.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "lighting",
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.455,
+          "reasons": [
+            "0 open places within 50 m",
+            "residential road",
+            "nearest help point: police (Fixture Police Station), 634 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "unknown"
+        },
+        {
+          "segment_id": "seg-14",
+          "start": [
+            -122.44055999999999,
+            37.8029
+          ],
+          "end": [
+            -122.44,
+            37.8029
+          ],
+          "length_m": 49.2,
+          "arrival_time": "2026-10-24T20:08:12.004242-07:00",
+          "score": 18.0,
+          "band": "red",
+          "factors": {
+            "open_places": 0.0,
+            "lighting": null,
+            "main_road": 60.0,
+            "help_points": 0.0,
+            "transit": null,
+            "activity": null,
+            "incidents": null,
+            "turns": null
+          },
+          "unknown_factors": [
+            "lighting",
+            "transit",
+            "activity",
+            "incidents",
+            "turns"
+          ],
+          "known_weight_fraction": 0.455,
+          "reasons": [
+            "0 open places within 50 m",
+            "residential road",
+            "nearest help point: police (Fixture Police Station), 674 m"
+          ],
+          "data_fetched_at": "2026-10-24T22:31:00Z",
+          "confidence": "unknown"
+        }
+      ],
+      "explanation": "67% of this walk stays near an open place. The longest quiet stretch is about 246 m from 492 m to 738 m along the route. 4 open places along the way.",
+      "explanation_source": "template"
+    }
+  ],
+  "warnings": [
+    "1 place had opening hours we could not read; it was not counted as open."
+  ]
+}
