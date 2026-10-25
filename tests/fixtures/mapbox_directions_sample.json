@@ -1,0 +1,45 @@
+{
+  "_comment": "TEST FIXTURE, hand-written to look like a Mapbox Directions v5 walking answer (alternatives=true, geometries=geojson, overview=full). Not real Mapbox output and not used in the live demo path. Includes vendor fields we ignore on purpose.",
+  "code": "Ok",
+  "uuid": "fixture-uuid-not-real",
+  "waypoints": [
+    {"name": "Lyon Street", "location": [-122.4484, 37.8029], "distance": 4.1},
+    {"name": "Montgomery Street", "location": [-122.4013, 37.7894], "distance": 6.3}
+  ],
+  "routes": [
+    {
+      "weight_name": "pedestrian",
+      "weight": 3980.2,
+      "duration": 3650.4,
+      "distance": 5120.7,
+      "legs": [{"summary": "Marina Boulevard, Bay Street", "distance": 5120.7, "duration": 3650.4, "steps": []}],
+      "geometry": {"type": "LineString", "coordinates": [
+        [-122.4484, 37.8029], [-122.4440, 37.8040], [-122.4385, 37.8052],
+        [-122.4301, 37.8018], [-122.4212, 37.7975], [-122.4101, 37.7931], [-122.4013, 37.7894]
+      ]}
+    },
+    {
+      "weight_name": "pedestrian",
+      "weight": 4110.0,
+      "duration": 3790.0,
+      "distance": 5310.2,
+      "legs": [{"summary": "Chestnut Street, Columbus Avenue", "distance": 5310.2, "duration": 3790.0, "steps": []}],
+      "geometry": {"type": "LineString", "coordinates": [
+        [-122.4484, 37.8029], [-122.4470, 37.8001], [-122.4390, 37.7990],
+        [-122.4280, 37.7950], [-122.4150, 37.7920], [-122.4013, 37.7894]
+      ]}
+    },
+    {
+      "weight_name": "pedestrian",
+      "weight": 4320.5,
+      "duration": 4010.9,
+      "distance": 5605.5,
+      "new_vendor_field": {"nested": [1, 2, 3]},
+      "legs": [{"summary": "Lombard Street, Hyde Street", "distance": 5605.5, "duration": 4010.9, "steps": []}],
+      "geometry": {"type": "LineString", "coordinates": [
+        [-122.4484, 37.8029], [-122.4425, 37.8020], [-122.4350, 37.8010],
+        [-122.4260, 37.8005], [-122.4140, 37.7960], [-122.4060, 37.7915], [-122.4013, 37.7894]
+      ]}
+    }
+  ]
+}

@@ -46,7 +46,21 @@ Not measurements of safety; tunable constants all live in `scoring/scoring_v1.js
 - `help_points`: nearest police/hospital/fire_station to the segment, `max(0, 100*(1 - d/150))`. AreaContext unavailable -> unknown; available but empty -> 0 ("none found in queried area").
 - `transit`, `incidents`, `activity`, `turns`: always unknown for now (no providers).
 - Scorer inputs: `SegmentScorer(config, places: list[Place] | None, area_context: AreaContext | None, weights=None)`; `None` = dataset unavailable, empty = available but nothing found. Scoring reads only; it never fetches.
-- Routing provider (Mapbox, other developer) must supply: ordered walking-route `(lat, lng)` points (legs concatenated), total duration/distance, and ideally per-leg timing. Feed `segment_route(points, cfg["segment_length_m"])`.
+- Routing provider (Mapbox, other developer) must supply: ordered walking-route `(lat, lng)` points (legs concatenated), total duration/distance, and ideally per-leg timing. Feed `segment_route(points, cfg["segment_length_m"])`. Now provided by `RouteCandidate.as_lat_lng()`, `distance_m`, `duration_s` (see Routing provider below; no per-leg timing, steps are off).
+
+### Routing provider (server/data/mapbox.py) - Mapbox walking candidates
+Candidate generation only: no scoring, ranking or labels. Mapbox JSON is read only in this file.
+```python
+RouteCandidate(id: str, provider: str, coordinates: list[(lng, lat)], distance_m: float, duration_s: float)
+MapboxWalkingProvider(token=None, timeout_s=12.0, client=None).get_walking_routes(origin, dest) -> list[RouteCandidate]
+```
+- **Coordinate order is (longitude, latitude)** in `coordinates`, `origin` and `dest` (GeoJSON/Mapbox order). The segmenter and `geo.py` use (lat, lng): call `route.as_lat_lng()` to get that order; never swap by hand. A latitude outside +-90 is rejected, so an accidental swap fails loudly.
+- `id` = `"mapbox-<n>"`, n = position in Mapbox's answer (0 = Mapbox's preferred route). A dropped bad route leaves a gap; ids never shift. `provider` is always `"mapbox"`.
+- `distance_m` meters and `duration_s` seconds, exactly as Mapbox sends them (no conversion). Mapbox's walking time is its own estimate; segment arrival times still use 1.4 m/s unless changed.
+- Request: Directions v5 `walking` profile, `alternatives=true`, `geometries=geojson`, `overview=full`, `steps=false`. Mapbox often returns only ONE walking route even with alternatives on (seen live), so do not assume 2-3 candidates; extra candidates need detours (later, service layer).
+- Errors: `MapboxError` (a `RuntimeError`) with `kind`: `not_configured` (no `MAPBOX_TOKEN`, no request made), `timeout`, `failed` (HTTP error, bad JSON, no usable geometry), `empty` (Mapbox found no route). Invalid `origin`/`dest` raise `ValueError`. Messages never contain the token, URL or coordinates.
+- A route with missing/short/non-numeric geometry or a non-positive distance/duration is dropped; unknown Mapbox fields are ignored.
+- Feeding the segmenter: `segment_route(route.as_lat_lng(), cfg["segment_length_m"])`.
 
 ## Route result
 ```json
