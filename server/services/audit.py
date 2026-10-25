@@ -85,15 +85,16 @@ def parse_audit(text: str, photo: Photo) -> StretchAudit | None:
 
 
 class StreetAuditor:
-    """One Claude vision call per photo, cached by photo id, capped per instance."""
+    """One Claude vision call per photo, cached by photo id. `max_calls` is a lifetime cost guard for the
+    process (AUDIT_MAX_CALLS_TOTAL, default 200); the planner limits how many it asks for per request."""
 
     def __init__(self, api_key: str | None = None, model: str | None = None, timeout_s: float = 20.0,
                  max_calls: int | None = None, client: httpx.Client | None = None):
         self._api_key = api_key
         self.model = model or os.environ.get("ANTHROPIC_MODEL") or DEFAULT_MODEL
         self.timeout_s = timeout_s
-        env_cap = os.environ.get("AUDIT_MAX_CALLS_PER_REQUEST", "")
-        self.max_calls = max_calls if max_calls is not None else (int(env_cap) if env_cap.isdigit() else 3)
+        env_cap = os.environ.get("AUDIT_MAX_CALLS_TOTAL", "")
+        self.max_calls = max_calls if max_calls is not None else (int(env_cap) if env_cap.isdigit() else 200)
         self._client = client
         self._cache: dict[str, StretchAudit | None] = {}
         self.calls = 0

@@ -134,6 +134,8 @@ def make_planner(directory: Path, **overrides) -> RoutePlanner:
         context=overrides.get("context", FakeContext()),
         explainer=overrides.get("explainer", FakeExplainer()),
         transit=overrides.get("transit"),
+        auditor=overrides.get("auditor"),
+        photos=overrides.get("photos"),
         sf=overrides.get("sf"),  # None = SF open data not connected, so those factors stay not sure
     )
     return RoutePlanner(providers, load_scoring_config())
