@@ -11,7 +11,7 @@ async function expectNoViolations(page: import("@playwright/test").Page) {
 }
 
 test.describe("accessibility", () => {
-  for (const path of ["/", "/plan", "/preferences", "/how-scores-work"]) {
+  for (const path of ["/", "/plan", "/preferences", "/watch", "/how-scores-work"]) {
     test(`${path} has no WCAG A/AA violations`, async ({ page }) => {
       await page.goto(path);
       await page.waitForLoadState("networkidle");

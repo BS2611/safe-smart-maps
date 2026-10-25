@@ -8,7 +8,7 @@ Last full review by a human: (date/time)
 ## Person A: Bhavpreet (frontend / map)
 - Owns (do not edit without asking): `web/`, `docs/agent-context/` entries by A
 - Status: Branch `bhav/mapbox-routes` (cut from amey/backend fc503b7) has 2 commits: (1) Mapbox walking-route provider from the handoff doc, (2) the `ui` backend rebuilt on Amey's modules: POST /v1/routes, planner, candidates (detours), continuity, selector, explain, wording, prewarm, SF open data + transit providers (unwired). Full suite green (see the newest log for the count). Frontend (`web/`) still lives only on branch `ui`.
-- Doing now: Merged origin/main into bhav/backend-data keeping main's scoring; Mapillary audits, Claude auditor/provider switch, Apify fallback and env profiles re-applied on top (see log 20261025-042439). Not pushed yet.
+- Doing now: Watch system (relay in server/, phone Watch screen, watch/ Wear OS app) merged with latest main on branch `bhav/watch-integration`; paired and sent real heart-rate readings from a Galaxy Watch 4 (log 20261025-062445). Earlier: backend-data merged into main (log 20261025-042439). Needs: phone-screen test with the watch, then PR to main; Amey review of server/api/watch.py.
 - Files in progress: none
 - Next: copy `web/.env.demo.example` to ignored `web/.env.demo`, add the browser token, then run `npm run dev:local` and `npm run dev:demo` in separate terminals.
 - Blocked on: Amey's review; STATE "Last full review by a human" still blank

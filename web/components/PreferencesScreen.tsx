@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -81,6 +82,12 @@ export function PreferencesScreen({ next = "/plan" }: { next?: string }) {
             Past incidents stay a small part of the score (5%). The record can reflect policing as much as events.
           </p>
         </div>
+      </section>
+
+      <section className="card stack-sm" aria-labelledby="watch-link-h">
+        <h2 id="watch-link-h">Watch check (optional)</h2>
+        <p className="small muted">Try a heart-rate check with your Galaxy Watch or a simulated reading.</p>
+        <Link href="/watch" className="btn secondary">Open watch check</Link>
       </section>
 
       <p className="small muted row"><RefreshIcon /> Applying changes recalculates your routes.</p>
