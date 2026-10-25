@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.util.Log
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
@@ -49,6 +50,8 @@ class HeartRateService : Service() {
 
     private val exerciseCallback = object : ExerciseUpdateCallback {
         override fun onExerciseUpdateReceived(update: ExerciseUpdate) {
+            Log.d("SSMWatch", "update keys=" + update.latestMetrics.sampleDataPoints.keys.map { it.name } +
+                " state=" + update.exerciseStateInfo.state)
             val bpm = update.latestMetrics.getData(DataType.HEART_RATE_BPM).lastOrNull()?.value?.toInt()
             update.latestMetrics.getData(DataType.STEPS_PER_MINUTE).lastOrNull()?.value?.let { lastCadence = it.toInt() }
             if (bpm != null) onReading(bpm, lastCadence)
@@ -56,7 +59,13 @@ class HeartRateService : Service() {
         override fun onLapSummaryReceived(lapSummary: ExerciseLapSummary) {}
         override fun onRegistered() {}
         override fun onRegistrationFailed(throwable: Throwable) { useMeasureFallback() }
-        override fun onAvailabilityChanged(dataType: DataType<*, *>, availability: Availability) {}
+        override fun onAvailabilityChanged(dataType: DataType<*, *>, availability: Availability) {
+            Log.d("SSMWatch", "availability ${dataType.name} = $availability")
+            if (dataType == DataType.HEART_RATE_BPM) {
+                Session.note = "Heart rate sensor: $availability"
+                main.post { Session.changed() }
+            }
+        }
     }
 
     private val measureCallback = object : MeasureCallback {
