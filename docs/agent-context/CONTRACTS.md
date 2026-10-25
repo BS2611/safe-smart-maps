@@ -109,6 +109,19 @@ Known limits: `via` is always `[]` (the Mapbox provider asks for `steps=false`, 
 - `GET /v1/cache/status` -> `{ api_version, provider, ttl_seconds, areas: [{ area, status: fresh|stale|miss, refreshing, places, data_fetched_at, age_seconds, last_error }] }`
 - (add more here)
 
+## Watch relay endpoints (stretch; all in-memory, no accounts, one server instance)
+Flow: phone web app gets a 6-digit code, the Wear OS app enters it, the watch sends readings, the phone polls for them.
+- `POST /v1/trips/pair` -> `{ "trip_id": "32 hex", "pair_code": "6 digits", "expires_in_s": 600 }` (phone). `trip_id` is unguessable and acts as the phone's key.
+- `POST /v1/watch/pair` body `{ "pair_code", "device": "wearos" }` -> `{ "watch_token", "trip_id" }`. A code works once. 5 wrong codes in a minute -> 429 `TOO_MANY_ATTEMPTS`.
+- `POST /v1/watch/heartbeat` (`Authorization: Bearer watch_token`) body `{ "bpm": 25-250, "ts": "ISO", "source": "wearos | band | simulated" }` -> 204
+- `POST /v1/watch/prompt` (Bearer) -> 204. The watch says the "Are you OK?" prompt is showing.
+- `POST /v1/alerts` (Bearer) body `{ "trip_id", "location": {lat,lng}?, "route_id"? }` -> `{ "status": "contact_not_opted_in" }`. No message provider yet, so nothing is sent (OPEN_QUESTIONS 13). Location is accepted, never stored or logged.
+- `POST /v1/alerts/ack` body `{ "trip_id", "ok": true }` -> 204
+- `GET /v1/trips/{trip_id}/events?after=N` -> `{ "status": "waiting | paired", "latest": {bpm, ts, source} | null, "events": [{ "id", "type": "paired | bpm | prompt | alert_sent | ack", ... }], "next_after": N }` (phone polls about every 2 s; replaces the SSE stream for v1 because polling works through any proxy and on iOS).
+- `POST /v1/trips/{trip_id}/end` -> 204. Deletes the trip, code, token and readings. Later calls with that trip or token return 404 / 401.
+- Errors use the standard shape. Codes: `BAD_REQUEST` 400, `BAD_CODE` 400, `UNAUTHORIZED` 401, `NOT_FOUND` 404, `TOO_MANY_ATTEMPTS` 429.
+- Rules: `source: "simulated"` must be shown as Simulated in every UI. Idle trips are deleted after 30 min; the last 30 events are kept. No bpm, token or coordinates are stored on disk or logged. CORS now allows the `authorization` header; a Capacitor app needs its origin (`http://localhost` / `https://localhost`) in `WEB_ORIGINS`.
+
 ## Data source interface (server/data/)
 - `get_places(area, time)` -> list of places with opening hours, `is_24h`, `category`, `source`, `fetched_at`.
   Implementations: `brightdata` (core), `apify` (supporting only), later `osm` / `overture`.
