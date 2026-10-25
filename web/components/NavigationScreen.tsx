@@ -4,6 +4,9 @@ import { useEffect, useRef, useState } from "react";
 
 import { formatMeters, formatMinutes } from "@/lib/format";
 import { alertAhead } from "@/lib/nav/alerts";
+import {
+  CHECK_IN_INTERVAL_MS, evaluateCheckIn, onDarkestStretch, pingPairedWatch, type CheckInReason,
+} from "@/lib/nav/checkin";
 import { pointAtDistance, routeLength, type LngLat } from "@/lib/nav/geo";
 import { arrowRotation, chooseHeading, mapBearing, type HeadingMode } from "@/lib/nav/heading";
 import { buzz, prefersReducedMotion, watchCompass, watchLocation, type GeoFix, type LocationStatus } from "@/lib/nav/sensors";
@@ -12,6 +15,7 @@ import type { Place, Route } from "@/lib/types";
 
 import { NavMap } from "./NavMap";
 import { StreetView } from "./StreetView";
+import { useTrip } from "./TripProvider";
 
 const SIM_MPS = 22;
 
@@ -20,9 +24,15 @@ type Props = {
   onClose: () => void;
   onReroute: (from: Place) => void;
   recalculating?: boolean;
+  /** Tests pass a short interval. The walk uses a few minutes. */
+  checkInIntervalMs?: number;
 };
 
-export function NavigationScreen({ route, onClose, onReroute, recalculating = false }: Props) {
+export function NavigationScreen({
+  route, onClose, onReroute, recalculating = false, checkInIntervalMs = CHECK_IN_INTERVAL_MS,
+}: Props) {
+  const { trip } = useTrip();
+  const watchCheckIn = trip.settings.watchCheckIn;
   const coords = route.geometry.coordinates as LngLat[];
   const [steps, setSteps] = useState<NavStep[]>(() => stepsFromGeometry(coords));
   const [simulated, setSimulated] = useState(false);
@@ -35,8 +45,13 @@ export function NavigationScreen({ route, onClose, onReroute, recalculating = fa
   const [hapticsOn, setHapticsOn] = useState(true);
   const [dismissedOff, setDismissedOff] = useState(false);
   const [streetOpen, setStreetOpen] = useState(false);
+  const [checkIn, setCheckIn] = useState<CheckInReason | null>(null);
   const wasOffRef = useRef(false);
   const lastBuzz = useRef<string>("");
+  const checkInShowing = useRef(false);
+  const checkInLatched = useRef(false);
+  const checkInAckAt = useRef(0);
+  const checkInStarted = useRef(false);
   const reducedMotion = prefersReducedMotion();
 
   useEffect(() => {
@@ -91,6 +106,46 @@ export function NavigationScreen({ route, onClose, onReroute, recalculating = fa
   const arrow = arrowRotation(heading.degrees, headingMode);
   const alert = alertAhead(route, progress.alongM);
   const showOff = progress.offRoute && !simulated && !dismissedOff && !recalculating;
+  const onDarkest = watchCheckIn && onDarkestStretch(route.segments, user[0], user[1]);
+
+  useEffect(() => {
+    if (!watchCheckIn) {
+      checkInShowing.current = false;
+      checkInLatched.current = false;
+      setCheckIn(null);
+      return;
+    }
+    if (!checkInStarted.current) {
+      checkInAckAt.current = Date.now();
+      checkInStarted.current = true;
+    }
+    const tick = () => {
+      const decision = evaluateCheckIn({
+        enabled: true,
+        nowMs: Date.now(),
+        lastAckMs: checkInAckAt.current,
+        intervalMs: checkInIntervalMs,
+        onDarkest,
+        darkestLatched: checkInLatched.current,
+        showing: checkInShowing.current,
+      });
+      checkInLatched.current = decision.darkestLatched;
+      if (!decision.open || checkInShowing.current) return;
+      checkInShowing.current = true;
+      setCheckIn(decision.open);
+      void buzz(hapticsOn);
+      pingPairedWatch(decision.open);
+    };
+    tick();
+    const timer = window.setInterval(tick, Math.min(1_000, Math.max(16, checkInIntervalMs)));
+    return () => window.clearInterval(timer);
+  }, [watchCheckIn, onDarkest, checkInIntervalMs, hapticsOn]);
+
+  function ackCheckIn() {
+    checkInAckAt.current = Date.now();
+    checkInShowing.current = false;
+    setCheckIn(null);
+  }
   const remainingMin = route.duration_min * progress.remainingFraction;
   const buzzKey = `${progress.stepIndex}:${showOff ? "off" : ""}:${alert?.kind ?? ""}`;
 
@@ -153,22 +208,34 @@ export function NavigationScreen({ route, onClose, onReroute, recalculating = fa
         </div>
       ) : null}
 
-      {showOff ? (
-        <div className="nav-prompt" role="alertdialog" aria-label="Off the route">
-          <strong>You are away from this route.</strong>
-          <p>Recalculate the walk from here?</p>
-          <div className="nav-prompt-actions">
-            <button type="button" className="btn primary" onClick={() => onReroute({
-              id: "nav-here", name: "Your location", lat: user[1], lng: user[0],
-            })}>Recalculate</button>
-            <button type="button" className="btn secondary" onClick={() => setDismissedOff(true)}>Keep this route</button>
-          </div>
-        </div>
-      ) : null}
-
       <NavMap coords={coords} user={user} mapBearing={bearing} arrowDeg={arrow} reducedMotion={reducedMotion} />
 
       <div className="nav-dock">
+        {showOff ? (
+          <div className="nav-prompt" role="alertdialog" aria-label="Off the route">
+            <strong>You are away from this route.</strong>
+            <p>Recalculate the walk from here?</p>
+            <div className="nav-prompt-actions">
+              <button type="button" className="btn primary" onClick={() => onReroute({
+                id: "nav-here", name: "Your location", lat: user[1], lng: user[0],
+              })}>Recalculate</button>
+              <button type="button" className="btn secondary" onClick={() => setDismissedOff(true)}>Keep this route</button>
+            </div>
+          </div>
+        ) : checkIn ? (
+          <div className="nav-prompt" role="status" aria-label="Watch check-in">
+            <strong>Check-in</strong>
+            <p>
+              {checkIn === "darkest"
+                ? "Darkest stretch on this walk. Tap I'm OK if you are still going."
+                : "A few minutes have passed. Tap I'm OK if you are still going."}
+            </p>
+            <p>Meant for a paired watch. This does not guarantee safety.</p>
+            <div className="nav-prompt-actions">
+              <button type="button" className="btn primary" onClick={ackCheckIn}>{"I'm OK"}</button>
+            </div>
+          </div>
+        ) : null}
         <button type="button" className="btn secondary" onClick={onClose}>End</button>
         <button type="button" className="btn secondary" aria-pressed={simulated}
           onClick={() => { setSimulated((on) => !on); setSimAlong(progress.alongM); }}>

@@ -17,6 +17,8 @@ export type Settings = {
   maxExtraMinutes: number;
   withCompanion: boolean;
   priorities: string[];
+  /** Phone check-in during walking navigation. Not sent to the route API. */
+  watchCheckIn: boolean;
 };
 
 export type Trip = {
@@ -26,7 +28,9 @@ export type Trip = {
   settings: Settings;
 };
 
-export const DEFAULT_SETTINGS: Settings = { maxExtraMinutes: 10, withCompanion: false, priorities: [] };
+export const DEFAULT_SETTINGS: Settings = {
+  maxExtraMinutes: 10, withCompanion: false, priorities: [], watchCheckIn: false,
+};
 export const EMPTY_TRIP: Trip = { from: null, to: null, departISO: null, settings: DEFAULT_SETTINGS };
 
 export function togglePriority(current: string[], id: string): string[] {

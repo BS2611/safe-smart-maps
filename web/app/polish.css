@@ -44,7 +44,7 @@ h1 { font-size: clamp(1.85rem, 2.6vw, 2.4rem); line-height: 1.08; font-weight: 5
 h2 { font-size: clamp(1.4rem, 2vw, 1.7rem); line-height: 1.15; font-weight: 560; }
 h3 { font-family: var(--font-display); font-size: 1.12rem; line-height: 1.25; letter-spacing: -0.02em; }
 
-.screen { max-width: 1120px; padding: 22px 16px 56px; display: flex; flex-direction: column; gap: 20px; }
+.screen { max-width: 1120px; padding: 22px 16px calc(56px + var(--sab)); display: flex; flex-direction: column; gap: 20px; }
 .stack, .stack-sm { display: flex; flex-direction: column; }
 .stack { gap: 20px; }
 .stack-sm { gap: 8px; }
@@ -385,12 +385,18 @@ h3 { font-family: var(--font-display); font-size: 1.12rem; line-height: 1.25; le
 .hero-walker { display: none; }
 
 @media (min-width: 980px) {
-  .screen { padding: 28px 32px 64px; }
+  .screen { padding: 28px 32px calc(64px + var(--sab)); }
   .hero { grid-template-columns: minmax(0, 0.84fr) minmax(340px, 1.16fr); gap: 28px; }
   .routes-layout, .detail-layout { grid-template-columns: minmax(0, 1.15fr) minmax(340px, 0.85fr); gap: 22px; align-items: start; }
   .map-col { position: sticky; top: 84px; }
   .welcome-foot { grid-template-columns: 1.4fr 0.8fr; align-items: start; }
   .welcome-foot .caption { grid-column: 1 / -1; }
+}
+@media (max-width: 840px) {
+  /* Gesture and 3-button bars overlay the WebView when the inset variable is still 0. */
+  .screen { padding-bottom: calc(56px + max(48px, var(--sab))); }
+  .detail-actions, .sticky-cta { padding-bottom: max(48px, var(--sab)); }
+  .nav-dock { padding-bottom: max(48px, calc(12px + var(--sab))); }
 }
 @media (max-width: 700px) {
   .hero h1 { max-width: none; }
@@ -507,12 +513,25 @@ h3 { font-family: var(--font-display); font-size: 1.12rem; line-height: 1.25; le
 .nav-alert { top: calc(132px + var(--sat)); }
 .nav-prompt { bottom: calc(12px + var(--sab)); }
 .nav-prompt-actions { display: flex; gap: 8px; margin-top: 8px; }
+.nav-dock .nav-prompt { position: relative; left: auto; right: auto; bottom: auto; flex: 1 1 100%; }
 .nav-dock {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   padding: 10px 12px calc(12px + var(--sab));
   background: #07110e;
+}
+.detail-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 12px;
+  padding-bottom: max(12px, var(--sab));
+  background-color: var(--bg);
+  background-image: none;
 }
 .nav-dock .btn { width: auto; flex: 1 1 42%; min-height: 48px; }
 .nav-compass-note { margin: 0; padding: 0 12px 8px; color: #f7faf7; font-size: 0.85rem; }

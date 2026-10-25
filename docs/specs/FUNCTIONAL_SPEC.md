@@ -34,7 +34,7 @@ Normal maps show the fastest walking route. Safe Smart Maps shows three walking 
 ## 5. Features
 
 ### 5.1 Trip input
-Start and destination (geocoded search), departure time (default now), settings screen: maximum extra minutes, walking alone or with someone, and which factors matter most (adjusts weights within limits).
+Start and destination (geocoded search), departure time (default now), settings screen: maximum extra minutes, walking alone or with someone, which factors matter most (adjusts weights within limits), and an optional watch check-in saved with those preferences.
 
 ### 5.2 Three routes
 - **Fastest:** shortest travel time.
@@ -67,7 +67,7 @@ Total = 100%.
 Colored segments on the map. Each route card: extra minutes, coverage %, longest gap, number of open places, nearest help point, data-fetched-at time, and the AI explanation with reasons.
 
 ### 5.6 Walking navigation
-Start, on the route detail, opens a full-screen walk for that route. It shows the next maneuver, the distance to it, the street name (or "not sure"), and the time and distance left. Position comes from the phone's GPS in the Android app and from the browser on the web. If location is denied or there is no fix, the screen says so and offers a walk labeled Simulated that replays the route. Steps advance as the walker passes each maneuver. Leaving the line by more than about 35 m asks before recalculating from the current point. A low-scoring stretch or a stretch with no open places ahead is called out in plain words. A compass button switches the map between heading-up and north-up; if there is no compass, the map uses the GPS direction of travel or stays north-up. Street view opens the panorama at the current point. Vibration on turns can be turned off, and it stays off when the device asks for reduced motion.
+Start, on the route detail, opens a full-screen walk for that route. It shows the next maneuver, the distance to it, the street name (or "not sure"), and the time and distance left. Position comes from the phone's GPS in the Android app and from the browser on the web. If location is denied or there is no fix, the screen says so and offers a walk labeled Simulated that replays the route. Steps advance as the walker passes each maneuver. Leaving the line by more than about 35 m asks before recalculating from the current point. A low-scoring stretch or a stretch with no open places ahead is called out in plain words. A compass button switches the map between heading-up and north-up; if there is no compass, the map uses the GPS direction of travel or stays north-up. Street view opens the panorama at the current point. Vibration on turns can be turned off, and it stays off when the device asks for reduced motion. If watch check-in is on, the walk shows a check-in every few minutes and on the darkest stretch, buzzes, and waits for "I'm OK". The buzz is meant for a paired watch. The phone does not claim the watch was reached, and the check-in does not guarantee safety.
 
 ### 5.7 Street-level photos
 On a route's detail map, tap a point or drag the peg to open a street-level photo at that spot. Drag to look around, step forward and back along the walk, and read that stretch's score and reasons on the photo. A mini map shows position and heading. One button opens the darkest stretch. With no photo token, the screen says street view is unavailable and the rest of the walk still works. Photos are Mapillary unless a Google browser key is set.

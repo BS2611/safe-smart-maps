@@ -84,6 +84,22 @@ export function PreferencesScreen({ next = "/plan" }: { next?: string }) {
         </div>
       </section>
 
+      <section className="card stack-sm" aria-labelledby="checkin-h">
+        <h2 id="checkin-h">Watch check-in</h2>
+        <div className="segmented" role="group" aria-labelledby="checkin-h">
+          <button type="button" aria-pressed={!settings.watchCheckIn} onClick={() => set({ watchCheckIn: false })}>
+            Check-in off
+          </button>
+          <button type="button" aria-pressed={settings.watchCheckIn} onClick={() => set({ watchCheckIn: true })}>
+            Check-in on
+          </button>
+        </div>
+        <p className="small muted">
+          When this is on, the walk asks you to check in every few minutes and on the darkest stretch, and the phone buzzes.
+          That buzz is meant for a paired watch. This does not guarantee safety.
+        </p>
+      </section>
+
       <section className="card stack-sm" aria-labelledby="watch-link-h">
         <h2 id="watch-link-h">Watch check (optional)</h2>
         <p className="small muted">Try a heart-rate check with your Galaxy Watch or a simulated reading.</p>

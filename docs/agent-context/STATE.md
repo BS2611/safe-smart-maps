@@ -43,6 +43,13 @@ Last full review by a human: (date/time)
 ## Shared areas (ask first, log every change)
 - `CONTRACTS.md`, `DECISIONS.md`, `OPEN_QUESTIONS.md`, `docs/specs/`, `README.md`, `.env.example`, `package.json`
 
+## Owner tasks (cursor, watch check-in)
+- Status: Watch check-in preference and navigation prompt on `cursor/watch-checkin-01d5`, plus bottom inset so route-detail Start clears the Android gesture bar.
+- Doing now: Opening the pull request.
+- Files in progress: none
+- Next: Review the pull request. Android export is `BUILD_TARGET=android NEXT_DIST_DIR=.next-android` (HTML lands in `.next-android`, and `cap sync` with the same env copies that folder). No Android SDK here, so `gradlew assembleDebug` was not run. WebKit was not launched locally.
+- Blocked on: STATE "Last full review by a human" is still blank. Bhavpreet owns `web/` and the Wear OS app; this edit was an explicit owner task and does not change `server/` or `watch/`.
+
 ## Owner tasks (cursor, web)
 - Status: Walking navigation and compass on `cursor/walk-nav-01d5`, merged with main after street view landed. Phone-layout fixes stay on their own PR.
 - Doing now: Opening the navigation pull request, then updating the phone-layout branch onto main.
