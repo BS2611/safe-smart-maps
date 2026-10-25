@@ -2,7 +2,7 @@
 
 - When: 2026-10-25 03:06 PT
 - Who: owner via cursor (agent: cursor)
-- Branch / commit: cursor/night-mark-01d5 / this commit
+- Branch / commit: cursor/night-mark-01d5 / 5adf96f
 - Files touched: web/components/Icons.tsx, web/app/polish.css, web/app/layout.tsx, web/public/icons/logo.svg, web/public/icons/icon-192.png, web/public/icons/icon-512.png, web/public/icons/icon-maskable-512.png, web/public/icons/apple-touch-icon.png, web/app/favicon.ico, docs/agent-context/DECISIONS.md
 - What changed: Replaced the header mark and the app icons with one night-route drawing: a walk that turns a corner, coral at the start, amber at the turn, a mint glow at the lit point, on #07110e. The wordmark is still "Safe Smart Maps".
 - Why: The owner asked for a distinctive logo that matches the night-map and score colors and still reads at favicon size.
