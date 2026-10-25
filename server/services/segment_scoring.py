@@ -78,13 +78,14 @@ class SegmentScorer:
 
     def __init__(self, config: dict, places: list[Place] | None,
                  area_context: AreaContext | None, weights: dict[str, float] | None = None,
-                 incidents: list | None = None, outages: list | None = None):
+                 incidents: list | None = None, outages: list | None = None, transit=None):
         check_scoring_params(config)
         self.config = config
         self.places = places
         self.area_context = area_context
         self.incidents = incidents      # Incident(lat, lng) list; None = source unavailable
         self.outages = outages          # Outage(lat, lng) list of OPEN streetlight reports; None = unavailable
+        self.transit = transit          # TransitSnapshot (live arrivals); None = unavailable
         self.weights = dict(weights or config["weights"])
         if set(self.weights) != set(config["weights"]):
             raise ScoringConfigError("weights override must use the same factor names as the config")
@@ -227,6 +228,24 @@ class SegmentScorer:
         return FactorResult("lighting", value, f"{lighting.reason}; {n} open streetlight outage report"
                             f"{'s' if n != 1 else ''} nearby", {**lighting.evidence, "outages": n})
 
+    def _transit(self, seg: Segment, arrival: datetime) -> FactorResult:
+        """Vehicles predicted at nearby stops around the arrival time. Live feed only: later than the
+        feed's horizon (or before it) is "not sure", never a guess."""
+        snap = self.transit
+        if snap is None:
+            return FactorResult("transit", None, "transit: no live feed (not sure)")
+        if arrival > snap.horizon or arrival < snap.fetched_at - timedelta(minutes=5):
+            return FactorResult("transit", None, "transit: live arrivals only cover the next ~30 minutes (not sure)")
+        radius = self.config["radii_m"]["transit"]
+        win = self.config["factor_params"]["transit_window_min"]
+        lo, hi = arrival - timedelta(minutes=win["before"]), arrival + timedelta(minutes=win["after"])
+        n = sum(1 for a in snap.arrivals if lo <= a.time <= hi
+                and point_to_polyline_m((a.lat, a.lng), seg.coordinates) <= radius)
+        table = self.config["factor_params"]["transit_by_count"]
+        return FactorResult("transit", float(table[min(n, len(table) - 1)]),
+                            f"{n} bus or train arrival{'s' if n != 1 else ''} predicted within {radius:g} m "
+                            f"in the next {win['after']} min (live feed)", {"arrivals": n})
+
     def _covered(self, seg: Segment, arrival: datetime) -> bool | None:
         """Continuity coverage (TECHNICAL_SPEC s5): an OPEN place or a help point within
         radii_m.coverage of the segment. True as soon as one is found. False only when both
@@ -256,7 +275,8 @@ class SegmentScorer:
         lighting = self._outage_penalty(lighting, seg)
         found = {f.name: f for f in (self._open_places(seg, arrival), lighting, main_road,
                                      self._help_points(seg), self._turns(seg, prev),
-                                     self._activity(seg, arrival), self._incidents(seg))}
+                                     self._activity(seg, arrival), self._incidents(seg),
+                                     self._transit(seg, arrival))}
         for name in self.config["factor_params"]["not_yet_implemented"]:
             found[name] = FactorResult(name, None, f"{name.replace('_', ' ')}: not available yet (not sure)")
         factors = {name: found[name] for name in self.weights}   # config order

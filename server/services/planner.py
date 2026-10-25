@@ -17,6 +17,7 @@ from server.data.models import AreaContext, BoundingBox, Place
 from server.data.opening_hours import OpenStatus, evaluate_open_status
 from server.data.osm import OsmError
 from server.data.sf_open_data import SfDataError
+from server.data.transit import TransitError
 from server.data.ttl_cache import TTLCache
 from server.services.candidates import generate_candidates
 from server.services.continuity import compute_continuity
@@ -57,6 +58,7 @@ class Providers:
     places: Any           # CachedPlacesProvider (reads saved listings only; never fetches)
     context: Any          # ContextProvider: get_area_context(BoundingBox) -> AreaContext
     explainer: Any        # explain(facts) -> (text, source)
+    transit: Any = None   # Muni511Provider-like: get_snapshot() -> TransitSnapshot; None = not connected
     sf: Any = None        # SocrataClient-like: get_recent_incidents(area), get_open_outages(area); None = not connected
 
 
@@ -95,6 +97,8 @@ class RoutePlanner:
         self.context_cache = context_cache or TTLCache(24 * 3600)
         # City open data (incidents, streetlight reports) is fast but changes daily: keep it 6 hours.
         self.sf_cache = TTLCache(6 * 3600)
+        # Live 511 arrivals change by the minute but 511 allows ~60 requests an hour: keep them 3 minutes.
+        self.transit_cache = TTLCache(180)
 
     # ---------- data gathering ----------
     def _context(self, area: BoundingBox, warnings: list[str]) -> AreaContext | None:
@@ -123,6 +127,18 @@ class RoutePlanner:
                 warnings.append(f"{label}: not available right now, so it shows as not sure.")
                 out.append(None)
         return out[0], out[1]
+
+    def _transit_data(self, area: BoundingBox, warnings: list[str]):
+        """Live bus and train arrivals near the route, or None (the factor stays "not sure")."""
+        if self.p.transit is None:
+            return None
+        try:
+            snap = self.transit_cache.get_or_load("snapshot", self.p.transit.get_snapshot)
+        except TransitError as e:
+            if e.kind != "not_configured":
+                warnings.append("Live transit arrivals (511): not available right now, so transit shows as not sure.")
+            return None
+        return snap.within(area)
 
     # ---------- per-route work ----------
     def _route_facts(self, cand: RouteCandidate, scored: list[SegmentScore],
@@ -192,7 +208,8 @@ class RoutePlanner:
         weights = apply_priorities(self.cfg["weights"], req.settings.priorities,
                                    self.cfg["priorities"]["boost"])
         incidents, outages = self._sf_data(area, warnings)
-        scorer = SegmentScorer(self.cfg, found.places, context, weights, incidents=incidents, outages=outages)
+        scorer = SegmentScorer(self.cfg, found.places, context, weights, incidents=incidents, outages=outages,
+                              transit=self._transit_data(area, warnings))
 
         results = {}
         for cand in candidates:

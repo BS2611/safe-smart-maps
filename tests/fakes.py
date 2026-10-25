@@ -133,6 +133,7 @@ def make_planner(directory: Path, **overrides) -> RoutePlanner:
         places=overrides["places"] if "places" in overrides else make_places_provider(directory, places()),
         context=overrides.get("context", FakeContext()),
         explainer=overrides.get("explainer", FakeExplainer()),
+        transit=overrides.get("transit"),
         sf=overrides.get("sf"),  # None = SF open data not connected, so those factors stay not sure
     )
     return RoutePlanner(providers, load_scoring_config())
