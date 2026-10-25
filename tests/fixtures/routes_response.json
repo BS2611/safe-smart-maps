@@ -16,14 +16,14 @@
       "duration_min": 13.0,
       "extra_min": 4.0,
       "distance_m": 1050.0,
-      "route_score": 42.4,
+      "route_score": 44.1,
       "continuity": {
         "coverage_pct": 50.0,
         "longest_gap_m": 305.0,
         "longest_gap_note": "on Lombard St",
         "worst_window_score": 50.0
       },
-      "open_places_count": 7,
+      "open_places_count": 9,
       "nearest_help_point": {
         "name": "All Night Pharmacy",
         "distance_m": 19.0
@@ -62,7 +62,7 @@
           ],
           "length_m": 50.8,
           "arrival_time": "2026-10-25T03:00:16.250000Z",
-          "score": 50.0,
+          "score": 52.8,
           "band": "yellow",
           "factors": {
             "open_places": 0.0,
@@ -70,7 +70,7 @@
             "main_road": 100.0,
             "help_points": 0.0,
             "transit": null,
-            "activity": 0.0,
+            "activity": 25.0,
             "incidents": 100.0,
             "turns": 100.0
           },
@@ -95,7 +95,7 @@
           ],
           "length_m": 50.8,
           "arrival_time": "2026-10-25T03:00:48.750000Z",
-          "score": 50.0,
+          "score": 52.8,
           "band": "yellow",
           "factors": {
             "open_places": 0.0,
@@ -103,7 +103,7 @@
             "main_road": 100.0,
             "help_points": 0.0,
             "transit": null,
-            "activity": 0.0,
+            "activity": 25.0,
             "incidents": 100.0,
             "turns": 100.0
           },
@@ -227,7 +227,7 @@
           ],
           "length_m": 50.8,
           "arrival_time": "2026-10-25T03:02:58.750000Z",
-          "score": 57.4,
+          "score": 60.2,
           "band": "yellow",
           "factors": {
             "open_places": 0.0,
@@ -235,7 +235,7 @@
             "main_road": 100.0,
             "help_points": 42.0,
             "transit": null,
-            "activity": 25.0,
+            "activity": 50.0,
             "incidents": 100.0,
             "turns": 100.0
           },
@@ -261,7 +261,7 @@
           ],
           "length_m": 50.8,
           "arrival_time": "2026-10-25T03:03:31.250000Z",
-          "score": 79.7,
+          "score": 82.5,
           "band": "green",
           "factors": {
             "open_places": 60.0,
@@ -269,7 +269,7 @@
             "main_road": 100.0,
             "help_points": 92.5,
             "transit": null,
-            "activity": 25.0,
+            "activity": 50.0,
             "incidents": 100.0,
             "turns": 100.0
           },
@@ -295,7 +295,7 @@
           ],
           "length_m": 50.8,
           "arrival_time": "2026-10-25T03:04:03.750000Z",
-          "score": 81.7,
+          "score": 84.4,
           "band": "green",
           "factors": {
             "open_places": 60.0,
@@ -303,7 +303,7 @@
             "main_road": 100.0,
             "help_points": 100.0,
             "transit": null,
-            "activity": 50.0,
+            "activity": 75.0,
             "incidents": 100.0,
             "turns": 70.0
           },
@@ -329,20 +329,20 @@
           ],
           "length_m": 50.8,
           "arrival_time": "2026-10-25T03:04:36.250000Z",
-          "score": 81.2,
+          "score": 95.1,
           "band": "green",
           "factors": {
-            "open_places": 60.0,
+            "open_places": 100.0,
             "lighting": 100.0,
             "main_road": 100.0,
             "help_points": 80.9,
             "transit": null,
-            "activity": 50.0,
+            "activity": 75.0,
             "incidents": 100.0,
             "turns": 100.0
           },
           "reasons": [
-            "2 open places within 50 m",
+            "3 open places within 50 m",
             "lit street",
             "main road",
             "help point 69 m away",
@@ -363,20 +363,20 @@
           ],
           "length_m": 50.8,
           "arrival_time": "2026-10-25T03:05:08.750000Z",
-          "score": 75.7,
+          "score": 89.6,
           "band": "green",
           "factors": {
-            "open_places": 60.0,
+            "open_places": 100.0,
             "lighting": 100.0,
             "main_road": 100.0,
             "help_points": 31.7,
             "transit": null,
-            "activity": 50.0,
+            "activity": 75.0,
             "incidents": 100.0,
             "turns": 100.0
           },
           "reasons": [
-            "2 open places within 50 m",
+            "3 open places within 50 m",
             "lit street",
             "main road",
             "help point 118 m away",
@@ -397,7 +397,7 @@
           ],
           "length_m": 50.8,
           "arrival_time": "2026-10-25T03:05:41.250000Z",
-          "score": 72.2,
+          "score": 75.0,
           "band": "green",
           "factors": {
             "open_places": 60.0,
@@ -405,7 +405,7 @@
             "main_road": 100.0,
             "help_points": 0.0,
             "transit": null,
-            "activity": 50.0,
+            "activity": 75.0,
             "incidents": 100.0,
             "turns": 100.0
           },
@@ -430,7 +430,7 @@
           ],
           "length_m": 50.8,
           "arrival_time": "2026-10-25T03:06:13.750000Z",
-          "score": 74.0,
+          "score": 76.8,
           "band": "green",
           "factors": {
             "open_places": 60.0,
@@ -438,7 +438,7 @@
             "main_road": 100.0,
             "help_points": 16.2,
             "transit": null,
-            "activity": 50.0,
+            "activity": 75.0,
             "incidents": 100.0,
             "turns": 100.0
           },
@@ -464,10 +464,10 @@
           ],
           "length_m": 50.8,
           "arrival_time": "2026-10-25T03:06:46.250000Z",
-          "score": 82.4,
+          "score": 93.5,
           "band": "green",
           "factors": {
-            "open_places": 60.0,
+            "open_places": 100.0,
             "lighting": 100.0,
             "main_road": 100.0,
             "help_points": 66.9,
@@ -477,7 +477,7 @@
             "turns": 100.0
           },
           "reasons": [
-            "2 open places within 50 m",
+            "3 open places within 50 m",
             "lit street",
             "main road",
             "help point 83 m away",
@@ -498,7 +498,7 @@
           ],
           "length_m": 50.8,
           "arrival_time": "2026-10-25T03:07:18.750000Z",
-          "score": 97.2,
+          "score": 100.0,
           "band": "green",
           "factors": {
             "open_places": 100.0,
@@ -506,7 +506,7 @@
             "main_road": 100.0,
             "help_points": 100.0,
             "transit": null,
-            "activity": 75.0,
+            "activity": 100.0,
             "incidents": 100.0,
             "turns": 100.0
           },
@@ -532,7 +532,7 @@
           ],
           "length_m": 50.8,
           "arrival_time": "2026-10-25T03:07:51.250000Z",
-          "score": 97.2,
+          "score": 100.0,
           "band": "green",
           "factors": {
             "open_places": 100.0,
@@ -540,7 +540,7 @@
             "main_road": 100.0,
             "help_points": 100.0,
             "transit": null,
-            "activity": 75.0,
+            "activity": 100.0,
             "incidents": 100.0,
             "turns": 100.0
           },
@@ -566,7 +566,7 @@
           ],
           "length_m": 50.8,
           "arrival_time": "2026-10-25T03:08:23.750000Z",
-          "score": 83.9,
+          "score": 86.7,
           "band": "green",
           "factors": {
             "open_places": 60.0,
@@ -574,7 +574,7 @@
             "main_road": 100.0,
             "help_points": 80.4,
             "transit": null,
-            "activity": 75.0,
+            "activity": 100.0,
             "incidents": 100.0,
             "turns": 100.0
           },
@@ -600,10 +600,10 @@
           ],
           "length_m": 50.8,
           "arrival_time": "2026-10-25T03:08:56.250000Z",
-          "score": 75.5,
+          "score": 86.6,
           "band": "green",
           "factors": {
-            "open_places": 60.0,
+            "open_places": 100.0,
             "lighting": 100.0,
             "main_road": 100.0,
             "help_points": 29.7,
@@ -613,7 +613,7 @@
             "turns": 100.0
           },
           "reasons": [
-            "2 open places within 50 m",
+            "3 open places within 50 m",
             "lit street",
             "main road",
             "help point 120 m away",
@@ -634,15 +634,15 @@
           ],
           "length_m": 50.8,
           "arrival_time": "2026-10-25T03:09:28.750000Z",
-          "score": 67.8,
-          "band": "yellow",
+          "score": 70.6,
+          "band": "green",
           "factors": {
             "open_places": 60.0,
             "lighting": 100.0,
             "main_road": 100.0,
             "help_points": 0.0,
             "transit": null,
-            "activity": 25.0,
+            "activity": 50.0,
             "incidents": 100.0,
             "turns": 70.0
           },
@@ -854,7 +854,7 @@
           "confidence": "high"
         }
       ],
-      "explanation": "Fixture explanation.",
+      "explanation": "50% of this walk stays near an open place, help point or active stop. The longest quiet stretch is about 305 m on Lombard St. 9 open places along the way. Nearest help point: All Night Pharmacy, 19 m away. It adds about 4 min compared with the fastest route.",
       "explanation_source": "template"
     },
     {
@@ -868,14 +868,14 @@
       "duration_min": 9.0,
       "extra_min": 0.0,
       "distance_m": 740.0,
-      "route_score": 13.6,
+      "route_score": 19.3,
       "continuity": {
-        "coverage_pct": 20.0,
+        "coverage_pct": 60.0,
         "longest_gap_m": 295.0,
         "longest_gap_note": "on Marina Blvd",
         "worst_window_score": 26.1
       },
-      "open_places_count": 1,
+      "open_places_count": 4,
       "nearest_help_point": {
         "name": "All Night Pharmacy",
         "distance_m": 350.0
@@ -910,7 +910,7 @@
           ],
           "length_m": 49.2,
           "arrival_time": "2026-10-25T03:00:18Z",
-          "score": 26.1,
+          "score": 29.6,
           "band": "red",
           "factors": {
             "open_places": 0.0,
@@ -918,7 +918,7 @@
             "main_road": 55.0,
             "help_points": 0.0,
             "transit": null,
-            "activity": 0.0,
+            "activity": 25.0,
             "incidents": 100.0,
             "turns": 100.0
           },
@@ -943,20 +943,20 @@
           ],
           "length_m": 49.2,
           "arrival_time": "2026-10-25T03:00:54Z",
-          "score": 26.1,
-          "band": "red",
+          "score": 51.1,
+          "band": "yellow",
           "factors": {
-            "open_places": 0.0,
+            "open_places": 60.0,
             "lighting": null,
             "main_road": 55.0,
             "help_points": 0.0,
             "transit": null,
-            "activity": 0.0,
+            "activity": 25.0,
             "incidents": 100.0,
             "turns": 100.0
           },
           "reasons": [
-            "no open places nearby",
+            "2 open places within 50 m",
             "not sure: lighting data missing",
             "side street",
             "not sure: transit schedule not connected"
@@ -976,20 +976,20 @@
           ],
           "length_m": 49.2,
           "arrival_time": "2026-10-25T03:01:30Z",
-          "score": 26.1,
-          "band": "red",
+          "score": 54.6,
+          "band": "yellow",
           "factors": {
-            "open_places": 0.0,
+            "open_places": 60.0,
             "lighting": null,
             "main_road": 55.0,
             "help_points": 0.0,
             "transit": null,
-            "activity": 0.0,
+            "activity": 50.0,
             "incidents": 100.0,
             "turns": 100.0
           },
           "reasons": [
-            "no open places nearby",
+            "2 open places within 50 m",
             "not sure: lighting data missing",
             "side street",
             "not sure: transit schedule not connected"
@@ -1009,20 +1009,20 @@
           ],
           "length_m": 49.2,
           "arrival_time": "2026-10-25T03:02:06Z",
-          "score": 26.1,
-          "band": "red",
+          "score": 54.6,
+          "band": "yellow",
           "factors": {
-            "open_places": 0.0,
+            "open_places": 60.0,
             "lighting": null,
             "main_road": 55.0,
             "help_points": 0.0,
             "transit": null,
-            "activity": 0.0,
+            "activity": 50.0,
             "incidents": 100.0,
             "turns": 100.0
           },
           "reasons": [
-            "no open places nearby",
+            "2 open places within 50 m",
             "not sure: lighting data missing",
             "side street",
             "not sure: transit schedule not connected"
@@ -1042,20 +1042,20 @@
           ],
           "length_m": 49.2,
           "arrival_time": "2026-10-25T03:02:42Z",
-          "score": 26.1,
-          "band": "red",
+          "score": 54.6,
+          "band": "yellow",
           "factors": {
-            "open_places": 0.0,
+            "open_places": 60.0,
             "lighting": null,
             "main_road": 55.0,
             "help_points": 0.0,
             "transit": null,
-            "activity": 0.0,
+            "activity": 50.0,
             "incidents": 100.0,
             "turns": 100.0
           },
           "reasons": [
-            "no open places nearby",
+            "2 open places within 50 m",
             "not sure: lighting data missing",
             "side street",
             "not sure: transit schedule not connected"
@@ -1075,20 +1075,20 @@
           ],
           "length_m": 49.2,
           "arrival_time": "2026-10-25T03:03:18Z",
-          "score": 29.6,
-          "band": "red",
+          "score": 58.2,
+          "band": "yellow",
           "factors": {
-            "open_places": 0.0,
+            "open_places": 60.0,
             "lighting": null,
             "main_road": 55.0,
             "help_points": 0.0,
             "transit": null,
-            "activity": 25.0,
+            "activity": 75.0,
             "incidents": 100.0,
             "turns": 100.0
           },
           "reasons": [
-            "no open places nearby",
+            "2 open places within 50 m",
             "not sure: lighting data missing",
             "side street",
             "not sure: transit schedule not connected"
@@ -1108,20 +1108,20 @@
           ],
           "length_m": 49.2,
           "arrival_time": "2026-10-25T03:03:54Z",
-          "score": 43.9,
-          "band": "red",
+          "score": 68.9,
+          "band": "yellow",
           "factors": {
-            "open_places": 40.0,
+            "open_places": 100.0,
             "lighting": null,
             "main_road": 55.0,
             "help_points": 0.0,
             "transit": null,
-            "activity": 25.0,
+            "activity": 50.0,
             "incidents": 100.0,
             "turns": 100.0
           },
           "reasons": [
-            "1 open place within 50 m",
+            "2 open places within 50 m",
             "not sure: lighting data missing",
             "side street",
             "not sure: transit schedule not connected"
@@ -1141,15 +1141,15 @@
           ],
           "length_m": 49.2,
           "arrival_time": "2026-10-25T03:04:30Z",
-          "score": 43.9,
-          "band": "red",
+          "score": 47.5,
+          "band": "yellow",
           "factors": {
             "open_places": 40.0,
             "lighting": null,
             "main_road": 55.0,
             "help_points": 0.0,
             "transit": null,
-            "activity": 25.0,
+            "activity": 50.0,
             "incidents": 100.0,
             "turns": 100.0
           },
@@ -1394,7 +1394,7 @@
           "confidence": "low"
         }
       ],
-      "explanation": "Fixture explanation.",
+      "explanation": "60% of this walk stays near an open place, help point or active stop. The longest quiet stretch is about 295 m on Marina Blvd. 4 open places along the way. Nearest help point: All Night Pharmacy, 350 m away.",
       "explanation_source": "template"
     }
   ],

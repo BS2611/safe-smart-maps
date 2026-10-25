@@ -1,8 +1,9 @@
 """LABELED TEST FIXTURES: fake providers and a small invented scenario (see AGENTS.md section 6).
 
 Nothing here is real data and none of it is used outside tests. The scenario is a short trip
-near the Palace of Fine Arts. Route A is the direct street; route B is a longer, lit main road
-with restaurants that stay open late. At 8 PM both have things open; at 1 AM route A is empty.
+near the Palace of Fine Arts. Route B is a longer, lit main road with restaurants that close by 11:30 PM. Route A is the
+direct street with a few night-owl places open until 3 AM. At 8 PM route B is better lit and
+more active; by 1 AM its restaurants have closed and route A is recommended.
 """
 from datetime import datetime, timezone
 
@@ -12,6 +13,7 @@ from server.data.models import BoundingBox, Place
 from server.data.osm import HelpPoint, MapFeatures, Way
 from server.data.sf_open_data import Incident, Outage
 from server.data.transit import NoTransitProvider
+from server.services.explain import template_explanation
 from server.services.planner import Providers, RoutePlanner
 from server.services.scoring_config import load_scoring_config
 
@@ -22,9 +24,10 @@ FETCHED = datetime(2026, 10, 24, 22, 31, tzinfo=timezone.utc)
 ROUTE_A_COORDS = [ORIGIN, (-122.4442, 37.8029), DEST]
 ROUTE_B_COORDS = [ORIGIN, (-122.4470, 37.8060), (-122.4415, 37.8060), DEST]
 
-# Hours as (open_minute, close_minute) from local midnight; 1080-1560 = 6 PM to 2 AM.
-LATE = {d: [(1080, 1560)] for d in range(7)}
-DAYTIME = {d: [(480, 1260)] for d in range(7)}  # 8 AM to 9 PM
+# Hours as (open_minute, close_minute) from local midnight.
+EVENING = {d: [(1080, 1410)] for d in range(7)}   # 6 PM to 11:30 PM (closed by 1 AM)
+NIGHT_OWL = {d: [(1020, 1620)] for d in range(7)}  # 5 PM to 3 AM (still open at 1 AM)
+DAYTIME = {d: [(480, 1260)] for d in range(7)}     # 8 AM to 9 PM
 
 
 def route_a() -> RouteCandidate:
@@ -42,9 +45,11 @@ def place(name, lng, lat, category, hours, is_24h=None):
 
 
 def places() -> list[Place]:
-    late = [place(f"Late Diner {i}", -122.4470 + i * 0.0011, 37.80605, "restaurant", LATE)
-            for i in range(6)]
-    return late + [
+    evening = [place(f"Evening Diner {i}", -122.4476 + i * 0.0008, 37.80605, "restaurant", EVENING)
+               for i in range(9)]
+    night_owls = [place(f"Night Owl {i}", -122.4474 + i * 0.0012, 37.80295, "restaurant", NIGHT_OWL)
+                  for i in range(3)]
+    return evening + night_owls + [
         place("Day Cafe", -122.4442, 37.80295, "cafe", DAYTIME),
         place("All Night Pharmacy", -122.4430, 37.80605, "pharmacy", None, is_24h=True),
         place("Mystery Shop", -122.4450, 37.80295, "other", None),  # hours unreadable
@@ -118,13 +123,15 @@ class FakeSf:
 
 
 class FakeExplainer:
-    def __init__(self, text="Fixture explanation.", source="template"):
+    """Records the facts it was given. Default text is the real template wording."""
+
+    def __init__(self, text=None, source="template"):
         self.text, self.source = text, source
         self.seen = []
 
     def explain(self, facts):
         self.seen.append(facts)
-        return self.text, self.source
+        return (self.text or template_explanation(facts)), self.source
 
 
 def make_planner(**overrides) -> RoutePlanner:

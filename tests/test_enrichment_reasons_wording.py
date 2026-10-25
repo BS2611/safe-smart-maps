@@ -35,7 +35,8 @@ def test_places_open_and_closed_by_arrival_time():
     evening = build_route_facts(segments(EIGHT_PM), bundle, CFG)
     late = build_route_facts(segments(ONE_AM), bundle, CFG)
     assert evening.open_places_count >= 1 and "Day Cafe" in evening.open_place_names
-    assert late.open_places_count == 0           # the cafe is closed at 1 AM
+    assert "Day Cafe" not in late.open_place_names   # the cafe is closed at 1 AM
+    assert "Night Owl 0" in late.open_place_names    # the night-owl places are still open
     assert evening.unknown_hours_places == 1     # the shop with unreadable hours
 
 
