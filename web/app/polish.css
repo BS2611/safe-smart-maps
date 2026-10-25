@@ -166,8 +166,10 @@ h3 { font-family: var(--font-display); font-size: 1.12rem; line-height: 1.25; le
 
 .plan-layout, .routes-layout, .detail-layout, .guide-grid, .compare-top {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
 }
+.plan-layout > *, .routes-layout > *, .detail-layout > *, .guide-grid > *, .compare-top > * { min-width: 0; }
 .plan-aside ol { margin: 0; padding-left: 1.1rem; display: grid; gap: 8px; }
 .steps li::marker { color: var(--accent); font-weight: 700; }
 
