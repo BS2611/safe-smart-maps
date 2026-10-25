@@ -20,9 +20,9 @@ describe("DepartureField", () => {
     render(<DepartureField value={null} onChange={onChange} now={SATURDAY_3PM} />);
     const user = userEvent.setup();
     expect(screen.getByRole("button", { name: "Leave now" })).toHaveAttribute("aria-pressed", "true");
-    await user.click(screen.getByRole("button", { name: "Tonight 8 PM" }));
+    await user.click(screen.getByRole("button", { name: "8 PM tonight" }));
     expect(onChange).toHaveBeenLastCalledWith("2026-10-25T03:00:00.000Z");
-    await user.click(screen.getByRole("button", { name: "Tonight 1 AM" }));
+    await user.click(screen.getByRole("button", { name: "1 AM, after midnight" }));
     expect(onChange).toHaveBeenLastCalledWith("2026-10-25T08:00:00.000Z");
     await user.click(screen.getByRole("button", { name: "Leave now" }));
     expect(onChange).toHaveBeenLastCalledWith(null);
@@ -30,8 +30,9 @@ describe("DepartureField", () => {
 
   it("explains that scores use the arrival time", () => {
     render(<DepartureField value="2026-10-25T03:00:00.000Z" onChange={() => undefined} now={SATURDAY_3PM} />);
-    expect(screen.getByRole("button", { name: "Tonight 8 PM" })).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByText(/Scores use the time you reach each street, not when you leave/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "8 PM tonight" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByText(/8 PM is this evening/)).toBeInTheDocument();
+    expect(screen.getByText(/Scores follow the time you reach each street/)).toBeInTheDocument();
     expect(screen.getByText(/Sat 8:00 PM \(San Francisco time\)/)).toBeInTheDocument();
   });
 

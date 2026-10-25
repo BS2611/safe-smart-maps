@@ -31,11 +31,11 @@ export function DepartureField({ value, onChange, now }: Props) {
 
   return (
     <div className="field">
-      <span className="label" id="depart-label">Leave</span>
+      <span className="label" id="depart-label">When do you leave?</span>
       <div className="chips" role="group" aria-labelledby="depart-label">
         <button type="button" className="chip" aria-pressed={mode === "now"} onClick={() => choose("now")}>Leave now</button>
-        <button type="button" className="chip" aria-pressed={mode === "eight"} onClick={() => choose("eight")}>Tonight 8 PM</button>
-        <button type="button" className="chip" aria-pressed={mode === "one"} onClick={() => choose("one")}>Tonight 1 AM</button>
+        <button type="button" className="chip" aria-pressed={mode === "eight"} onClick={() => choose("eight")}>8 PM tonight</button>
+        <button type="button" className="chip" aria-pressed={mode === "one"} onClick={() => choose("one")}>1 AM, after midnight</button>
         <button type="button" className="chip" aria-pressed={mode === "pick"} onClick={() => choose("pick")}>Pick a time</button>
       </div>
       {mode === "pick" ? (
@@ -50,8 +50,13 @@ export function DepartureField({ value, onChange, now }: Props) {
         />
       ) : null}
       <p className="small muted" style={{ marginTop: 8 }}>
-        {value ? `${formatDayClock(value)} (San Francisco time). ` : "Now. "}
-        Scores use the time you reach each street, not when you leave.
+        {value ? `${formatDayClock(value)} (San Francisco time). ` : "You are leaving now. "}
+        {mode === "one"
+          ? "1 AM is after midnight, later the same night, when more places have closed. "
+          : mode === "eight"
+            ? "8 PM is this evening. "
+            : ""}
+        Scores follow the time you reach each street.
       </p>
     </div>
   );

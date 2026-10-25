@@ -64,7 +64,7 @@ export function PlanTripScreen() {
         <p className="muted">Palace of Fine Arts to Montgomery BART. The score follows the minute you will be on each street.</p>
         <ol className="steps">
           <li>Set the start and the destination.</li>
-          <li>Leave now, at 8 PM, or at 1 AM.</li>
+          <li>Leave now, at 8 PM this evening, or at 1 AM after midnight.</li>
           <li>Read the score, the empty stretches, and the reasons.</li>
         </ol>
         <p className="caption">The same walk later shows what has closed.</p>
