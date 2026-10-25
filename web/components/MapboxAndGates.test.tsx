@@ -106,3 +106,16 @@ describe("TripProvider", () => {
     spy.mockRestore();
   });
 });
+
+describe("RouteDetailGate", () => {
+  it("reads the route id from the address and shows that route", async () => {
+    const nav = await import("next/navigation");
+    const spy = vi.spyOn(nav, "useSearchParams").mockReturnValue(new URLSearchParams("id=r-missing") as never);
+    const { RouteDetailGate } = await import("./RouteDetailGate");
+    const { stubFetch } = await import("@/test-utils/render");
+    stubFetch();
+    renderWithTrip(<RouteDetailGate />, READY_TRIP);
+    expect(await screen.findByText("This route is not in your current results")).toBeInTheDocument();
+    spy.mockRestore();
+  });
+});

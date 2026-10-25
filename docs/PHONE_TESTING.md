@@ -44,12 +44,28 @@ iPhone Safari only allows location and "Add to Home Screen" install features on 
 - **Deploy:** web on Vercel, backend on any small host (Render, Fly, Railway). Put the real domain in the Mapbox token's allowed URLs and in `WEB_ORIGINS`.
 Then on the iPhone: open the address in Safari > Share > **Add to Home Screen**.
 
-## E. If you really want an installable Android app (APK)
-Wrap the same web app with **Capacitor** (keeps one codebase; uses Android Studio to build):
-1. `cd web && npm i @capacitor/core @capacitor/cli @capacitor/android && npx cap init`
-2. Point it at the hosted https address (`server.url` in `capacitor.config.ts`), or export the site statically (needs the `/routes/[routeId]` page changed to a query parameter first).
-3. `npx cap add android && npx cap open android` > Run in Android Studio on the phone or emulator.
-This is optional and not set up. A React Native rewrite is not needed and would duplicate every screen and test.
+## E. Android app (APK) built from the same web app
+Done with **Capacitor** (not React Native; nothing was rewritten). The Android project is `web/android`. Decision: DECISIONS.md, 2026-10-24 (Capacitor wrapper).
+
+Build the web bundle and copy it into the Android project:
+```bash
+cd web
+npm run build:android          # sample-data build: works with NO backend (saved sample routes, orange "Sample data" banner)
+npm run build:android:live     # talks to the backend at NEXT_PUBLIC_API_BASE_URL (use your PC address or a hosted https URL, not localhost)
+```
+Then make the APK, in **Android Studio**:
+1. Open the folder `web/android` (File > Open). Let it sync Gradle. The first time, accept the prompt to install the missing Android SDK pieces (SDK Platform 36 and Build-Tools); Studio downloads them.
+2. Plug the phone in with USB debugging on (section A, step 1), or start an emulator.
+3. Press the green **Run** button to install and open it on the phone, **or** Build > Build Bundle(s) / APK(s) > **Build APK(s)**. The file is `web/android/app/build/outputs/apk/debug/app-debug.apk`; copy it to the phone and open it (allow "install unknown apps" once).
+
+Command line instead (needs the SDK installed and `ANDROID_HOME` set): `cd web/android && gradlew assembleDebug`.
+
+Things to know:
+- The app contains the browser Mapbox token from `web/.env.local`. That token is restricted by URL; the app runs from `https://localhost`, so add `https://localhost` to the token's allowed URLs or the map falls back to the simple route drawing.
+- "Use my location" asks for the Android location permission.
+- After changing any web code, run `npm run build:android` again before rebuilding the APK.
+- The debug APK is for testing only. A release/Play Store build needs a signing key (not set up).
+- iPhone: Capacitor can also make an iOS app, but that needs a Mac with Xcode. Not set up.
 
 ## What to check on a real phone
 Welcome and Plan fit without sideways scrolling; keyboard does not hide "Show routes"; the map draws and pans; coverage/segment colors also show symbols; the install tip appears on iPhone; "Use my location" asks for permission and, if denied, shows "Location is off"; portrait and landscape.

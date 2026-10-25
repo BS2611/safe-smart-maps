@@ -120,7 +120,7 @@ describe("RouteCard", () => {
     expect(screen.getByText("Longest empty stretch")).toBeInTheDocument();
     expect(screen.getByText("Open places")).toBeInTheDocument();
     expect(screen.getByText("Nearest help point")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Details" })).toHaveAttribute("href", `/routes/${fastest.route_id}`);
+    expect(screen.getByRole("link", { name: "Details" })).toHaveAttribute("href", `/route?id=${fastest.route_id}`);
   });
 
   it("shows merged labels once and says so", () => {

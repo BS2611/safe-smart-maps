@@ -1,5 +1,7 @@
 import type { MetadataRoute } from "next";
 
+export const dynamic = "force-static"; // needed for the static Android export
+
 // Lets people add the app to the home screen on Android and iPhone (docs/specs/TECHNICAL_SPEC.md 8.1).
 export default function manifest(): MetadataRoute.Manifest {
   return {

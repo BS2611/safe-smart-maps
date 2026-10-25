@@ -190,3 +190,15 @@ def test_helpers_bbox_and_cells():
     assert 1 <= len(cells) <= 12
     many = [[(-122.4 + i * 0.01, 37.8) for i in range(40)]]
     assert len(places_cells(many)) == 12
+
+
+def test_saved_copy_of_map_data_is_reported_to_the_user():
+    from dataclasses import replace
+    saved = replace(fakes.features(), saved_copy=True)
+
+    class SavedOsm(fakes.FakeOsm):
+        def get_map_features(self, area):
+            return saved
+
+    resp = fakes.make_planner(osm=SavedOsm()).plan(request())
+    assert any("saved copy" in w and "Street and lighting map data" in w for w in resp.warnings)

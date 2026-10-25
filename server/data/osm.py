@@ -2,8 +2,11 @@
 
 Public data, no key. Overpass requires a descriptive User-Agent (otherwise HTTP 406).
 """
+import json
+import logging
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 
 import httpx
@@ -46,6 +49,7 @@ class MapFeatures:
     ways: list[Way]
     help_points: list[HelpPoint]
     fetched_at: datetime
+    saved_copy: bool = False   # True when the live servers failed and this is the last good copy
 
 
 def build_query(area: BoundingBox) -> str:
@@ -92,15 +96,20 @@ def parse_overpass(payload: dict[str, Any], fetched_at: datetime) -> MapFeatures
 
 
 class OverpassProvider:
-    """Tries each public Overpass server in turn: they are free and sometimes overloaded (HTTP 502/429)."""
+    """Tries each public Overpass server in turn: they are free and sometimes overloaded or down.
+
+    With `cache_dir`, every good answer is also written to disk. If all servers fail later, the last
+    good copy for that area is used and marked `saved_copy=True` (with its real fetched time), so
+    street data survives a restart and a busy hour. Without a saved copy the error is raised."""
 
     def __init__(self, urls: tuple[str, ...] = OVERPASS_URLS, timeout_s: float = 60.0,
-                 client: httpx.Client | None = None):
+                 client: httpx.Client | None = None, cache_dir: Path | None = None):
         self.urls = urls
         self.timeout_s = timeout_s
         self._client = client
+        self.cache_dir = cache_dir
 
-    def _post(self, url: str, area: BoundingBox) -> MapFeatures:
+    def _fetch(self, url: str, area: BoundingBox) -> dict[str, Any]:
         try:
             resp = (self._client or httpx).post(url, data={"data": build_query(area)},
                                                 headers={"User-Agent": USER_AGENT}, timeout=self.timeout_s)
@@ -111,16 +120,50 @@ class OverpassProvider:
         if resp.status_code != 200:
             raise DataSourceError("osm", f"HTTP {resp.status_code}")
         try:
-            payload = resp.json()
+            return resp.json()
         except ValueError:
             raise DataSourceError("osm", "response was not valid JSON") from None
-        return parse_overpass(payload, datetime.now(timezone.utc))
+
+    def _saved_path(self, area: BoundingBox) -> Path | None:
+        if self.cache_dir is None:
+            return None
+        name = f"{area.south}_{area.west}_{area.north}_{area.east}.json"
+        return self.cache_dir / name
+
+    def _save(self, area: BoundingBox, payload: dict[str, Any], saved_at: datetime) -> None:
+        path = self._saved_path(area)
+        if path is None:
+            return
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps({"saved_at": saved_at.isoformat(), "payload": payload}), encoding="utf-8")
+        except OSError:
+            logging.getLogger("osm").warning("could not save map data copy")
+
+    def _load_saved(self, area: BoundingBox) -> MapFeatures | None:
+        path = self._saved_path(area)
+        if path is None or not path.exists():
+            return None
+        try:
+            record = json.loads(path.read_text(encoding="utf-8"))
+            saved_at = datetime.fromisoformat(record["saved_at"])
+            features = parse_overpass(record["payload"], saved_at)
+        except (OSError, ValueError, KeyError, TypeError):
+            return None
+        return MapFeatures(features.ways, features.help_points, saved_at, saved_copy=True)
 
     def get_map_features(self, area: BoundingBox) -> MapFeatures:
         last: DataSourceError | None = None
         for url in self.urls:
             try:
-                return self._post(url, area)
+                payload = self._fetch(url, area)
             except DataSourceError as e:
                 last = e
+                continue
+            now = datetime.now(timezone.utc)
+            self._save(area, payload, now)
+            return parse_overpass(payload, now)
+        saved = self._load_saved(area)
+        if saved is not None:
+            return saved
         raise last or DataSourceError("osm", "no servers configured")

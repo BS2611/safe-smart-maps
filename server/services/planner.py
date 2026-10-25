@@ -4,8 +4,10 @@ Providers are injected so tests can swap them. A provider that fails never fails
 its factor becomes "not sure" and a warning is returned (TECHNICAL_SPEC section 6).
 """
 import math
-from collections.abc import Callable
-from concurrent.futures import ThreadPoolExecutor
+import threading
+import time
+from collections.abc import Callable, Hashable
+from concurrent.futures import Future, ThreadPoolExecutor, wait
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any
@@ -86,77 +88,129 @@ def _round_area(area: BoundingBox) -> BoundingBox:
 
 class RoutePlanner:
     def __init__(self, providers: Providers, cfg: dict, cache: TTLCache | None = None,
-                 static_cache: TTLCache | None = None):
+                 static_cache: TTLCache | None = None, budgets: dict[str, float] | None = None):
         self.p = providers
         self.cfg = cfg
         self.cache = cache or TTLCache()
         # Street maps (OpenStreetMap) change rarely and the Overpass API is slow (20-30 s), so keep
         # them for a day. Listings, outages and incidents use the short cache above.
         self.static_cache = static_cache or TTLCache(24 * 3600)
+        # How long one request waits for each source (seconds). A source that is not done by then is
+        # reported as "still loading" and keeps running in the background to fill the caches, so the
+        # next request is fast. Bright Data takes 60-100 s per area, which is why places wait longer.
+        self.budgets = {"places": 40.0, "default": 25.0, **(budgets or {})}
+        self._pool = ThreadPoolExecutor(max_workers=16, thread_name_prefix="planner")
+        self._inflight: dict[Hashable, Future] = {}
+        self._lock = threading.Lock()
 
     # ---------- data gathering ----------
-    def _fetch_places(self, cells: list[BoundingBox], when: datetime) -> list[Place]:
-        places: dict[str, Place] = {}
-        errors: list[DataSourceError] = []
+    def _once(self, key: Hashable, fn: Callable[[], Any]) -> Future:
+        """Runs `fn` in the background, or joins the identical job already running (no double lookups)."""
+        with self._lock:
+            running = self._inflight.get(key)
+            if running is not None and not running.done():
+                return running
+            fut = self._pool.submit(fn)
+            self._inflight[key] = fut
+        fut.add_done_callback(lambda f, k=key: self._forget(k, f))
+        return fut
 
-        def one(cell: BoundingBox) -> list[Place]:
-            key = ("places", round(cell.south, 4), round(cell.west, 4))
-            return self.cache.get_or_load(key, lambda: self.p.places.get_places(cell, when))
+    def _forget(self, key: Hashable, fut: Future) -> None:
+        with self._lock:
+            if self._inflight.get(key) is fut:
+                del self._inflight[key]
 
-        with ThreadPoolExecutor(max_workers=min(6, max(1, len(cells)))) as pool:
-            futures = [pool.submit(one, c) for c in cells]
-            for f in futures:
-                try:
-                    for pl in f.result():
-                        places[pl.place_id or f"{pl.name}|{pl.lat}|{pl.lng}"] = pl
-                except DataSourceError as e:
-                    errors.append(e)
-        if errors and not places:
-            raise errors[0]
-        if errors:
-            raise _Partial(list(places.values()), errors[0])
-        return list(places.values())
+    def _budget(self, name: str) -> float:
+        return self.budgets.get(name, self.budgets["default"])
+
+    @staticmethod
+    def _outcome(fut: Future, label: str) -> tuple[Any, str | None]:
+        """(value, warning) for one source future that has finished or is still running."""
+        if not fut.done():
+            return None, f"{label}: not available right now (still loading). It will be ready for the next request."
+        try:
+            return fut.result(), None
+        except NotConfiguredError as e:
+            return None, f"{label}: not connected ({e})."
+        except DataSourceError as e:
+            return None, f"{label}: not available right now ({e.kind})."
 
     def _gather(self, area: BoundingBox, cells: list[BoundingBox], when: datetime
                 ) -> tuple[DataBundle, list[str]]:
         warnings: list[str] = []
-        bundle = DataBundle()
         rounded = _round_area(area)
-        jobs: dict[str, Callable[[], Any]] = {
-            "places": lambda: self._fetch_places(cells, when),
-            "features": lambda: self.static_cache.get_or_load(
-                ("osm", rounded), lambda: self.p.osm.get_map_features(rounded)),
-            "outages": lambda: self.cache.get_or_load(
-                ("sf311", rounded), lambda: self.p.sf.get_open_outages(rounded)),
-            "incidents": lambda: self.cache.get_or_load(
-                ("incidents", rounded), lambda: self.p.sf.get_recent_incidents(rounded)),
-            "transit": lambda: self.p.transit.get_active_stops(area, when),
-        }
+        started = time.monotonic()
         labels = {
             "places": "Live business listings", "features": "Street and lighting map data (OpenStreetMap)",
             "outages": "Streetlight outage reports", "incidents": "Past incident reports",
             "transit": "Transit schedules",
         }
+
+        def cell_job(cell: BoundingBox) -> Future:
+            key = ("places", round(cell.south, 4), round(cell.west, 4))
+            return self._once(("job",) + key, lambda: self.cache.get_or_load(
+                key, lambda: self.p.places.get_places(cell, when)))
+
+        cell_futures = [cell_job(c) for c in cells]
+        singles = {
+            "features": self._once(("job", "osm", rounded), lambda: self.static_cache.get_or_load(
+                ("osm", rounded), lambda: self.p.osm.get_map_features(rounded))),
+            "outages": self._once(("job", "sf311", rounded), lambda: self.cache.get_or_load(
+                ("sf311", rounded), lambda: self.p.sf.get_open_outages(rounded))),
+            "incidents": self._once(("job", "incidents", rounded), lambda: self.cache.get_or_load(
+                ("incidents", rounded), lambda: self.p.sf.get_recent_incidents(rounded))),
+            "transit": self._pool.submit(lambda: self.p.transit.get_active_stops(area, when)),
+        }
+
+        def remaining(name: str) -> float:
+            return max(0.0, self._budget(name) - (time.monotonic() - started))
+
         results: dict[str, Any] = {}
-        with ThreadPoolExecutor(max_workers=5) as pool:
-            futures = {name: pool.submit(fn) for name, fn in jobs.items()}
-            for name, fut in futures.items():
-                try:
-                    results[name] = fut.result()
-                except _Partial as part:
-                    results[name] = part.partial
-                    warnings.append(f"{labels[name]}: only part of the area loaded ({part.error.kind}).")
-                except NotConfiguredError as e:
-                    results[name] = None
-                    warnings.append(f"{labels[name]}: not connected ({e}).")
-                except DataSourceError as e:
-                    results[name] = None
-                    warnings.append(f"{labels[name]}: not available right now ({e.kind}).")
-        bundle.places = results["places"]
-        bundle.features = results["features"]
-        bundle.outages = results["outages"]
-        bundle.incidents = results["incidents"]
-        bundle.transit = results["transit"]
+        wait(cell_futures, timeout=remaining("places"))
+        places: dict[str, Place] = {}
+        first_error: DataSourceError | None = None
+        pending = failed = 0
+        for fut in cell_futures:
+            if not fut.done():
+                pending += 1
+                continue
+            try:
+                for pl in fut.result():
+                    places[pl.place_id or f"{pl.name}|{pl.lat}|{pl.lng}"] = pl
+            except DataSourceError as e:
+                failed += 1
+                first_error = first_error or e
+        label = labels["places"]
+        if not pending and not failed:
+            results["places"] = list(places.values())
+        elif places:
+            results["places"] = list(places.values())
+            why = "still loading" if pending and not failed else (first_error.kind if first_error else "failed")
+            warnings.append(f"{label}: only part of the area loaded ({why})."
+                            + (" Ask again in a minute for the rest." if pending else ""))
+        elif isinstance(first_error, NotConfiguredError):
+            results["places"] = None
+            warnings.append(f"{label}: not connected ({first_error}).")
+        elif first_error is not None:
+            results["places"] = None
+            warnings.append(f"{label}: not available right now ({first_error.kind}).")
+        else:
+            results["places"] = None
+            warnings.append(f"{label}: not available right now (still loading). It will be ready for the next request.")
+
+        for name, fut in singles.items():
+            wait([fut], timeout=remaining(name))
+            value, warning = self._outcome(fut, labels[name])
+            results[name] = value
+            if warning:
+                warnings.append(warning)
+
+        features = results["features"]
+        if features is not None and getattr(features, "saved_copy", False):
+            warnings.append("Street and lighting map data: the live servers did not answer, so this is a saved copy "
+                            f"from {features.fetched_at.strftime('%b %d %H:%M')} UTC.")
+        bundle = DataBundle(places=results["places"], features=features, outages=results["outages"],
+                            incidents=results["incidents"], transit=results["transit"])
         if bundle.transit is None and not any("Transit" in w for w in warnings):
             warnings.append("Transit schedules are not connected, so transit shows as not sure.")
         return bundle, warnings
@@ -274,13 +328,3 @@ class RoutePlanner:
             factors={k: (None if v is None else round(v, ROUND_FACTORS)) for k, v in s.factors.items()},
             reasons=segment_reasons(ev, s.factors), data_fetched_at=fetched_at, confidence=s.confidence,
         )
-
-
-class _Partial(Exception):
-    """Some map cells failed but we have data from the others."""
-
-    def __init__(self, partial: list[Place], error: DataSourceError):
-        super().__init__("partial")
-        self.partial = partial
-        self.error = error
-

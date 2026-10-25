@@ -63,7 +63,7 @@ export function RouteCard({ route, selected, onSelect }: Props) {
           </dd>
         </div>
       </dl>
-      <Link href={`/routes/${route.route_id}`} className="btn secondary" style={{ marginTop: 12 }}>
+      <Link href={`/route?id=${encodeURIComponent(route.route_id)}`} className="btn secondary" style={{ marginTop: 12 }}>
         Details
       </Link>
     </div>

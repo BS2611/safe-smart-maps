@@ -349,3 +349,52 @@ def test_cache_ttl_and_failures_not_cached():
     assert sum(cache.get(k)[0] for k in ["k", "a", "b", "bad"]) == 2
     cache.clear()
     assert cache.get("a") == (False, None)
+
+
+# ---------- saved copy of map data (survives restarts and busy servers) ----------
+
+def test_overpass_saves_good_answers_and_falls_back_to_the_saved_copy(tmp_path):
+    ok = {"on": True}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, json=OVERPASS) if ok["on"] else httpx.Response(502)
+
+    provider = OverpassProvider(client=mock_client(handler), cache_dir=tmp_path)
+    live = provider.get_map_features(AREA)
+    assert live.saved_copy is False and len(list(tmp_path.glob("*.json"))) == 1
+
+    ok["on"] = False                                  # every server is down now
+    saved = provider.get_map_features(AREA)
+    assert saved.saved_copy is True
+    assert len(saved.ways) == len(live.ways)
+    assert abs((saved.fetched_at - live.fetched_at).total_seconds()) < 1   # real time of the data, not "now"
+
+
+def test_overpass_without_a_saved_copy_still_raises(tmp_path):
+    provider = OverpassProvider(client=mock_client(lambda r: httpx.Response(502)), cache_dir=tmp_path)
+    with pytest.raises(DataSourceError):
+        provider.get_map_features(AREA)
+
+
+def test_overpass_ignores_a_corrupt_saved_copy(tmp_path):
+    provider = OverpassProvider(client=mock_client(lambda r: httpx.Response(502)), cache_dir=tmp_path)
+    (tmp_path / f"{AREA.south}_{AREA.west}_{AREA.north}_{AREA.east}.json").write_text("{not json", encoding="utf-8")
+    with pytest.raises(DataSourceError):
+        provider.get_map_features(AREA)
+
+
+def test_overpass_saved_copy_is_per_area(tmp_path):
+    provider = OverpassProvider(client=mock_client(lambda r: httpx.Response(200, json=OVERPASS)), cache_dir=tmp_path)
+    provider.get_map_features(AREA)
+    other = BoundingBox(37.70, -122.50, 37.71, -122.49)
+    broken = OverpassProvider(client=mock_client(lambda r: httpx.Response(502)), cache_dir=tmp_path)
+    with pytest.raises(DataSourceError):
+        broken.get_map_features(other)
+
+
+def test_overpass_survives_a_cache_folder_that_cannot_be_written(tmp_path):
+    blocker = tmp_path / "file-not-folder"
+    blocker.write_text("x", encoding="utf-8")
+    provider = OverpassProvider(client=mock_client(lambda r: httpx.Response(200, json=OVERPASS)),
+                                cache_dir=blocker / "sub")
+    assert len(provider.get_map_features(AREA).ways) == 3     # saving failed quietly; live data still returned

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Safe Smart Maps</string>
+    <string name="title_activity_main">Safe Smart Maps</string>
+    <string name="package_name">com.safesmartmaps.app</string>
+    <string name="custom_url_scheme">com.safesmartmaps.app</string>
+</resources>
