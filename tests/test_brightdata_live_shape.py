@@ -16,7 +16,7 @@ from server.data.brightdata import BrightDataError, BrightDataPlacesProvider, no
 from server.data.models import BoundingBox
 from server.data.opening_hours import OpenStatus, evaluate_open_status, parse_weekly_hours
 
-RECORDS = json.loads((Path(__file__).parent / "fixtures" / "brightdata_live_shape_sample.json").read_text())["records"]
+RECORDS = json.loads((Path(__file__).parent / "fixtures" / "brightdata_live_shape_sample.json").read_text(encoding="utf-8"))["records"]
 FETCHED = datetime(2026, 10, 24, tzinfo=timezone.utc)
 LA = ZoneInfo("America/Los_Angeles")
 BOX = BoundingBox(37.797, -122.455, 37.809, -122.440)
