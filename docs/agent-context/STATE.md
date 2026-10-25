@@ -7,7 +7,7 @@ Last full review by a human: (date/time)
 
 ## Person A: Bhavpreet (frontend / map)
 - Owns (do not edit without asking): `web/`, `docs/agent-context/` entries by A
-- Status: S0-S5 built on branch `ui` (not pushed): backend routes API + scoring, all web screens, 169 + 200 unit tests, 54 browser tests green (scripts/verify.sh). Live keys not tested.
+- Status: S0-S5 built on branch `ui` (pushed to origin/ui): backend routes API + scoring, all web screens, 169 + 200 unit tests, 54 browser tests green (scripts/verify.sh). Live keys not tested. Mapbox browser token created (localhost-restricted, in .env, not tested); server token MAPBOX_TOKEN still to create.
 - Doing now: nothing running; waiting for review
 - Files in progress: none (web/ scaffold, tests/test_health.py, tests/test_scoring_config.py, CI files are committed on s0 branch)
 - Next: add keys to .env and run `pytest -m live`; real-phone check; push `ui`; apply FIGMA_FIXES_BRIEF; review log 20261024-*-s1-s2*
