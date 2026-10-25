@@ -1,5 +1,6 @@
 "use client";
 
+import "mapbox-gl/dist/mapbox-gl.css"; // static on purpose: the map needs this CSS when it is created
 import { useEffect, useRef, useState } from "react";
 
 import { bandLayers, boundsOf, otherRoutesCollection, segmentCollection } from "@/lib/mapdata";
@@ -27,7 +28,6 @@ export function RouteMap({ routes, selectedId, highlightSegment = null }: Props)
     (async () => {
       try {
         const mapboxgl = (await import("mapbox-gl")).default;
-        await import("mapbox-gl/dist/mapbox-gl.css");
         if (cancelled || !container.current) return;
         mapboxgl.accessToken = token;
         const map = new mapboxgl.Map({
