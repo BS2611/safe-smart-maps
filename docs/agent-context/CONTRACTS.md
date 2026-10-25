@@ -63,16 +63,19 @@ Add fields freely; never remove or rename a field within a version.
   -> `{ "api_version", "scoring_version", "data_fetched_at", "routes": [Route result], "warnings": ["string"] }`
 - Errors: `{ "error": { "code": "NO_ROUTE | UPSTREAM_TIMEOUT | BAD_REQUEST", "message": "string" } }`
   Partial upstream failure returns 200 with `warnings`.
+- `GET /v1/cache/status` -> `{ api_version, provider, ttl_seconds, areas: [{ area, status: fresh|stale|miss, refreshing, places, data_fetched_at, age_seconds, last_error }] }`
 - (add more here)
 
 ## Data source interface (server/data/)
 - `get_places(area, time)` -> list of places with opening hours, `is_24h`, `category`, `source`, `fetched_at`.
   Implementations: `brightdata` (core), `apify` (supporting only), later `osm` / `overture`.
 - Same pattern for roads (OSM), lighting (SF 311), transit (511/GTFS), incidents (SF open data), routing (Mapbox).
-- Cache key: `(provider, area_cell, hour_bucket)`.
+- Cache key: `(provider, area)`; `area` = the BoundingBox that was fetched (a request inside a cached box reuses it). No `hour_bucket`: listings are not hour-specific, open/closed is computed per request from cached hours. File cache in `CACHE_DIR` (default `.cache/places`, git-ignored). Route requests only READ the cache (never fetch); stale entries are served with their original `fetched_at` while a background refresh runs; a miss returns no places ("not sure").
 
 ## Config and env
 - Score weights: `scoring/scoring_v1.json` (weights must sum to 1.0)
 - Env vars (names only, see `.env.example`): BRIGHTDATA_API_KEY, APIFY_TOKEN,
   MAPBOX_TOKEN (server), NEXT_PUBLIC_MAPBOX_TOKEN (browser, URL-restricted),
-  ANTHROPIC_API_KEY, NEXT_PUBLIC_API_BASE_URL
+  ANTHROPIC_API_KEY, NEXT_PUBLIC_API_BASE_URL,
+  CACHE_TTL_SECONDS (default 86400), CACHE_DIR (default .cache/places),
+  PREFETCH_ON_STARTUP (1 = background-refresh missing/stale demo areas at server start; needs BRIGHTDATA_API_KEY)

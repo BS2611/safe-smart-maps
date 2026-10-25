@@ -9,3 +9,4 @@ __pycache__/
 .DS_Store
 *.mp4
 .claude/settings.local.json
+.cache/
