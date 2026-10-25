@@ -88,7 +88,13 @@ test.describe("plan, routes, details", () => {
     await expect(page.getByRole("heading", { name: "Why this route" })).toBeVisible();
     await page.getByRole("link", { name: "Route preferences" }).click();
     await page.getByRole("button", { name: "Lighting" }).click();
+    await expect(page.getByRole("heading", { name: "Watch check-in" })).toBeVisible();
+    await page.getByRole("button", { name: "Check-in on" }).click();
     await page.getByRole("button", { name: "Apply preferences" }).click();
+    await expect.poll(() => page.evaluate(() => {
+      const raw = window.sessionStorage.getItem("ssm.trip.v1");
+      return raw ? JSON.parse(raw).settings.watchCheckIn : null;
+    })).toBe(true);
     await expect(page).toHaveURL(/\/routes$/);
     await expect(page.getByRole("heading", { name: "Why this route" })).toBeVisible();
     expect(api.requests).toHaveLength(2);
@@ -179,6 +185,17 @@ test.describe("when things go wrong", () => {
     await page.getByRole("link", { name: "Details" }).first().click();
     await expect(page.getByRole("heading", { name: "Along the whole walk" })).toBeVisible();
     await expectNoSideScroll(page);
+    await page.evaluate(() => {
+      document.documentElement.style.setProperty("--safe-area-inset-bottom", "48px");
+      window.scrollTo(0, document.documentElement.scrollHeight);
+    });
+    const startClearance = await page.getByRole("button", { name: "Start" }).evaluate((el) => {
+      const box = el.getBoundingClientRect();
+      const pad = parseFloat(getComputedStyle(el.parentElement as HTMLElement).paddingBottom);
+      return { bottom: box.bottom, height: window.innerHeight, pad };
+    });
+    expect(startClearance.pad).toBeGreaterThanOrEqual(48);
+    expect(startClearance.bottom).toBeLessThanOrEqual(startClearance.height - 48);
 
     await page.goto("/compare");
     await expect(page.getByRole("heading", { name: /Key difference/ })).toBeVisible();

@@ -213,9 +213,11 @@ export function RouteDetailScreen({ routeId }: { routeId: string }) {
         {route.nearest_help_point
           ? ` Nearest help point: ${route.nearest_help_point.name}, ${formatMeters(route.nearest_help_point.distance_m)}.` : ""}
       </p>
-      <button type="button" className="btn primary" onClick={() => openNav(route)}>Start</button>
-      <Link href="/routes" className="btn secondary">Back to routes</Link>
       <DisclaimerBanner compact />
+      <div className="detail-actions">
+        <button type="button" className="btn primary" onClick={() => openNav(route)}>Start</button>
+        <Link href="/routes" className="btn secondary">Back to routes</Link>
+      </div>
       {navigating ? (
         <NavigationScreen
           route={route}

@@ -73,5 +73,17 @@ describe("session storage", () => {
     const s = new MemoryStorage();
     s.setItem("ssm.trip.v1", JSON.stringify({ from: palace, to: montgomery, settings: { maxExtraMinutes: 5 } }));
     expect(loadTrip(s).settings).toEqual({ ...DEFAULT_SETTINGS, maxExtraMinutes: 5 });
+    expect(loadTrip(s).settings.watchCheckIn).toBe(false);
+  });
+
+  it("keeps watch check-in in the saved trip and out of the route request", () => {
+    const withCheck: Trip = { ...trip, settings: { ...DEFAULT_SETTINGS, watchCheckIn: true } };
+    const s = new MemoryStorage();
+    saveTrip(withCheck, s);
+    expect(loadTrip(s).settings.watchCheckIn).toBe(true);
+    expect(toRequestBody(withCheck).settings).toEqual({
+      max_extra_minutes: 10, with_companion: false, priorities: [],
+    });
+    expect(toRequestBody(withCheck).settings).not.toHaveProperty("watch_check_in");
   });
 });

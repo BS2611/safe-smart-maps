@@ -49,7 +49,9 @@ describe("PreferencesScreen", () => {
     await user.click(screen.getByRole("button", { name: "With someone" }));
     await user.click(screen.getByRole("button", { name: "Transit" }));
     await user.click(screen.getByRole("button", { name: "Apply preferences" }));
-    expect(savedSettings()).toEqual({ maxExtraMinutes: 20, withCompanion: true, priorities: ["transit"] });
+    expect(savedSettings()).toEqual({
+      maxExtraMinutes: 20, withCompanion: true, priorities: ["transit"], watchCheckIn: false,
+    });
     expect(push).toHaveBeenCalledWith("/routes");
   });
 
@@ -67,5 +69,20 @@ describe("PreferencesScreen", () => {
     expect(screen.getByText(/does not change the scores yet/)).toBeInTheDocument();
     expect(screen.getByText(/small part of the score \(5%\)/)).toBeInTheDocument();
     expect(screen.getByText(/recalculates your routes/)).toBeInTheDocument();
+    expect(screen.getByText(/does not guarantee safety/)).toBeInTheDocument();
+  });
+
+  it("saves watch check-in with the other preferences and resets it", async () => {
+    renderWithTrip(<PreferencesScreen next="/routes" />, EMPTY_TRIP);
+    const user = userEvent.setup();
+    expect(screen.getByRole("button", { name: "Check-in off" })).toHaveAttribute("aria-pressed", "true");
+    await user.click(screen.getByRole("button", { name: "Check-in on" }));
+    await user.click(screen.getByRole("button", { name: "Reset to defaults" }));
+    expect(screen.getByRole("button", { name: "Check-in off" })).toHaveAttribute("aria-pressed", "true");
+    expect(push).not.toHaveBeenCalled();
+    await user.click(screen.getByRole("button", { name: "Check-in on" }));
+    await user.click(screen.getByRole("button", { name: "Apply preferences" }));
+    expect(savedSettings().watchCheckIn).toBe(true);
+    expect(savedSettings().maxExtraMinutes).toBe(10);
   });
 });

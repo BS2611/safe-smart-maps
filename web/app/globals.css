@@ -45,7 +45,7 @@ button, input, select { font: inherit; color: inherit; }
 button { cursor: pointer; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-.screen { max-width: 480px; margin: 0 auto; padding: 16px 16px 32px; }
+.screen { max-width: 480px; margin: 0 auto; padding: 16px 16px calc(32px + var(--sab)); }
 .stack > * + * { margin-top: 16px; }
 .stack-sm > * + * { margin-top: 8px; }
 .row { display: flex; align-items: center; gap: 12px; }
@@ -175,6 +175,6 @@ h1.brand { margin: 0; }
 .tab .t { font-weight: 600; }
 .tab .c { font-size: 13px; color: var(--muted); }
 
-.sticky-cta { position: sticky; bottom: 0; z-index: 5; padding-top: 12px; padding-bottom: var(--sab); background-color: var(--bg); background-image: none; }
+.sticky-cta { position: sticky; bottom: 0; z-index: 5; padding-top: 12px; padding-bottom: max(12px, var(--sab)); background-color: var(--bg); background-image: none; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 figure { margin: 0; }
