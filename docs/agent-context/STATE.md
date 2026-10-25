@@ -16,9 +16,9 @@ Last full review by a human: (date/time)
 ## Person B: Amey (backend / data)
 - Owns (do not edit without asking): `server/`, `scoring/`
 - Status: Bright Data places live + cached; OSM context provider built (live Overpass check still not done); M3.3 segment scoring and M3.4 continuity/route-level score done and tested (272 tests before Bhavpreet's PR #4; 439 pass now), committed locally on amey/backend, not pushed. Reviewed PR #4 (Mapbox provider): fixed test_wiring .env isolation, added lat/lng guard to segment_route.
-- Doing now: nothing
+- Doing now: nothing. E2E check done (log 20261024-211821): /v1/routes works live; Claude explanations fixed (442 tests pass); Overpass unreachable from this network.
 - Files in progress: none
-- Next: decide push of amey/backend; retry live Overpass check; re-point web/ at the new /v1/routes response
+- Next: find a reachable Overpass (OVERPASS_URL) + PREWARM_DEMO=1; decide coverage wording (log item 2); decide push of amey/backend; re-point web/ at the new /v1/routes response
 - Blocked on: approval to add Place model to CONTRACTS.md
 
 ## Guide (third person, advice and submission content, little code)

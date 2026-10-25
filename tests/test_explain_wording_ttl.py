@@ -6,7 +6,7 @@ import httpx
 import pytest
 
 from server.data.ttl_cache import TTLCache
-from server.services.explain import ClaudeExplainer, template_explanation
+from server.services.explain import DEFAULT_MODEL, ClaudeExplainer, template_explanation
 from server.services.wording import find_banned_wording
 
 FACTS = {"label": "safest", "duration_min": 13, "extra_min": 4, "coverage_pct": 88.0,
@@ -62,6 +62,37 @@ def test_explainer_uses_ai_text_when_clean():
     assert seen["headers"]["x-api-key"] == "fixture-key"
     assert "Never say a route is safe" in seen["body"]["system"]
     assert json.loads(seen["body"]["messages"][0]["content"])["coverage_pct"] == 88.0
+
+
+def test_empty_model_env_falls_back_to_default_model(monkeypatch):
+    # Regression: .env.example has ANTHROPIC_MODEL= (empty); "" was sent as the model -> HTTP 400.
+    monkeypatch.setenv("ANTHROPIC_MODEL", "")
+    seen = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen["body"] = json.loads(request.content)
+        return anthropic_reply("Better lit and more active in places.")
+
+    ClaudeExplainer(api_key="fixture-key", client=mock_client(handler)).explain(FACTS)
+    assert seen["body"]["model"] == DEFAULT_MODEL
+
+
+def test_request_turns_thinking_off_so_the_reply_is_text():
+    # Regression: Haiku 5.5 thinks by default and spent the 220-token cap on a thinking block.
+    seen = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen["body"] = json.loads(request.content)
+        return anthropic_reply("Better lit and more active in places.")
+
+    ClaudeExplainer(api_key="fixture-key", client=mock_client(handler)).explain(FACTS)
+    assert seen["body"]["thinking"] == {"type": "disabled"}
+
+
+def test_reply_with_only_a_thinking_block_falls_back_to_template():
+    reply = httpx.Response(200, json={"content": [{"type": "thinking", "thinking": ""}],
+                                      "stop_reason": "max_tokens"})
+    assert ClaudeExplainer(api_key="k", client=mock_client(lambda r: reply)).explain(FACTS)[1] == "template"
 
 
 @pytest.mark.parametrize("reply", [

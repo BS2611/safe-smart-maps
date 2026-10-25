@@ -49,7 +49,9 @@ class ClaudeExplainer:
     def __init__(self, api_key: str | None = None, model: str | None = None, timeout_s: float = 8.0,
                  client: httpx.Client | None = None):
         self._api_key = api_key
-        self.model = model or os.environ.get("ANTHROPIC_MODEL", DEFAULT_MODEL)
+        # `or`, not a default argument: .env.example ships ANTHROPIC_MODEL= (empty), which would
+        # otherwise send model "" and get a 400 on every request.
+        self.model = model or os.environ.get("ANTHROPIC_MODEL") or DEFAULT_MODEL
         self.timeout_s = timeout_s
         self._client = client
 
@@ -60,7 +62,9 @@ class ClaudeExplainer:
         if not api_key:
             return fallback
         body = {
-            "model": self.model, "max_tokens": 220, "system": SYSTEM_PROMPT,
+            # Haiku 5.5 thinks by default; with a 220-token cap the reply was only a thinking block.
+            "model": self.model, "max_tokens": 220, "thinking": {"type": "disabled"},
+            "system": SYSTEM_PROMPT,
             "messages": [{"role": "user", "content": json.dumps(facts, default=str)}],
         }
         headers = {"x-api-key": api_key, "anthropic-version": "2023-06-01",
