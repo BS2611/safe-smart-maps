@@ -1,0 +1,41 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra -m 'not live'"
+markers = [
+    "live: hits real external services (Mapbox, Anthropic). Run by hand: pytest -m live. Never in CI.",
+]
+
+[tool.coverage.run]
+source = ["server"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+# Gate for the whole backend. Pure scoring modules (segment_scoring, continuity, selector)
+# should stay near 100%: see docs/specs/AGILE_PLAN.md section 3.
+fail_under = 80
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"]
+# Long lines are allowed (formatting is not a merge gate).
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+# Amey's files: found when ruff was added. Not edited by Bhavpreet (owner rule). Remove these
+# lines once he fixes them (`ruff check . --fix` handles the import order).
+"scripts/brightdata_smoke.py" = ["B904"]
+"server/services/continuity.py" = ["E731"]
+"scripts/demo_segment_scoring.py" = ["I001"]
+"server/services/prefetch.py" = ["I001"]
+"server/services/segmenter.py" = ["B905"]
+"tests/test_brightdata_normalization.py" = ["I001"]
+"tests/test_cache.py" = ["I001", "F401"]
+"tests/test_continuity.py" = ["F401", "B905"]
+"tests/test_osm.py" = ["I001"]
+"tests/test_places.py" = ["I001"]
+"tests/test_provider_failures.py" = ["I001"]
+"tests/test_segmenter.py" = ["B905"]

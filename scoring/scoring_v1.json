@@ -11,7 +11,19 @@
     "turns": 0.05
   },
   "segment_length_m": 50,
-  "radii_m": {"open_place": 50, "help_point": 150, "coverage": 75},
+  "radii_m": {"open_place": 50, "help_point": 150, "coverage": 75, "road_match": 25},
+  "walking_speed_mps": 1.4,
+  "bands": {"green_min": 70, "yellow_min": 40},
+  "factor_params": {
+    "open_places_by_count": [0, 50, 75, 100],
+    "lighting_by_lit": {"yes": 100, "no": 0},
+    "main_road_by_class": {
+      "trunk": 100, "primary": 100, "secondary": 100, "tertiary": 100,
+      "residential": 60, "service": 40, "pedestrian": 40
+    },
+    "help_point_max_value": 100,
+    "not_yet_implemented": ["transit", "incidents", "activity", "turns"]
+  },
   "continuity": {
     "coverage_target": 0.80,
     "gap_limit_m": 150,
@@ -19,5 +31,9 @@
     "avg_weight": 0.5,
     "worst_window_weight": 0.5,
     "gap_penalty_per_m": 0.1
-  }
+  },
+  "selection": {"balanced_points_per_extra_min": 1.5},
+  "confidence": {"high_min_known_weight": 0.8, "low_min_known_weight": 0.5},
+  "priorities": {"boost": 1.5},
+  "candidates": {"detour_offset_m": 250, "dedupe_tolerance_m": 20, "dedupe_share": 0.9, "max_route_diagonal_m": 7000}
 }

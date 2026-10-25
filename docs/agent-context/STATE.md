@@ -7,19 +7,19 @@ Last full review by a human: (date/time)
 
 ## Person A: Bhavpreet (frontend / map)
 - Owns (do not edit without asking): `web/`, `docs/agent-context/` entries by A
-- Status: specs drafted (functional, technical, tasks); no code yet
-- Doing now: aligning specs with the agent kit
+- Status: Branch `bhav/mapbox-routes` (cut from amey/backend fc503b7) has 2 commits: (1) Mapbox walking-route provider from the handoff doc, (2) the `ui` backend rebuilt on Amey's modules: POST /v1/routes, planner, candidates (detours), continuity, selector, explain, wording, prewarm, SF open data + transit providers (unwired). Full suite green (see the newest log for the count). Frontend (`web/`) still lives only on branch `ui`.
+- Doing now: nothing running; waiting for Amey's review
 - Files in progress: none
-- Next: agree folder layout + contract with Amey; git init and commit
-- Blocked on: Amey's answers (framework, layout, contract shape)
+- Next: Amey reviews `bhav/mapbox-routes`; then push/PR as agreed; re-point `web/` at the new response (segment ids are `seg-<n>`, `via` is empty, extra fields `unknown_factors`, `known_weight_fraction`); live check `python -m pytest -m live`
+- Blocked on: Amey's review; STATE "Last full review by a human" still blank
 
 ## Person B: Amey (backend / data)
 - Owns (do not edit without asking): `server/`, `scoring/`
-- Status: M2.2/M2.3 code done on amey/brightdata-places (Place model, Bright Data provider, open/closed/unknown evaluator, 16 unit tests passing). Live Bright Data call NOT run: no key.
+- Status: Bright Data places live + cached; OSM context provider built (live Overpass check still not done); M3.3 segment scoring and M3.4 continuity/route-level score done and tested (272 tests pass), committed locally on amey/backend, not pushed.
 - Doing now: nothing
 - Files in progress: none
-- Next: put BRIGHTDATA_API_KEY in .env, run `.venv/bin/python -m scripts.brightdata_smoke`, check real open_hours shape; then Mapbox/OSM
-- Blocked on: Bright Data API key; CONTRACTS.md items in the log (incl. approving Place model)
+- Next: retry live Overpass check; then candidate selector and /v1/routes when Mapbox provider lands
+- Blocked on: Mapbox candidate-route provider (other developer) for /v1/routes; approval to add Place model to CONTRACTS.md
 
 ## Guide (third person, advice and submission content, little code)
 - Owns: Devpost text, demo script, community quotes, track questions (`docs/agent-context/OPEN_QUESTIONS.md`)
