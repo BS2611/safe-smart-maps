@@ -15,6 +15,20 @@ npm run dev                     # http://localhost:3000
 - No backend yet? Set `NEXT_PUBLIC_DEV_FIXTURES=1` in `.env.local`: the screens run on saved sample routes under an
   orange "Sample data" banner. Off by default.
 
+### Local and Render/demo profiles
+
+Keep two ignored files so the UI can talk to either backend without editing URLs:
+
+```bash
+cp .env.example .env.local
+cp .env.demo.example .env.demo
+npm run dev:local  # local UI :3000 -> local backend :8000
+npm run dev:demo   # demo UI :3001 -> https://safe-smart-maps.onrender.com
+```
+
+Fill the same URL-restricted `NEXT_PUBLIC_MAPBOX_TOKEN` into both files. Its allowed URLs must include
+`http://localhost:3000` and `http://localhost:3001`; add the deployed frontend URL when the production UI exists.
+
 ## Test (all must pass before a merge)
 ```bash
 npm run lint && npm run typecheck && npm run test:coverage     # unit tests, coverage gate 80%
