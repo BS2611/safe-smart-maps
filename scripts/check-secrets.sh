@@ -12,7 +12,7 @@ if [ -n "$bad_env" ]; then
 fi
 
 # 2. .env.example must hold names only (URLs and the cache TTL are allowed values).
-leaky="$(grep -nE '^[A-Z_]+=.+' .env.example | grep -vE '^[0-9]+:(NEXT_PUBLIC_API_BASE_URL|CACHE_TTL_SECONDS)=' || true)"
+leaky="$(grep -nE '^[A-Z_]+=.+' .env.example | grep -vE '^[0-9]+:(NEXT_PUBLIC_API_BASE_URL|CACHE_TTL_SECONDS|WEB_ORIGINS)=' || true)"
 if [ -n "$leaky" ]; then
   echo "FAIL: .env.example has values:"; echo "$leaky"; status=1
 fi

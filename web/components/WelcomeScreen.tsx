@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { AppHeader } from "./AppHeader";
 import { DisclaimerBanner } from "./DisclaimerBanner";
+import { InstallTip } from "./InstallTip";
 import { ClockIcon, InfoIcon, LocationOffIcon, RouteIcon, SearchIcon, StoreIcon } from "./Icons";
 import { RouteIllustration } from "./RouteIllustration";
 
@@ -41,6 +42,7 @@ export function WelcomeScreen({ locationOff = false }: { locationOff?: boolean }
         ))}
       </ul>
       <DisclaimerBanner />
+      <InstallTip />
       <p className="caption center">Trip location is temporary. Sharing is optional.</p>
       <div className="card tight stack-sm">
         <Link href="/plan" className="btn primary">

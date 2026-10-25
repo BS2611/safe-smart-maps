@@ -31,6 +31,19 @@ export function fixturePath(departISO: string | Date): string {
   return hour >= 0 && hour < 5 ? "/dev-fixtures/routes_response_1am.json" : "/dev-fixtures/routes_response.json";
 }
 
+/** Sample data only: pretend it was fetched a few minutes ago so the screens show the normal state. */
+export function withFreshTimes(data: RoutesResponse, now: Date = new Date(), minutesAgo = 4): RoutesResponse {
+  const fetched = new Date(now.getTime() - minutesAgo * 60_000).toISOString();
+  return {
+    ...data,
+    data_fetched_at: data.data_fetched_at ? fetched : null,
+    routes: data.routes.map((r) => ({
+      ...r,
+      segments: r.segments.map((s) => ({ ...s, data_fetched_at: s.data_fetched_at ? fetched : null })),
+    })),
+  };
+}
+
 export function describeError(error: unknown): string {
   if (error instanceof ApiError) {
     switch (error.code) {
@@ -87,7 +100,7 @@ export async function fetchRoutes(trip: Trip, options: FetchOptions = {}): Promi
     }
     const parsed = RoutesResponseSchema.safeParse(json);
     if (!parsed.success) throw new ApiError("BAD_RESPONSE", "Response did not match the contract");
-    return parsed.data;
+    return useFixtures ? withFreshTimes(parsed.data, options.now) : parsed.data;
   } finally {
     clearTimeout(timer);
     outer?.removeEventListener("abort", onAbort);

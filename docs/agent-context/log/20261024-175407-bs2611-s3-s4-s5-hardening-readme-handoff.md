@@ -1,0 +1,21 @@
+# S3-S5: hardening, install, prewarm, README, final regression
+
+- When: 2026-10-24 18:20 PT
+- Who: Bhavpreet (agent: claude-code)
+- Branch / commit: ui / see git log
+- Files touched: web/e2e/a11y.spec.ts, web/components/InstallTip(.test).tsx, web/app/manifest.ts, web/app/layout.tsx, web/public/icons/*, web/scripts/make_icons.py, web/lib/api.ts (sample times), web/components/RouteCard.tsx (accessible name), server/services/prewarm.py, server/main.py (PREWARM_DEMO, Amey's file), tests/test_prewarm.py, tests/test_health.py, scripts/check-secrets.sh, .env.example, README.md, docs/specs/TASKS.md, STATE.md
+- What changed: automated accessibility checks (axe, WCAG A/AA, 44 px targets) on every screen at three phone sizes; fixed the one violation found (card label). Install tip + web manifest + icons for iPhone and Android. Cache pre-warm for the demo corridor (PREWARM_DEMO=1). Sample-data mode now shows fresh times. README with setup, sponsor-tool map, honest known limits.
+- Decisions made in chat: none new beyond DECISIONS lines of 17:30.
+- Contracts affected: none.
+- How it was tested: `bash scripts/verify.sh` full run: secrets OK; ruff clean; pytest 169 passed (96% coverage); tsc clean; next lint clean; vitest 200 passed (98% lines); next build + Playwright 54 passed (18 tests x iPhone WebKit, Android Chromium, 360 px). `pytest -m live` earlier: OpenStreetMap, SF 311, SF incidents OK; Mapbox, Bright Data, Claude skipped (no keys).
+- Unfinished / uncommitted: nothing uncommitted. Not pushed (no co-author line in commits).
+- Open issues / risks:
+  - NOT VERIFIED: Mapbox routing, Bright Data places and hours, Claude explanations, Mapbox GL map rendering, with real keys. Real iPhone/Android devices (tests use emulation; WebKit on Windows is not Safari).
+  - Bright Data open_hours format is an assumption (see Amey's log). If all places are "unknown", fix parse_weekly_hours.
+  - Under heavy machine load WebKit tests can time out (one 31-minute run); workers are limited (3 local, 2 CI).
+  - Transit factor is always "not sure" (no schedule feed). Lighting is "not sure" where OpenStreetMap has no lit tag.
+  - Shared files edited: server/main.py, scoring/scoring_v1.json, CONTRACTS.md, AGENTS.md, README.md (new). Amey to review.
+  - CI has not run on GitHub yet; branch protection not set.
+  - Figma was not changed; screens Plan, Results and Detail were built from the brief, not from Figma frames.
+- Next step for whoever continues: 1) put keys in .env, run `.venv/Scripts/python -m pytest -m live -rs`, then start server + web and walk through the demo (8 PM vs 1 AM); 2) push `ui`, open a PR, confirm CI is green, enable branch protection; 3) test on a real iPhone and Android phone; 4) Amey reviews shared-file changes; 5) demo video, Devpost.
+- Needs from teammate: Amey: review CONTRACTS.md, main.py, scoring_v1.json; add tzdata to server/requirements.txt; confirm Bright Data hours shape.

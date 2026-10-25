@@ -4,6 +4,12 @@ Method, Definition of Done and test strategy: docs/specs/AGILE_PLAN.md. Every st
 Owners: **A** = Bhavpreet (web/, design), **B** = Amey (server/, scoring/), **G** = guide. Est. in hours. Swap owners by strength.
 Deadline: Sunday 9:00 AM PT.
 
+## Status (updated 2026-10-24 evening, branch `ui`)
+Verified by `bash scripts/verify.sh`: backend 169 tests, web 200 unit tests, 54 browser tests (3 phone sizes) incl. accessibility. All green.
+- **Done:** S0 setup; S1 scoring, continuity, selector, providers, Welcome, Plan trip, Preferences; S2 `/v1/routes`, map, three route cards, checking states; S3 explanations, caching, Route detail, 8 PM vs 1 AM compare, How scores work; S4 accessibility automation, home-screen install (manifest, icons, tip), cache pre-warm; S5 README.
+- **Not done / needs a person:** live runs with real Mapbox, Bright Data and Claude keys (`pytest -m live`); real iPhone and Android phone checks; confirm Bright Data `open_hours` shape; GitHub push, CI first run, branch protection; Amey's review of CONTRACTS and shared-file edits; Figma updates (missing screens, copy fixes); demo video, Devpost text, tracks.
+- **Not built (stretch):** walk mode, heartbeat check, Wear OS app, voice, transit schedule feed.
+
 ## S0 - Foundations (Sat now to ~5 PM)
 | # | Story | Owner | Est. | Tests / done when |
 |---|---|---|---|---|

@@ -7,6 +7,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 
 from server.api import health, routes
+from server.services.prewarm import start_prewarm_thread
 from server.services.scoring_config import load_scoring_config
 from server.wiring import build_planner
 
@@ -19,6 +20,8 @@ async def lifespan(app: FastAPI):
     app.state.scoring_config = load_scoring_config()
     if not hasattr(app.state, "planner"):  # tests set their own planner first
         app.state.planner = build_planner(app.state.scoring_config)
+        if os.environ.get("PREWARM_DEMO") == "1":
+            start_prewarm_thread(app.state.planner)
     yield
 
 

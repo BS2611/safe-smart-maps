@@ -7,10 +7,10 @@ Last full review by a human: (date/time)
 
 ## Person A: Bhavpreet (frontend / map)
 - Owns (do not edit without asking): `web/`, `docs/agent-context/` entries by A
-- Status: specs, Stitch brief, Figma review (docs/design/FIGMA_REVIEW.md) and agile plan (docs/specs/AGILE_PLAN.md) done; no code yet
-- Doing now: Sprint 0: CI + test scaffolding done on branch bhav/s0-test-ci-scaffold (needs push + PR); next fix Figma list
+- Status: S0-S5 built on branch `ui` (not pushed): backend routes API + scoring, all web screens, 169 + 200 unit tests, 54 browser tests green (scripts/verify.sh). Live keys not tested.
+- Doing now: nothing running; waiting for review
 - Files in progress: none (web/ scaffold, tests/test_health.py, tests/test_scoring_config.py, CI files are committed on s0 branch)
-- Next: tick the must-fix list in docs/design/FIGMA_REVIEW.md; answer OPEN_QUESTIONS 10, 11, 15-17; create GitHub repo; start S0 in TASKS.md
+- Next: add keys to .env and run `pytest -m live`; real-phone check; push `ui`; apply FIGMA_FIXES_BRIEF; review log 20261024-*-s1-s2*
 - Blocked on: Amey confirming CONTRACTS v1 (see his latest log)
 
 ## Person B: Amey (backend / data)

@@ -16,7 +16,6 @@ export function RouteCard({ route, selected, onSelect }: Props) {
       <button
         type="button" className="route-select"
         aria-pressed={selected} onClick={onSelect}
-        aria-label={`${LABEL_NAMES[route.label]}${merged.length ? ` and ${merged.join(" and ")}` : ""}, ${formatMinutes(route.duration_min)}`}
       >
         <span className="row" style={{ alignItems: "stretch" }}>
           <span className="accent-bar" />

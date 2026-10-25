@@ -1,4 +1,5 @@
-import { ApiError, describeError, fetchRoutes, fixturePath } from "./api";
+import { ApiError, describeError, fetchRoutes, fixturePath, withFreshTimes } from "./api";
+import { loadFixture } from "@/test-utils/fixtures";
 import { DEFAULT_SETTINGS, type Trip } from "./trip";
 import { DEMO_PLACES } from "./places";
 import { rawFixture } from "@/test-utils/fixtures";
@@ -85,5 +86,22 @@ describe("describeError", () => {
     for (const code of codes) expect(describeError(new ApiError(code, "Check these fields: to")).length).toBeGreaterThan(10);
     expect(describeError(new ApiError("BAD_REQUEST", "Check these fields: to"))).toBe("Check these fields: to");
     expect(describeError(new Error("x"))).toMatch(/went wrong/);
+  });
+});
+
+describe("sample data times", () => {
+  it("makes sample data look fresh without touching live responses", async () => {
+    const now = new Date("2026-10-25T00:00:00Z");
+    const fresh = withFreshTimes(loadFixture(), now);
+    expect(fresh.data_fetched_at).toBe("2026-10-24T23:56:00.000Z");
+    expect(fresh.routes[0].segments[0].data_fetched_at).toBe("2026-10-24T23:56:00.000Z");
+    const nulls = withFreshTimes({ ...loadFixture(), data_fetched_at: null }, now);
+    expect(nulls.data_fetched_at).toBeNull();
+
+    const fetchImpl = (async () => new Response(JSON.stringify(rawFixture()), { status: 200 })) as unknown as typeof fetch;
+    const live = await fetchRoutes(trip, { fetchImpl, devFixtures: false, now });
+    expect(live.data_fetched_at).toBe(loadFixture().data_fetched_at);          // live data is never rewritten
+    const sample = await fetchRoutes(trip, { fetchImpl, devFixtures: true, now });
+    expect(sample.data_fetched_at).toBe("2026-10-24T23:56:00.000Z");
   });
 });

@@ -10,6 +10,8 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "sw
 export const metadata: Metadata = {
   title: "Safe Smart Maps",
   description: "Compare walking routes for the time you will be on the street.",
+  icons: { icon: "/icons/icon-192.png", apple: "/icons/apple-touch-icon.png" },
+  appleWebApp: { capable: true, title: "Smart Maps", statusBarStyle: "black-translucent" },
 };
 
 // viewport-fit=cover lets us use safe-area insets on iPhone.
