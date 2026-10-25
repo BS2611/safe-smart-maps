@@ -14,10 +14,10 @@ describe("WelcomeScreen", () => {
     }
     expect(screen.getByText("We describe conditions. We do not guarantee safety.")).toBeInTheDocument();
     expect(screen.getByText("In an emergency, call 911.")).toBeInTheDocument();
-    expect(screen.getByText("Trip location is temporary. Sharing is optional.")).toBeInTheDocument();
+    expect(screen.getByText("This trip stays in this tab. Sharing is optional.")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Get started" })).toHaveAttribute("href", "/plan");
     expect(screen.getByRole("link", { name: /How scores work/ })).toHaveAttribute("href", "/how-scores-work");
-    expect(screen.getByText("You can enter your start manually.")).toBeInTheDocument();
+    expect(screen.getByText("You can type your start. GPS is optional.")).toBeInTheDocument();
     expect(screen.queryByText(/Location is off/)).not.toBeInTheDocument();
   });
 

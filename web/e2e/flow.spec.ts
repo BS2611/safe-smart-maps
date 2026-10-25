@@ -91,7 +91,7 @@ test.describe("plan, routes, details", () => {
 test.describe("8 PM vs 1 AM", () => {
   test("compares both times and lets the user choose one", async ({ page }) => {
     const api = await stubApi(page);
-    await planDemoTrip(page, "Tonight 1 AM");
+    await planDemoTrip(page, "1 AM");
     await page.getByRole("button", { name: "Show routes" }).click();
     await expect(page.getByRole("heading", { name: "Why this route" })).toBeVisible();
 

@@ -16,6 +16,7 @@ import { AppHeader } from "./AppHeader";
 import { Banner } from "./Banner";
 import { DisclaimerBanner } from "./DisclaimerBanner";
 import { RouteMap } from "./RouteMap";
+import { ScoreRing } from "./ScoreVisuals";
 import { useTrip } from "./TripProvider";
 
 export function RouteDetailScreen({ routeId }: { routeId: string }) {
@@ -41,7 +42,7 @@ export function RouteDetailScreen({ routeId }: { routeId: string }) {
     return (
       <div className="screen stack">
         <AppHeader title="Route details" backHref="/routes" />
-        <Banner kind="error" title="We could not load this route">{describeError(state.error)}</Banner>
+        <Banner kind="error" title="This route didn't load">{describeError(state.error)}</Banner>
         <div className="stack-sm">
           <button type="button" className="btn primary" onClick={retry}>Try again</button>
           <Link href="/plan" className="btn secondary">Plan a walk</Link>
@@ -69,20 +70,23 @@ export function RouteDetailScreen({ routeId }: { routeId: string }) {
   const target = CONTINUITY_RULES.coverageTarget;
 
   return (
-    <div className="screen stack">
+    <div className="screen stack detail-page">
       <AppHeader title={LABEL_NAMES[route.label]} subtitle={viaText(route.via)} backHref="/routes" />
 
-      <div className="card row between">
+      <div className="card detail-hero">
+        <ScoreRing score={route.route_score} size={96} />
         <div>
-          <p className="caption">Walk time</p>
-          <strong style={{ fontSize: 22 }}>{formatMinutes(route.duration_min)}</strong>
+          <p className="caption">Street conditions</p>
+          <strong className="stat-xl">{scoreWord(route.route_score)}</strong>
         </div>
-        <div style={{ textAlign: "right" }}>
-          <p className="caption">Overall</p>
-          <strong style={{ fontSize: 22 }}>{scoreWord(route.route_score)}</strong>
+        <div className="detail-time">
+          <p className="caption">Walk time</p>
+          <strong className="stat-xl">{formatMinutes(route.duration_min)}</strong>
         </div>
       </div>
 
+      <div className="detail-layout">
+      <div className="map-col stack-sm">
       <RouteMap routes={state.data.routes} selectedId={route.route_id} highlightSegment={index} />
 
       <section className="card stack-sm" aria-labelledby="cont-h">
@@ -111,7 +115,7 @@ export function RouteDetailScreen({ routeId }: { routeId: string }) {
 
       <section className="card stack-sm" aria-labelledby="strip-h">
         <h2 id="strip-h">Every stretch of the route</h2>
-        <p className="small muted">Tap a part to see why it is rated that way.</p>
+        <p className="small muted">Tap a stretch to see why.</p>
         <div className="strip" role="group" aria-label="Route segments">
           {route.segments.map((s, i) => (
             <button key={s.segment_id} type="button" className={`band-${s.band}`}
@@ -135,6 +139,8 @@ export function RouteDetailScreen({ routeId }: { routeId: string }) {
           </div>
         ) : null}
       </section>
+      </div>
+      <div className="detail-col stack">
 
       <section className="card stack-sm" aria-labelledby="fac-h">
         <h2 id="fac-h">What we checked</h2>
@@ -166,6 +172,8 @@ export function RouteDetailScreen({ routeId }: { routeId: string }) {
       </p>
       <Link href="/routes" className="btn primary">Back to routes</Link>
       <DisclaimerBanner compact />
+      </div>
+      </div>
     </div>
   );
 }

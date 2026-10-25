@@ -36,6 +36,10 @@ export function RouteMap({ routes, selectedId, highlightSegment = null }: Props)
         });
         mapRef.current = map;
         removeMap = () => map.remove();
+        const Nav = mapboxgl.NavigationControl;
+        if (typeof map.addControl === "function" && typeof Nav === "function") {
+          map.addControl(new Nav({ showCompass: false, visualizePitch: false }), "top-right");
+        }
         map.on("load", () => {
           map.addSource(OTHERS, { type: "geojson", data: otherRoutesCollection(routes, selected.route_id) as never });
           map.addLayer({ id: OTHERS, type: "line", source: OTHERS,

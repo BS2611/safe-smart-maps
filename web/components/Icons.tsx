@@ -25,11 +25,29 @@ export const CloseIcon = () => (<Svg><path d="M6 6l12 12M18 6L6 18" /></Svg>);
 export const RefreshIcon = () => (<Svg><path d="M20 11a8 8 0 1 0-2 6" /><path d="M20 5v6h-6" /></Svg>);
 export const HourglassIcon = () => (<Svg><path d="M6 3h12M6 21h12M7 3c0 5 5 5 5 9s-5 4-5 9M17 3c0 5-5 5-5 9s5 4 5 9" /></Svg>);
 
+// Night-route mark. Keep this drawing in sync with web/public/icons/logo.svg.
 export function BrandMark() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#89d5bc" strokeWidth="2"
-      strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
-      <circle cx="5" cy="19" r="2" /><circle cx="19" cy="5" r="2" /><path d="M7 19h6a4 4 0 0 0 4-4V9" />
+    <svg width="32" height="32" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+      <rect width="64" height="64" fill="#07110e" />
+      <circle cx="46" cy="18" r="11" fill="#7ef0c8" opacity="0.22" />
+      <circle cx="46" cy="18" r="6.6" fill="#b6ffe4" opacity="0.36" />
+      <path d="M18 50 V18" fill="none" stroke="url(#ssm-up)" strokeWidth="7.2" strokeLinecap="round" />
+      <path d="M18 18 H46" fill="none" stroke="url(#ssm-over)" strokeWidth="7.2" strokeLinecap="round" />
+      <circle cx="18" cy="50" r="4.7" fill="#ffb09a" />
+      <circle cx="18" cy="18" r="4.3" fill="#ffc14d" />
+      <circle cx="46" cy="18" r="5.4" fill="#b6ffe4" />
+      <circle cx="46" cy="18" r="2.15" fill="#f7fff9" />
+      <defs>
+        <linearGradient id="ssm-up" x1="18" y1="50" x2="18" y2="18" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#ffb09a" />
+          <stop offset="1" stopColor="#ffc14d" />
+        </linearGradient>
+        <linearGradient id="ssm-over" x1="18" y1="18" x2="46" y2="18" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#ffc14d" />
+          <stop offset="1" stopColor="#7ef0c8" />
+        </linearGradient>
+      </defs>
     </svg>
   );
 }

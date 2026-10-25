@@ -19,6 +19,7 @@ import { CheckingScreen } from "./CheckingScreen";
 import { DisclaimerBanner } from "./DisclaimerBanner";
 import { MapLegend } from "./MapLegend";
 import { RouteMap } from "./RouteMap";
+import { ScoreRing } from "./ScoreVisuals";
 import { useTrip } from "./TripProvider";
 
 export function CompareScreen({ now }: { now?: Date }) {
@@ -53,7 +54,7 @@ export function CompareScreen({ now }: { now?: Date }) {
     return (
       <div className="screen stack">
         <AppHeader title="The same walk, later" backHref="/routes" />
-        <Banner kind="error" title="We could not compare the two times">{describeError(error)}</Banner>
+        <Banner kind="error" title="The comparison didn't finish">{describeError(error)}</Banner>
         <button type="button" className="btn primary" onClick={() => { a.retry(); b.retry(); }}>Try again</button>
         <Link href="/routes" className="btn secondary">Back to routes</Link>
       </div>
@@ -85,12 +86,29 @@ export function CompareScreen({ now }: { now?: Date }) {
   const warnings = [...new Set([...dataA.warnings, ...dataB.warnings])];
 
   return (
-    <div className="screen stack">
-      <AppHeader title="The same walk, later" subtitle="Places may close before you reach them." backHref="/routes" />
+    <div className="screen stack compare-page">
+      <AppHeader title="The same walk, later" subtitle="Places may close before you arrive." backHref="/routes" />
       {devFixturesEnabled() ? <Banner kind="warn" title="Sample data">Saved sample data for design review, not a live check.</Banner> : null}
-      <div className="card tight">
+      <div className="card tight trip-summary">
         <strong>{trip.from?.name} → {trip.to?.name}</strong>
         <p className="small muted">Up to {trip.settings.maxExtraMinutes} min extra · Los Angeles time zone</p>
+      </div>
+      <div className="card duel" aria-hidden="true">
+        <div className="duel-side">
+          <ScoreRing score={pa.route_score} size={84} />
+          <div>
+            <div className="duel-time">8 PM</div>
+            <p className="small muted">{formatMinutes(pa.duration_min)} · {formatPercent(pa.continuity.coverage_pct)} coverage</p>
+          </div>
+        </div>
+        <div className="duel-vs">vs</div>
+        <div className="duel-side">
+          <ScoreRing score={pb.route_score} size={84} />
+          <div>
+            <div className="duel-time">1 AM</div>
+            <p className="small muted">{formatMinutes(pb.duration_min)} · {formatPercent(pb.continuity.coverage_pct)} coverage</p>
+          </div>
+        </div>
       </div>
 
       <div className="tabs" role="group" aria-label="Departure time">
@@ -154,7 +172,7 @@ export function CompareScreen({ now }: { now?: Date }) {
           onClick={() => { updateTrip({ departISO: times.oneAm.toISOString() }); router.push("/routes"); }}>
           Use 1:00 AM departure
         </button>
-        <p className="caption center">Recalculates open places and routes for the time you choose.</p>
+        <p className="caption center">Recalculates the walk for the time you pick.</p>
       </div>
       <DisclaimerBanner compact />
     </div>

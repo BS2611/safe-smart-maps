@@ -78,7 +78,7 @@ describe("RouteDetailScreen", () => {
   it("handles errors and an empty trip", async () => {
     stubFetch({ status: 502, respond: () => ({ error: { code: "UPSTREAM_ERROR", message: "x" } }) });
     renderWithTrip(<RouteDetailScreen routeId="x" />, READY_TRIP);
-    expect(await screen.findByText("We could not load this route")).toBeInTheDocument();
+    expect(await screen.findByText("This route didn't load")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Try again" })).toBeInTheDocument();
   });
 
@@ -146,7 +146,7 @@ describe("CompareScreen", () => {
   it("shows an error if either check fails", async () => {
     stubFetch({ respond: (body) => (body?.depart_time.startsWith("2026-10-25T08") ? new Error("offline") : fixtureFor(body?.depart_time)) });
     renderWithTrip(<CompareScreen now={NOW} />, tripBoth);
-    expect(await screen.findByText("We could not compare the two times")).toBeInTheDocument();
+    expect(await screen.findByText("The comparison didn't finish")).toBeInTheDocument();
     await userEvent.setup().click(screen.getByRole("button", { name: "Try again" }));
   });
 

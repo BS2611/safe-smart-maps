@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" fill="#07110e"/>
+  <circle cx="46" cy="18" r="11" fill="#7ef0c8" opacity="0.22"/>
+  <circle cx="46" cy="18" r="6.6" fill="#b6ffe4" opacity="0.36"/>
+  <path d="M18 50 V18" fill="none" stroke="url(#ssm-up)" stroke-width="7.2" stroke-linecap="round"/>
+  <path d="M18 18 H46" fill="none" stroke="url(#ssm-over)" stroke-width="7.2" stroke-linecap="round"/>
+  <circle cx="18" cy="50" r="4.7" fill="#ffb09a"/>
+  <circle cx="18" cy="18" r="4.3" fill="#ffc14d"/>
+  <circle cx="46" cy="18" r="5.4" fill="#b6ffe4"/>
+  <circle cx="46" cy="18" r="2.15" fill="#f7fff9"/>
+  <defs>
+    <linearGradient id="ssm-up" x1="18" y1="50" x2="18" y2="18" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffb09a"/>
+      <stop offset="1" stop-color="#ffc14d"/>
+    </linearGradient>
+    <linearGradient id="ssm-over" x1="18" y1="18" x2="46" y2="18" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffc14d"/>
+      <stop offset="1" stop-color="#7ef0c8"/>
+    </linearGradient>
+  </defs>
+</svg>
