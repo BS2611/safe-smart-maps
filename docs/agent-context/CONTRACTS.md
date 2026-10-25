@@ -18,22 +18,35 @@ Add fields freely; never remove or rename a field within a version.
 ## Segment score (backend -> frontend)
 ```json
 {
-  "segment_id": "string",
+  "segment_id": "seg-0",
   "start": [lng, lat],
   "end": [lng, lat],
-  "length_m": 50,
+  "length_m": 48.3,
   "arrival_time": "2026-10-24T23:10:00-07:00",
-  "score": 0,
+  "score": 56.5,
   "band": "green | yellow | red | unknown",
-  "factors": { "open_places": 0, "lighting": 0, "main_road": 0,
-               "help_points": 0, "transit": 0, "activity_estimate": 0,
-               "incidents": 0, "turns": 0 },
-  "reasons": ["2 open places within 50 m", "lit main road"],
-  "data_fetched_at": "ISO time",
-  "confidence": "high | low | unknown"
+  "factors": { "open_places": 0, "lighting": 100, "main_road": 100,
+               "help_points": 45.3, "transit": null, "activity": null,
+               "incidents": null, "turns": null },
+  "unknown_factors": ["transit", "activity", "incidents", "turns"],
+  "reasons": ["2 open places within 50 m", "lit road"],
+  "data_fetched_at": "ISO time (oldest source used) or null",
+  "known_weight_fraction": 0.7
 }
 ```
-`confidence: unknown` (or a missing factor) must render as "not sure".
+Factor names are exactly the keys of `scoring_v1.json` `weights` (`activity`, NOT `activity_estimate`; renamed 2026-10-24). A factor value is 0-100 or `null` = unknown, shown as "not sure". `score` is `null` and `band` is `unknown` when no factor is known. `known_weight_fraction` = share of total weight backed by known factors (a simple signal for how much the score rests on; no `confidence` label is defined yet). Bands are display labels, not a claim a route is safe or unsafe.
+
+### Segment scoring (server/services/segmenter.py, segment_scoring.py) - hackathon-v1 heuristics
+Not measurements of safety; tunable constants all live in `scoring/scoring_v1.json`.
+- Segmenter input: ordered `(lat, lng)` route points (flat list; `join_legs` flattens legs). Repeats dropped; < 2 distinct points -> no segments. Length by haversine; `n = max(1, round(L / segment_length_m))` equal pieces. `Segment`: `index, segment_id, start, end, midpoint (halfway along path), length_m, coordinates, offset_m`.
+- Arrival at a segment = `depart_at + offset_m / walking_speed_mps` (1.4 m/s) until the routing provider supplies timing.
+- `score = sum(w_i * f_i over known) / sum(w_i over known)`; weights can be overridden per user and are renormalized.
+- `open_places`: places OPEN at arrival within `radii_m.open_place` of the segment path -> `open_places_by_count[min(n, 3)]` = 0/50/75/100. Place data unavailable (`None`) -> unknown; available with zero open -> 0; unknown-hours places never count as open or closed, kept as evidence.
+- `lighting` / `main_road`: nearest `RoadContext` within `radii_m.road_match` (25 m) of the midpoint. lit yes=100, no=0, unknown=unknown. Class trunk/primary/secondary/tertiary=100, residential=60, service=40, pedestrian=40; motorway/other/unknown/no match = unknown.
+- `help_points`: nearest police/hospital/fire_station to the segment, `max(0, 100*(1 - d/150))`. AreaContext unavailable -> unknown; available but empty -> 0 ("none found in queried area").
+- `transit`, `incidents`, `activity`, `turns`: always unknown for now (no providers).
+- Scorer inputs: `SegmentScorer(config, places: list[Place] | None, area_context: AreaContext | None, weights=None)`; `None` = dataset unavailable, empty = available but nothing found. Scoring reads only; it never fetches.
+- Routing provider (Mapbox, other developer) must supply: ordered walking-route `(lat, lng)` points (legs concatenated), total duration/distance, and ideally per-leg timing. Feed `segment_route(points, cfg["segment_length_m"])`.
 
 ## Route result
 ```json

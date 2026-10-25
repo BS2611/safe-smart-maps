@@ -1,0 +1,15 @@
+# segment-scoring-m33
+
+- When: 2026-10-24 20:26 PT
+- Who: Amey (agent: claude-code)
+- Branch / commit: amey/backend / committed locally, not pushed (see `git log -1`)
+- Files touched: scoring/scoring_v1.json; server/services/geo.py, segmenter.py, segment_scoring.py; tests/test_segmenter.py, tests/test_segment_scoring.py, tests/fixtures/__init__.py, tests/fixtures/palace_demo.py; scripts/demo_segment_scoring.py; docs/agent-context/CONTRACTS.md, DECISIONS.md, STATE.md
+- What changed: M3.3. Generic route segmenter (haversine, ~50 m equal pieces), context matching (places via existing opening-hours engine, nearest road, nearest help point), 8 factors, weighted score with known-weight renormalization, evidence/reasons, unknown-factor list, contract-shaped `to_dict()`.
+- Why: Turn route coordinates into per-segment contextual scores before the Mapbox provider exists.
+- Decisions made in chat (also added to DECISIONS.md? yes/no): all scoring rules (unknown renormalization, open_places table, main_road table, help_points formula, 25 m road match, bands 70/40, 1.4 m/s, activity name) - yes
+- Contracts affected: CONTRACTS.md "Segment score" (`activity` replaces `activity_estimate`; nulls = unknown; added `unknown_factors`, `known_weight_fraction`; `confidence` removed because no algorithm is defined) and new "Segment scoring" subsection. scoring_v1.json extended (radii_m.road_match, walking_speed_mps, bands, factor_params); weights unchanged.
+- How it was tested: `python -m unittest discover -s tests -t .` -> 229 tests OK (181 before + 48 new: segmenter, place/road/help matching, scoring, config). TestClient: GET /v1/health 200, GET /v1/cache/status 200. Demo `python -m scripts.demo_segment_scoring` ran on the labeled fixture (10 segments, ~48.3 m each, scores 18.0-86.1). No network used. OSM/Overpass still NOT live-verified.
+- Unfinished / uncommitted: none. Not done on purpose: continuity, route selection, /v1/routes, Mapbox, transit/incidents/activity/turns providers, `confidence` label.
+- Open issues / risks: heuristics are hackathon-v1, not safety measurements. Bands/segment length: pieces are 25-75 m. Help-point and place distance use the segment path; road match uses the midpoint only. A cache MISS currently maps to "empty list" in CachedPlacesProvider.get_places, so the caller must pass `places=None` on a miss (use `lookup().status`), otherwise open_places reads 0 instead of unknown. Motorway segments are unknown until the walking provider contract says otherwise. Place data uses the 50 m radius to the segment polyline, so a big building footprint can be missed.
+- Next step for whoever continues: M3.4 continuity in a new `server/services/continuity.py`: consume `list[SegmentScore]` (per-segment score + whether the segment is within `radii_m.coverage` (75 m) of an open place / help point), compute coverage %, longest gap, worst 200 m window, penalty, route_score. Then candidate selector and `/v1/routes` once Mapbox provider lands.
+- Needs from teammate: Mapbox provider must return ordered `(lat, lng)` walking points per candidate (legs concatenated) plus duration and distance.
