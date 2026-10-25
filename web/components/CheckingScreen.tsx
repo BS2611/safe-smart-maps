@@ -10,8 +10,9 @@ type Props = { trip: Trip; onCancel: () => void };
 export function CheckingScreen({ trip, onCancel }: Props) {
   const status = sourceStatuses("loading");
   return (
-    <div className="screen stack">
+    <div className="screen stack checking-page">
       <AppHeader title="Checking your walk" backHref="/plan" />
+      <div className="pulse-route" aria-hidden="true"><span /></div>
       <div className="card tight stack-sm">
         <div className="row"><span className="dot" /> <strong>{trip.from?.name}</strong></div>
         <div className="row"><span className="dot" style={{ background: "var(--accent)" }} /> <strong>{trip.to?.name}</strong></div>

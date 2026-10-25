@@ -1,11 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Fraunces, Outfit } from "next/font/google";
 
 import { TripProvider } from "@/components/TripProvider";
 
 import "./globals.css";
+import "./polish.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit", display: "swap" });
+const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces", display: "swap" });
 
 export const metadata: Metadata = {
   title: "Safe Smart Maps",
@@ -16,12 +18,12 @@ export const metadata: Metadata = {
 
 // viewport-fit=cover lets us use safe-area insets on iPhone.
 export const viewport: Viewport = {
-  width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#101413",
+  width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#07110e",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={`${outfit.variable} ${fraunces.variable}`}>
       <body>
         <TripProvider>{children}</TripProvider>
       </body>

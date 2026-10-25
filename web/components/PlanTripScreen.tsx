@@ -25,10 +25,12 @@ export function PlanTripScreen() {
   if (!ready) return <div className="screen" aria-busy="true" />;
 
   return (
-    <div className="screen stack">
+    <div className="screen plan-page">
       <AppHeader title="Plan your walk" backHref="/" right={
         <Link href="/preferences" className="icon-btn" aria-label="Route preferences"><SlidersIcon /></Link>
       } />
+      <div className="plan-layout">
+      <div className="stack">
       <div className="card stack">
         <PlaceField
           label="From" value={trip.from} onChange={(from) => updateTrip({ from })}
@@ -54,6 +56,19 @@ export function PlanTripScreen() {
         <button type="button" className="btn primary" disabled={!isReady(trip)} onClick={showRoutes}>
           Show routes
         </button>
+      </div>
+      </div>
+      <aside className="plan-aside card stack-sm">
+        <p className="eyebrow">Demo corridor</p>
+        <h2>A real late walk</h2>
+        <p className="muted">Palace of Fine Arts to Montgomery BART. The score follows the minute you will be on each street.</p>
+        <ol className="steps">
+          <li>Set the start and the destination.</li>
+          <li>Leave now, at 8 PM, or at 1 AM.</li>
+          <li>Read the score, the empty stretches, and the reasons.</li>
+        </ol>
+        <p className="caption">The same walk later shows what has closed.</p>
+      </aside>
       </div>
     </div>
   );
