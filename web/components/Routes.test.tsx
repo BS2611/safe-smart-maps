@@ -111,7 +111,7 @@ describe("RoutesScreen", () => {
   ])("explains a %s error calmly and offers a retry", async (code, status, text) => {
     stubFetch({ status, respond: () => ({ error: { code, message: "server text" } }) });
     renderWithTrip(<RoutesScreen />, READY_TRIP);
-    expect(await screen.findByText("We could not finish the check")).toBeInTheDocument();
+    expect(await screen.findByText("The check didn't finish")).toBeInTheDocument();
     expect(screen.getByRole("alert")).toHaveTextContent(text);
     expect(screen.getByRole("button", { name: "Try again" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Change trip" })).toHaveAttribute("href", "/plan");

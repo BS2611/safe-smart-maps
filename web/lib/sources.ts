@@ -11,19 +11,19 @@ export type SourceInfo = {
 };
 
 export const SOURCES: SourceInfo[] = [
-  { id: "routes", title: "Finding walking routes", detail: "Several candidate routes on the pedestrian network" },
+  { id: "routes", title: "Finding walking routes", detail: "A few walks on streets you can use" },
   {
-    id: "places", title: "Checking what's open when you arrive", detail: "Live business listings and their hours",
+    id: "places", title: "Checking what's open when you arrive", detail: "Places and their posted hours",
     warningPrefix: "Live business listings",
   },
   {
-    id: "lighting", title: "Checking lighting and main roads", detail: "OpenStreetMap and streetlight reports",
+    id: "lighting", title: "Checking lighting and main roads", detail: "Street maps and lighting reports",
     warningPrefix: "Street and lighting map data",
   },
   {
-    id: "transit", title: "Checking transit", detail: "Transit schedules", warningPrefix: "Transit schedules",
+    id: "transit", title: "Checking transit", detail: "Bus and train times", warningPrefix: "Transit schedules",
   },
-  { id: "reasons", title: "Preparing route reasons", detail: "Plain-language summary of each route" },
+  { id: "reasons", title: "Preparing route reasons", detail: "A short reason for each route" },
 ];
 
 export function sourceStatuses(

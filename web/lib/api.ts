@@ -47,14 +47,14 @@ export function withFreshTimes(data: RoutesResponse, now: Date = new Date(), min
 export function describeError(error: unknown): string {
   if (error instanceof ApiError) {
     switch (error.code) {
-      case "NO_ROUTE": return "We could not find a walking route between these places.";
+      case "NO_ROUTE": return "We could not find a walking route between these places. Try two different points.";
       case "BAD_REQUEST": return error.message;
-      case "NOT_CONFIGURED": return "The route service is not set up yet. Please try again later.";
+      case "NOT_CONFIGURED": return "The route service is not set up yet. Try again in a little while.";
       case "UPSTREAM_TIMEOUT": return "The route service took too long. Try again.";
       case "UPSTREAM_ERROR": return "The route service had a problem. Try again.";
       case "NETWORK": return "We could not reach the server. Check your connection and try again.";
       case "CANCELLED": return "Check cancelled.";
-      default: return "The server sent something we could not read.";
+      default: return "We could not read the server's answer. Try again.";
     }
   }
   return "Something went wrong. Try again.";

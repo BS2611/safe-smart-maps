@@ -64,8 +64,8 @@ describe("PreferencesScreen", () => {
 
   it("is honest about what the options do", () => {
     renderWithTrip(<PreferencesScreen />, EMPTY_TRIP);
-    expect(screen.getByText(/does not change the street scores/)).toBeInTheDocument();
-    expect(screen.getByText(/low weight \(5%\)/)).toBeInTheDocument();
+    expect(screen.getByText(/does not change the scores yet/)).toBeInTheDocument();
+    expect(screen.getByText(/small part of the score \(5%\)/)).toBeInTheDocument();
     expect(screen.getByText(/recalculates your routes/)).toBeInTheDocument();
   });
 });

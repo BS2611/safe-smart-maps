@@ -44,7 +44,7 @@ export function RoutesScreen() {
     return (
       <div className="screen stack">
         <AppHeader title="Your routes" backHref="/plan" />
-        <Banner kind="error" title="We could not finish the check">{describeError(state.error)}</Banner>
+        <Banner kind="error" title="The check didn't finish">{describeError(state.error)}</Banner>
         <div className="stack-sm">
           <button type="button" className="btn primary" onClick={retry}>Try again</button>
           <Link href="/plan" className="btn secondary">Change trip</Link>
@@ -76,7 +76,7 @@ export function RoutesScreen() {
           {trip.departISO ? formatDayClock(trip.departISO) : "Now"} · up to {trip.settings.maxExtraMinutes} min extra
         </p>
       </div>
-      <p className="section-kicker">Scores describe street conditions along the whole walk. They are not a promise.</p>
+      <p className="section-kicker">Scores describe the streets. They are not a promise.</p>
 
       <div className="routes-layout">
         <div className="map-col stack-sm">
